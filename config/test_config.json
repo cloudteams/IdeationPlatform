@@ -1,0 +1,40 @@
+{
+  "sites": [
+    {
+      "name": "my_site",
+
+      "connections": [
+        {
+          "ID": "my_site_db",
+          "ENGINE": "django.db.backends.sqlite3",
+          "NAME": "test_site.sqlite3",
+          "USER": "",
+          "PASSWORD": "",
+          "HOST": "",
+          "PORT": ""
+        }
+      ],
+
+      "user_pk": "Users.id@my_site_db",
+
+      "properties": [
+        {
+          "name": "age",
+          "type": "int",
+          "source": "Users.age@my_site_db"
+        },
+        {
+          "name": "gender",
+          "type": "scalar(Male|Female)",
+          "source": "Users.gender@my_site_db"
+        },
+        {
+          "name": "run_duration",
+          "type": "int",
+          "source": "Running.duration@my_site_db",
+          "user_fk": "Running.user@my_site_db"
+        }
+      ]
+    }
+  ]
+}
