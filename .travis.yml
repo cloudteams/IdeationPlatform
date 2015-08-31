@@ -10,7 +10,7 @@ install:
 branches:
  only:
   - master
-script: coverage run manage.py test
+script: coverage run --source=. manage.py test
 after_success:
   - coverage report
   - pip install --quiet python-coveralls
