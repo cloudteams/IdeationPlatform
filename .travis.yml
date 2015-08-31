@@ -6,7 +6,7 @@ env:
   - DJANGO="Django==1.8"
 install:
  - pip install $DJANGO --use-mirrors
- - pip install . --use-mirrors
+ - pip install requirements.txt
  - pip install coverage
 branches:
  only:
