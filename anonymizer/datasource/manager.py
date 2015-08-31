@@ -5,10 +5,16 @@ from connections import connection_manager
 
 
 class PropertyException(Exception):
+    """
+    Exceptions caused by the property manager
+    """
     pass
 
 
 class UserManagerException(Exception):
+    """
+    Exceptions caused by the user manager
+    """
     pass
 
 
