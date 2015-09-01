@@ -8,10 +8,6 @@
           "ID": "my_site_db",
           "ENGINE": "django.db.backends.sqlite3",
           "NAME": "test_site.sqlite3",
-          "USER": "",
-          "PASSWORD": "",
-          "HOST": "",
-          "PORT": ""
         }
       ],
 

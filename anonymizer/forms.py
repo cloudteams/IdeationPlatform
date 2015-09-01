@@ -13,7 +13,7 @@ class ConnectionConfigurationForm(forms.ModelForm):
 
 
 class Sqlite3ConnectionForm(forms.Form):
-    path = forms.CharField(max_length=4096, widget=forms.widgets.FileInput)
+    path = forms.CharField()
 
     def clean(self):
         # default validation
@@ -27,7 +27,6 @@ class Sqlite3ConnectionForm(forms.Form):
             f = open(self.cleaned_data['path'], 'r')
             ima = f.read(16).encode('hex')
         except IOError, e:
-            self.add_error(None, str(e))
             raise ValidationError(e[1])
         finally:
             # validate that the file is an sqlite3 file
@@ -47,7 +46,7 @@ class MySQLConnectionForm(forms.Form):
     DEFAULT_PORT = '3306'
 
     host = forms.CharField(max_length=512)
-    port = forms.IntegerField(min_value=1000, initial=DEFAULT_PORT, required=False)
+    port = forms.CharField(initial=DEFAULT_PORT)
     user = forms.CharField()
     password = forms.CharField(required=False)
     database = forms.CharField()
@@ -61,8 +60,8 @@ class MySQLConnectionForm(forms.Form):
             mysql_connect(host=self.cleaned_data['host'], port=self.cleaned_data['port'],
                           user=self.cleaned_data['user'], password=self.cleaned_data['password'],
                           database=self.cleaned_data['database'])
+
         except (InterfaceError, ProgrammingError), e:
-            self.add_error(None, str(e))
             raise ValidationError(str(e))
 
         return self.cleaned_data
