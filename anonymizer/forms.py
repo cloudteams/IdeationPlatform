@@ -1,13 +1,18 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from mysql.connector import connect as mysql_connect, InterfaceError, ProgrammingError
+from publisher.models import ConnectionConfiguration
 
 __author__ = 'dipap'
 
 
-class Sqlite3ConnectionForm(forms.Form):
-    name = forms.CharField(max_length=255)
+class ConnectionConfigurationForm(forms.ModelForm):
+    class Meta:
+        model = ConnectionConfiguration
+        exclude = ['info', ]
 
+
+class Sqlite3ConnectionForm(forms.Form):
     path = forms.CharField(max_length=4096)
 
     def clean(self):
@@ -39,10 +44,8 @@ class Sqlite3ConnectionForm(forms.Form):
 
 
 class MySQLConnectionForm(forms.Form):
-
-    name = forms.CharField(max_length=255)
-
     DEFAULT_PORT = '3306'
+
     host = forms.CharField(max_length=512)
     port = forms.IntegerField(min_value=1000, initial=DEFAULT_PORT, required=False)
     user = forms.CharField()

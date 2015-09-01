@@ -4,6 +4,8 @@ python:
  - "2.7"
 env:
   - DJANGO="Django==1.8"
+before_install:
+  - mysql -e "create database IF NOT EXISTS test_database;" -uroot  
 install:
  - pip install -r requirements.txt
  - pip install coverage
