@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from mysql.connector import connect as mysql_connect, InterfaceError, ProgrammingError
-from publisher.models import ConnectionConfiguration
+from models import ConnectionConfiguration
 
 __author__ = 'dipap'
 
@@ -13,7 +13,7 @@ class ConnectionConfigurationForm(forms.ModelForm):
 
 
 class Sqlite3ConnectionForm(forms.Form):
-    path = forms.CharField(max_length=4096)
+    path = forms.CharField(max_length=4096, widget=forms.widgets.FileInput)
 
     def clean(self):
         # default validation
