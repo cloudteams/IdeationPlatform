@@ -1,7 +1,7 @@
 __author__ = 'dipap'
 
 from django.test import TestCase
-from Person import first_name, last_name_initial, male_names, female_names, NoGenderOptions
+from Person import first_name, last_name_initial, male_names, female_names, NoGenderOptions, InvalidGenderOption
 
 
 class PersonTests(TestCase):
@@ -35,7 +35,11 @@ class PersonTests(TestCase):
 
     def test_no_gender_options(self):
         with self.assertRaises(NoGenderOptions):
-            first_name('Male')
+            first_name(('Male',))
+
+    def test_invalid_gender_option(self):
+        with self.assertRaises(InvalidGenderOption):
+            first_name(('Male', 'Man', 'Woman'))
 
     def test_last_name_initial_format(self):
         surname = last_name_initial()

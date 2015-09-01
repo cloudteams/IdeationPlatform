@@ -3,6 +3,7 @@ __author__ = 'dipap'
 import random
 import string
 
+# lists of names
 male_names = ['Jack', 'John', 'Nick']
 female_names = ['Stella', 'Rose', 'Eve', 'Kate']
 all_names = male_names + female_names
