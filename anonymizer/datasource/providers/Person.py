@@ -3,6 +3,10 @@ __author__ = 'dipap'
 import random
 import string
 
+male_names = ['Jack', 'John', 'Nick']
+female_names = ['Stella', 'Rose', 'Eve', 'Kate']
+all_names = male_names + female_names
+
 
 class InvalidGenderOption(Exception):
     pass
@@ -27,12 +31,9 @@ def first_name(*args):
     else:
         gender = None
 
-    male_names = ['Jack', 'John', 'Nick']
-    female_names = ['Stella', 'Rose', 'Eve', 'Kate']
-
     # create the list of all usable names
     if not gender:
-        names = male_names + female_names
+        names = all_names
     else:
         if gender == gender_male:
             names = male_names
