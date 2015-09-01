@@ -1,8 +1,23 @@
-from anonymizer.datasource.manager import user_manager, UserManagerException
+from anonymizer.datasource.manager import user_manager, Property, \
+    UserManagerException, ProviderNotFound, ProviderMethodNotFound
 
 __author__ = 'dipap'
 
 from django.test import TestCase
+
+
+class PropertyTests(TestCase):
+
+    def test_load_existing_provider(self):
+        Property('^Person.first_name', None)
+
+    def test_exception_on_wrong_provider(self):
+        with self.assertRaises(ProviderNotFound):
+            Property('^Person_wrong.first_name', None)
+
+    def test_exception_on_wrong_provider_method(self):
+        with self.assertRaises(ProviderMethodNotFound):
+            Property('^Person.first_name_wrong', None)
 
 
 class UserManagerTests(TestCase):

@@ -25,11 +25,24 @@
         },
         {
           "name": "gender",
-          "type": "scalar(Male|Female)",
+          "type": "[Male,Female]",
           "source": "Users.gender@my_site_db"
         },
         {
+          "name": "first_name",
+          "label": "first name",
+          "type": "string",
+          "source": "^Person.first_name(@gender,Male,Female)"
+        },
+        {
+          "name": "last_name",
+          "label": "last name (initial)",
+          "type": "string",
+          "source": "^Person.last_name_initial()"
+        },
+        {
           "name": "run_duration",
+          "label": "run duration (minutes)",
           "type": "int",
           "source": "Running.duration@my_site_db",
           "user_fk": "Running.user@my_site_db"
