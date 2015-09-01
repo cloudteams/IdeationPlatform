@@ -1,3 +1,5 @@
+from anonymizer.models import ConnectionConfiguration
+
 __author__ = 'dipap'
 
 
@@ -6,7 +8,7 @@ from django.test import TestCase
 
 class ConnectionViewTests(TestCase):
 
-    def test_create_connection_page(self):
+    def test_create_connection(self):
         form_url = '/anonymizer/connection/create/'
 
         # test that the page is accessible
@@ -38,7 +40,14 @@ class ConnectionViewTests(TestCase):
         self.assertNotEqual(response.status_code, 302)
 
     def test_update_sqlite3_info(self):
+        ConnectionConfiguration.objects.create(name='test_connection',
+                                               connection_type='django.db.backends.sqlite3', info='')
+
         form_url = '/anonymizer/connection/update-info/1/sqlite3/'
+
+        # test that we can get the form
+        response = self.client.get(form_url)
+        self.assertEqual(response.status_code, 200)
 
         # test that we can't create a connection to the wrong type of file
         data = {
@@ -62,7 +71,14 @@ class ConnectionViewTests(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_update_mysql_info(self):
-        form_url = '/anonymizer/connection/update-info/2/mysql/'
+        ConnectionConfiguration.objects.create(name='test_connection',
+                                               connection_type='django.db.backends.mysql', info='')
+
+        form_url = '/anonymizer/connection/update-info/1/mysql/'
+
+        # test that we can get the form
+        response = self.client.get(form_url)
+        self.assertEqual(response.status_code, 200)
 
         # test that we can create a correct connection
         data = {
