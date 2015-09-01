@@ -1,7 +1,7 @@
 __author__ = 'dipap'
 
 from django.test import TestCase
-from forms import Sqlite3ConnectionForm, MySQLConnectionForm
+from anonymizer.forms import Sqlite3ConnectionForm, MySQLConnectionForm
 
 
 # sqlite3 form tests
