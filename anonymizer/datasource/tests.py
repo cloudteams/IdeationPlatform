@@ -40,3 +40,7 @@ class UserManagerTests(TestCase):
     def test_custom_filter(self):
         res = user_manager.filter('age=37 OR gender="Male"')
         self.assertEqual(len(res), 51)
+
+    def test_aggregate_filter(self):
+        res = user_manager.filter(['age=37', 'run_duration_avg<13'])
+        self.assertEqual(len(res), 1)

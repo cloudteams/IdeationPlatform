@@ -41,9 +41,10 @@
           "source": "^Person.last_name_initial()"
         },
         {
-          "name": "run_duration",
+          "name": "run_duration_avg",
           "label": "run duration (minutes)",
-          "type": "int",
+          "type": "float",
+          "aggregate": "avg",
           "source": "Running.duration@my_site_db",
           "user_fk": "Running.user@my_site_db"
         }

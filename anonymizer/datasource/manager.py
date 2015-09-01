@@ -3,7 +3,7 @@ __author__ = 'dipap'
 from util import configuration
 from connections import connection_manager
 from pydoc import locate
-
+import re
 
 class PropertyManagerException(Exception):
     """
@@ -44,12 +44,16 @@ class Property:
     """
     A single property
     """
-    def __init__(self, source, user_fk, name=None, tp=None):
+    def __init__(self, source, user_fk, name=None, tp=None, aggregate=None):
         self.source = source
         self.table = source.split('@')[0].split('.')[0]
         self.column = source.split('@')[0].split('.')[1]
+        self.aggregate = aggregate
+
         if not name:
             self.name = self.column
+            if aggregate:
+                self.name += '__' + aggregate
         else:
             self.name = name
 
@@ -91,7 +95,11 @@ class Property:
         return self.source[0] in ['^']
 
     def full(self):
-        return self.table + '.' + self.column
+        result = self.table + '.' + self.column
+        if self.aggregate:
+            result = self.aggregate + '(' + result + ')'
+
+        return result
 
 
 class PropertyManager:
@@ -109,8 +117,22 @@ class PropertyManager:
             else:
                 user_fk = None
 
-            prop = Property(property_info['source'], user_fk=user_fk, name=property_info['name'], tp=property_info['type'])
+            if 'aggregate' in property_info:
+                aggregate = property_info['aggregate']
+            else:
+                aggregate = None
+
+            prop = Property(property_info['source'], user_fk=user_fk, name=property_info['name'],
+                            tp=property_info['type'], aggregate=aggregate)
+
             self.properties.append(prop)
+
+    def get_property_by_name(self, name):
+        for prop in self.properties:
+            if prop.name == name:
+                return prop
+
+        return None
 
     def info(self, row):
         idx = 0
@@ -125,8 +147,6 @@ class PropertyManager:
         # generate other properties
         for prop in self.properties:
             if prop.is_generated():
-                result[prop.name] = 'test'
-
                 # get function argument
                 fn_args = prop.source.split('.')[1].split('(')[1][:-1].split(',')
 
@@ -149,7 +169,10 @@ class PropertyManager:
     def query(self):
         select_clause = 'SELECT ' + \
                         ','.join([prop.full() + ' AS ' + prop.name for prop in self.properties if not prop.is_generated()]) + ' '
+
         from_clause = 'FROM {0} '.format(self.user_pk.table)
+
+        # find all joins
         join_clause = ''
         for prop in self.properties:
             if not prop.is_generated():
@@ -157,6 +180,7 @@ class PropertyManager:
                     join_clause += 'LEFT OUTER JOIN {0} ON {1}={2} '\
                         .format(prop.table, prop.user_fk.full(), self.user_pk.full())
 
+        # return the `all` query
         return select_clause + from_clause + join_clause
 
     def all(self):
@@ -175,9 +199,22 @@ class PropertyManager:
         if not type(filters) == list:
             filters = [filters]
 
-        where_clause = 'WHERE ' + ' AND '.join(filters)
+        # separate filters between those on simple columns and those on aggregates
+        filters_concrete = [f for f in filters if self.get_property_by_name(re.split('[=<>]', f)[0]).aggregate is None]
+        filters_aggegate = set(filters) - set(filters_concrete)
 
+        # construct where clause
+        where_clause = 'WHERE ' + ' AND '.join(filters_concrete)
         query += where_clause
+
+        # construct group by clause
+        group_by = ' GROUP BY ' + self.user_pk.full()
+        query += group_by
+
+        # aggregate filters must go after the group by in the `having` clause
+        if filters_aggegate:
+            having_clause = ' HAVING ' + ' AND '.join(filters_aggegate)
+            query += having_clause
 
         # execute query & return results
         return [self.info(row) for row in self.user_pk.connection.cursor().execute(query).fetchall()]
