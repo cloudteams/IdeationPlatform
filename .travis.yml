@@ -7,6 +7,7 @@ env:
 install:
  - pip install -r requirements.txt
  - pip install coverage
+ - pip install mysql-connector-python --allow-external mysql-connector-python
 branches:
  only:
   - master

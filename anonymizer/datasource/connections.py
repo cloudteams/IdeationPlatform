@@ -1,7 +1,7 @@
 __author__ = 'dipap'
 
 from util import configuration
-
+import sqlite3
 
 class ConnectionManager:
     """
@@ -14,7 +14,6 @@ class ConnectionManager:
         for conn_info in configuration.data['sites'][0]['connections']:
             db = {'ID': conn_info['ID']}
             if conn_info['ENGINE'] == 'django.db.backends.sqlite3':
-                import sqlite3
                 conn = sqlite3.connect(conn_info['NAME'])
             else:
                 raise Exception('Unsupported engine: ' + conn_info['ENGINE'])
