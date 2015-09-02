@@ -36,7 +36,7 @@ class ConnectionTests(TestCase):
     def test_related_tables(self):
         self.assertIn('Running', self.sqlite3.get_related_tables('Users'))
         self.assertNotIn('Running_wrong', self.sqlite3.get_related_tables('Users'))
-        # mysql reports lower case names
+
         self.assertIn('running', self.mysql.get_related_tables('Users'))
         self.assertNotIn('running_wrong', self.mysql.get_related_tables('Users'))
 

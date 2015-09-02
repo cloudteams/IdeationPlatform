@@ -70,21 +70,29 @@ class Connection:
             row = self.execute(query).fetchone()
             return '%s.%s@%s' % (table_name, row[4], self.id)
 
-    def get_data_properties(self, table_name):
+    def get_data_properties(self, table_name, from_related=False):
         """
+        If from_related is set to true, columns from other tables pointing to [table_name] will also be included
         :return: all non-auto increment columns of table
         """
         result = []
 
-        if self.is_sqlite3():
-            query = "PRAGMA table_info('%s')" % table_name
-            for row in self.execute(query).fetchall():
-                result.append((row[0], row[1]))
-        elif self.is_mysql():
-            query = "SHOW COLUMNS FROM %s;" % table_name
-            for row in self.execute(query).fetchall():
-                if 'auto' not in row[5]:
+        # check on which
+        tables = [table_name]
+        if from_related:
+            tables += self.get_related_tables(table_name)
+
+        # look for columns in the table(s)
+        for table in tables:
+            if self.is_sqlite3():
+                query = "PRAGMA table_info('%s')" % table
+                for row in self.execute(query).fetchall():
                     result.append((row[0], row[1]))
+            elif self.is_mysql():
+                query = "SHOW COLUMNS FROM %s;" % table
+                for row in self.execute(query).fetchall():
+                    if 'auto' not in row[5]:
+                        result.append((row[0], row[1]))
 
         return result
 
