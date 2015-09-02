@@ -1,7 +1,10 @@
+from anonymizer.datasource.connections import ConnectionManager
+from anonymizer.models import ConnectionConfiguration
+
 __author__ = 'dipap'
 
 from django.test import TestCase
-from anonymizer.forms import Sqlite3ConnectionForm, MySQLConnectionForm
+from anonymizer.forms import Sqlite3ConnectionForm, MySQLConnectionForm, UserTableSelectionForm
 
 
 # sqlite3 form tests
@@ -58,3 +61,25 @@ class MySQLFormTests(TestCase):
     def test_existing_connection(self):
         f = MySQLConnectionForm(data=self.get_test_data())
         self.assertTrue(f.is_valid())
+
+
+# Suggest table tests
+class UserTableSelectionFormTests(TestCase):
+
+    def setUp(self):
+        config = ConnectionConfiguration.objects.create(name='my_name', connection_type='django.db.backends.sqlite3',
+                                                        info='"name": "test_site.sqlite3"')
+
+        # get connection
+        manager = ConnectionManager(config.info_to_json())
+        self.connection = manager.get(config.name)
+
+        super(UserTableSelectionFormTests, self).setUp()
+
+    def test_table_selection(self):
+        f = UserTableSelectionForm(self.connection, data={'user_table': 'Users'})
+        self.assertTrue(f.is_valid())
+
+    def test_table_not_exists(self):
+        f = UserTableSelectionForm(self.connection, data={'user_table': 'Users_wrong'})
+        self.assertFalse(f.is_valid())

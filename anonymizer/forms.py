@@ -9,7 +9,7 @@ __author__ = 'dipap'
 class ConnectionConfigurationForm(forms.ModelForm):
     class Meta:
         model = ConnectionConfiguration
-        exclude = ['info', ]
+        fields = ['name', 'connection_type']
 
 
 class Sqlite3ConnectionForm(forms.Form):
@@ -65,3 +65,25 @@ class MySQLConnectionForm(forms.Form):
             raise ValidationError(str(e))
 
         return self.cleaned_data
+
+
+class UserTableSelectionForm(forms.Form):
+
+    def __init__(self, connection, *args, **kwargs):
+        super(UserTableSelectionForm, self).__init__(*args, **kwargs)
+
+        # create list with all possible options
+        choices = []
+        not_suggested = []
+        tables = connection.tables()
+        for table in tables:
+            table_name = table[0]
+            if 'user' in table_name.lower():
+                choices.append((table_name, table_name + ' (suggested)'),)
+            else:
+                not_suggested.append(table_name)
+
+        for table in not_suggested:
+            choices.append((table, table))
+
+        self.fields['user_table'] = forms.ChoiceField(choices=choices)

@@ -1,7 +1,9 @@
+import json
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import CreateView
-from forms import ConnectionConfigurationForm, Sqlite3ConnectionForm, MySQLConnectionForm
+from anonymizer.datasource.connections import ConnectionManager
+from forms import ConnectionConfigurationForm, Sqlite3ConnectionForm, MySQLConnectionForm, UserTableSelectionForm
 from models import ConnectionConfiguration
 
 
@@ -45,11 +47,11 @@ def sqlite3_info(request, pk):
         if form.is_valid():
             config = get_object_or_404(ConnectionConfiguration, pk=pk)
             config.info = '''
-                  "NAME": "''' + form.cleaned_data['path'] + '''",
+                  "name": "''' + form.cleaned_data['path'] + '''"
             '''
             config.save()
 
-            return redirect('/anonymizer/connection/create/')
+            return redirect('/anonymizer/connection/%d/suggest-user-table/' % config.pk)
         else:
             status = 400
             params['form'] = form
@@ -71,16 +73,44 @@ def mysql_info(request, pk):
         if form.is_valid():
             config = get_object_or_404(ConnectionConfiguration, pk=pk)
             data = form.cleaned_data
-            config.info = '''{
-                "NAME": "''' + data['database'] + '''",
-                'USER': "''' + data['user'] + '''",
-                'PASSWORD': "''' + data['password'] + '''",
-                'HOST': "''' + data['host'] + '''",
-                'PORT': "''' + data['port'] + '''"
+            config.info = '''
+                "name": "''' + data['database'] + '''",
+                'user': "''' + data['user'] + '''",
+                'password': "''' + data['password'] + '''",
+                'host': "''' + data['host'] + '''",
+                'port': "''' + data['port'] + '''"
             '''
             config.save()
 
-            return redirect('/anonymizer/connection/create/')
+            return redirect('/anonymizer/connection/%d/suggest-user-table/' % config.pk)
+        else:
+            status = 400
+            params['form'] = form
+
+    return render(request, 'anonymizer/connection/update_info.html', params, status=status)
+
+
+def suggest_users_table(request, pk):
+    """
+    Suggest to the user which table(s) probably contain the user info, let them select one
+    """
+    params = {}
+    status = 200
+
+    config = get_object_or_404(ConnectionConfiguration, pk=pk)
+
+    manager = ConnectionManager(config.info_to_json())
+    connection = manager.get(config.name)
+
+    if request.method == 'GET':
+        params['form'] = UserTableSelectionForm(connection)
+    elif request.method == 'POST':
+        form = UserTableSelectionForm(connection, request.POST)
+        if form.is_valid():
+            config.user_table = form.cleaned_data['user_table']
+            config.save()
+
+            redirect('/anonymizer/connection/%d/suggest-columns/')
         else:
             status = 400
             params['form'] = form
