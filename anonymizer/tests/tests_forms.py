@@ -4,7 +4,7 @@ from anonymizer.models import ConnectionConfiguration
 __author__ = 'dipap'
 
 from django.test import TestCase
-from anonymizer.forms import Sqlite3ConnectionForm, MySQLConnectionForm, UserTableSelectionForm
+from anonymizer.forms import Sqlite3ConnectionForm, MySQLConnectionForm, UserTableSelectionForm, ColumnForm
 
 
 # sqlite3 form tests
@@ -82,4 +82,26 @@ class UserTableSelectionFormTests(TestCase):
 
     def test_table_not_exists(self):
         f = UserTableSelectionForm(self.connection, data={'users_table': 'Users_wrong'})
+        self.assertFalse(f.is_valid())
+
+
+# Column form tests
+class ColumnFormTests(TestCase):
+
+    def test_column_form(self):
+        data = {
+            'name': 'p1',
+            'source': 't1.p1@test',
+            'include': True,
+        }
+
+        f = ColumnForm([('p1', 'int', 't1.p1@test')], data=data)
+        self.assertTrue(f.is_valid())
+
+        # assert source in options
+        f = ColumnForm([('p1', 'int', 't2.p1@test')], data=data)
+        self.assertFalse(f.is_valid())
+
+        # assert name required
+        data['name'] = ''
         self.assertFalse(f.is_valid())

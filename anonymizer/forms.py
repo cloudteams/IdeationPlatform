@@ -1,6 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from mysql.connector import connect as mysql_connect, InterfaceError, ProgrammingError
+from anonymizer.lists import AGGREGATE_LIST, PROVIDER_PLUGINS
 from models import ConnectionConfiguration
 
 __author__ = 'dipap'
@@ -89,14 +90,19 @@ class UserTableSelectionForm(forms.Form):
         self.fields['users_table'] = forms.ChoiceField(choices=choices)
 
 
-class ColumnSelectionForm(forms.Form):
+class ColumnForm(forms.Form):
+    include = forms.BooleanField(initial=True)
+    name = forms.CharField()
+    c_type = forms.CharField(required=False)
+    aggregate = forms.ChoiceField(choices=AGGREGATE_LIST, required=False)
 
-    def __init__(self, connection, users_table, *args, **kwargs):
-        super(ColumnSelectionForm, self).__init__(*args, **kwargs)
+    def __init__(self, all_properties, *args, **kwargs):
+        super(ColumnForm, self).__init__(*args, **kwargs)
 
-        columns = connection.get_data_properties(users_table, from_related=True)
-        choices = [(column[0], column[0] + ' ' + column[1]) for column in columns]
+        choices = []
+        for p in all_properties:
+            choices.append((p[2], p[0]))
 
-        import pdb;pdb.set_trace()
-        self.fields['columns'] = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple,
-                                                           choices=choices)
+        choices += PROVIDER_PLUGINS
+
+        self.fields['source'] = forms.ChoiceField(choices=choices)

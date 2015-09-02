@@ -1,10 +1,11 @@
-import json
+from functools import partial, wraps
+from django.forms import formset_factory
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import CreateView
 from anonymizer.datasource.connections import ConnectionManager
 from forms import ConnectionConfigurationForm, Sqlite3ConnectionForm, MySQLConnectionForm, UserTableSelectionForm, \
-    ColumnSelectionForm
+    ColumnForm
 from models import ConnectionConfiguration
 
 
@@ -76,10 +77,10 @@ def mysql_info(request, pk):
             data = form.cleaned_data
             config.info = '''
                 "name": "''' + data['database'] + '''",
-                'user': "''' + data['user'] + '''",
-                'password': "''' + data['password'] + '''",
-                'host': "''' + data['host'] + '''",
-                'port': "''' + data['port'] + '''"
+                "user": "''' + data['user'] + '''",
+                "password": "''' + data['password'] + '''",
+                "host": "''' + data['host'] + '''",
+                "port": "''' + data['port'] + '''"
             '''
             config.save()
 
@@ -99,7 +100,6 @@ def suggest_users_table(request, pk):
     status = 200
 
     config = get_object_or_404(ConnectionConfiguration, pk=pk)
-
     manager = ConnectionManager(config.info_to_json())
     connection = manager.get(config.name)
 
@@ -111,7 +111,6 @@ def suggest_users_table(request, pk):
             config.users_table = form.cleaned_data['users_table']
             config.save()
 
-            import pdb;pdb.set_trace()
             return redirect('/anonymizer/connection/%d/select-columns/' % config.pk)
         else:
             status = 400
@@ -128,11 +127,34 @@ def select_columns(request, pk):
     status = 200
 
     config = get_object_or_404(ConnectionConfiguration, pk=pk)
-    print config
     manager = ConnectionManager(config.info_to_json())
     connection = manager.get(config.name)
 
     if request.method == 'GET':
-        params['form'] = ColumnSelectionForm(connection, config.users_table)
+        # gather suggestions
+        initial = []
+        columns = connection.get_data_properties(config.users_table, from_related=True)
+        for column in columns:
+            initial.append({
+                'name': column[0],
+                'c_type': column[1],
+                'source': column[2],
+            })
+
+        # create formset
+        ColumnFormset = formset_factory(wraps(ColumnForm)(partial(ColumnForm, all_properties=columns)), extra=0)
+        formset = ColumnFormset(initial=initial)
+
+        params['formset'] = formset
+    else:
+        columns = connection.get_data_properties(config.users_table, from_related=True)
+        ColumnFormset = formset_factory(wraps(ColumnForm)(partial(ColumnForm, all_properties=columns)))
+
+        formset = ColumnFormset(request.POST)
+        if formset.is_valid():
+            import pdb;pdb.set_trace()
+        else:
+            status = 400
+            params['formset'] = formset
 
     return render(request, 'anonymizer/connection/select_columns.html', params, status=status)

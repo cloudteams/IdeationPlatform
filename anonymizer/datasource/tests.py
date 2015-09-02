@@ -39,7 +39,7 @@ class ConnectionTests(TestCase):
 
         # also check the properties from other tables pointing to Users as well
         self.assertEqual(len(self.sqlite3.get_data_properties('users', from_related=True)), 9)
-        self.assertEqual(len(self.mysql.get_data_properties('users', from_related=True)), 7)
+        self.assertEqual(len(self.mysql.get_data_properties('users', from_related=True)), 6)
 
     def test_related_tables(self):
         self.assertIn('Running', self.sqlite3.get_related_tables('users'))

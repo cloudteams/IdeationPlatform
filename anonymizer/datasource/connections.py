@@ -87,12 +87,12 @@ class Connection:
             if self.is_sqlite3():
                 query = "PRAGMA table_info('%s')" % table
                 for row in self.execute(query).fetchall():
-                    result.append((row[1], row[2]))
+                    result.append((row[1], row[2], '%s.%s' % (row[1], table)))
             elif self.is_mysql():
                 query = "SHOW COLUMNS FROM %s;" % table
                 for row in self.execute(query).fetchall():
-                    if 'auto' not in row[5]:
-                        result.append((row[0], row[1]))
+                    if ('auto' not in row[5]) and ('MUL' not in row[3]):
+                        result.append((row[0], row[1], '%s.%s' % (row[0], table)))
 
         return result
 

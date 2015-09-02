@@ -5,7 +5,13 @@
     <h2>Select the required information</h2>
 
     <form method="POST" action=".">{% csrf_token %}
-        {{form.as_p}}
+        {{formset.management_form}}
+
+        {% for form in formset %}
+            <div class="column-form">
+                {{form.as_p}}
+            </div>
+        {% endfor %}
         <input type="submit" value="Continue" />
     </form>
 
