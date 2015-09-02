@@ -8,6 +8,39 @@ __author__ = 'dipap'
 from django.test import TestCase
 
 
+class ConnectionTests(TestCase):
+
+    def setUp(self):
+        config = Configuration('config/sqlite3_config.json')
+        self.sqlite3 = ConnectionManager(config.get_connection_info()).get('my_site_db')
+
+        config = Configuration('config/mysql_config.json')
+        self.mysql = ConnectionManager(config.get_connection_info()).get('my_other_db')
+
+        super(ConnectionTests, self).setUp()
+
+    def test_tables(self):
+        # sqlite also reports the system special table
+        self.assertEqual(len(self.sqlite3.tables()), 3)
+        self.assertEqual(len(self.mysql.tables()), 2)
+
+    def test_table_primary_key(self):
+        self.assertEqual(self.sqlite3.primary_key_of('Users'), 'Users.id@my_site_db')
+        self.assertEqual(self.mysql.primary_key_of('Users'), 'Users.id@my_other_db')
+
+    def test_table_properties(self):
+        # sqlite falsely reports the id, too
+        self.assertEqual(len(self.sqlite3.get_data_properties('Users')), 6)
+        self.assertEqual(len(self.mysql.get_data_properties('Users')), 5)
+
+    def test_related_tables(self):
+        self.assertIn('Running', self.sqlite3.get_related_tables('Users'))
+        self.assertNotIn('Running_wrong', self.sqlite3.get_related_tables('Users'))
+        # mysql reports lower case names
+        self.assertIn('running', self.mysql.get_related_tables('Users'))
+        self.assertNotIn('running_wrong', self.mysql.get_related_tables('Users'))
+
+
 class ConnectionManagerTests(TestCase):
 
     def test_exception_connection_not_found(self):
@@ -16,20 +49,6 @@ class ConnectionManagerTests(TestCase):
 
         with self.assertRaises(ConnectionNotFound):
             cm.get('wrong_db')
-
-    def test_tables_sqlite3(self):
-        # test that there are 3 tables (`Users`, `Running` and the system-specific `sqlite_sequence`)
-        config = Configuration('config/sqlite3_config.json')
-        tables = ConnectionManager(config.get_connection_info()).get('my_site_db').tables()
-
-        self.assertEqual(len(tables), 3)
-
-    def test_tables_mysql(self):
-        # no table must be reported
-        config = Configuration('config/mysql_config.json')
-        tables = ConnectionManager(config.get_connection_info()).get('my_other_db').tables()
-
-        self.assertEqual(len(tables), 0)
 
 
 class PropertyTests(TestCase):
