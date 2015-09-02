@@ -1,0 +1,22 @@
+{
+  "sites": [
+    {
+      "name": "my_other_site",
+
+      "connections": [
+        {
+          "id": "my_other_db",
+          "engine": "django.db.backends.mysql",
+          "host": "127.0.0.1",
+          "port": "3306",
+          "user": "root",
+          "password": "",
+          "name": "test_database"
+        }
+      ],
+
+      "properties": [
+      ]
+    }
+  ]
+}

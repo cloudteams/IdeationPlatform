@@ -12,6 +12,9 @@ class Configuration:
     def __init__(self, filename):
         self.data = json.loads(open(filename).read())
 
+    def get_connection_info(self):
+        return self.data['sites'][0]['connections']
+
 
 
 

@@ -67,13 +67,7 @@ class Property:
         if not self.is_generated():
             # find responsible db connection
             conn_name = source.split('@')[1]
-            for c in connection_manager.connections:
-                if c['id'] == conn_name:
-                    self.connection = c['conn']
-                    break
-
-            if not self.connection:
-                raise PropertyManagerException('Database not found in test_config.json: ' + conn_name)
+            self.connection = connection_manager.get(conn_name)
 
             if user_fk:
                 self.user_fk = Property(self.connection_manager, user_fk, user_fk=None)
@@ -194,7 +188,7 @@ class PropertyManager:
         query += group_by
 
         # execute query & return results
-        return [self.info(row) for row in self.user_pk.connection.cursor().execute(query).fetchall()]
+        return [self.info(row) for row in self.user_pk.connection.execute(query).fetchall()]
 
     def filter(self, filters):
         if not filters:
@@ -224,7 +218,7 @@ class PropertyManager:
             query += having_clause
 
         # execute query & return results
-        return [self.info(row) for row in self.user_pk.connection.cursor().execute(query).fetchall()]
+        return [self.info(row) for row in self.user_pk.connection.execute(query).fetchall()]
 
     def get(self, pk):
         where_clause = 'WHERE {0}={1}'.format(self.user_pk.full(), pk)
@@ -233,7 +227,7 @@ class PropertyManager:
         query = self.query() + where_clause
 
         # execute query & return results
-        return self.info(self.user_pk.connection.cursor().execute(query).fetchone())
+        return self.info(self.user_pk.connection.execute(query).fetchone())
 
 
 class UserManager:
@@ -242,13 +236,13 @@ class UserManager:
     """
     def __init__(self, config_file):
         self.config = Configuration(config_file)
-        self.cm = ConnectionManager(self.config)
+        self.cm = ConnectionManager(self.config.get_connection_info())
         self.pm = PropertyManager(self.cm, self.config)
 
     def get(self, pk):
         # Ensures the user exists
         query = "SELECT {0} AS pk FROM {1} WHERE pk={2}".format(self.pm.user_pk.full(), self.pm.user_pk.table, pk)
-        result = self.pm.user_pk.connection.cursor().execute(query).fetchall()
+        result = self.pm.user_pk.connection.execute(query).fetchall()
 
         # check uniqueness
         if len(result) == 0:

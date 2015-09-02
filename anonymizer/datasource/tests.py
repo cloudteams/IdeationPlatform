@@ -1,15 +1,41 @@
 from anonymizer.datasource.managers import Property, \
     UserManagerException, ProviderNotFound, ProviderMethodNotFound, UserManager
+from anonymizer.datasource.connections import ConnectionManager, ConnectionNotFound
+from anonymizer.datasource.util import Configuration
 
 __author__ = 'dipap'
 
 from django.test import TestCase
 
 
+class ConnectionManagerTests(TestCase):
+
+    def test_exception_connection_not_found(self):
+        config = Configuration('config/sqlite3_config.json')
+        cm = ConnectionManager(config.get_connection_info())
+
+        with self.assertRaises(ConnectionNotFound):
+            cm.get('wrong_db')
+
+    def test_tables_sqlite3(self):
+        # test that there are 3 tables (`Users`, `Running` and the system-specific `sqlite_sequence`)
+        config = Configuration('config/sqlite3_config.json')
+        tables = ConnectionManager(config.get_connection_info()).get('my_site_db').tables()
+
+        self.assertEqual(len(tables), 3)
+
+    def test_tables_mysql(self):
+        # no table must be reported
+        config = Configuration('config/mysql_config.json')
+        tables = ConnectionManager(config.get_connection_info()).get('my_other_db').tables()
+
+        self.assertEqual(len(tables), 0)
+
+
 class PropertyTests(TestCase):
 
     def setUp(self):
-        self.um = UserManager('config/test_config.json')
+        self.um = UserManager('config/sqlite3_config.json')
         super(PropertyTests, self).setUp()
 
     def test_load_existing_provider(self):
@@ -27,7 +53,7 @@ class PropertyTests(TestCase):
 class UserManagerTests(TestCase):
 
     def setUp(self):
-        self.um = UserManager('config/test_config.json')
+        self.um = UserManager('config/sqlite3_config.json')
         super(UserManagerTests, self).setUp()
 
     def test_user_exists(self):
