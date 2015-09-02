@@ -33,6 +33,10 @@ class ConnectionTests(TestCase):
         self.assertEqual(len(self.sqlite3.get_data_properties('users')), 6)
         self.assertEqual(len(self.mysql.get_data_properties('users')), 5)
 
+        # make sure first element is column name
+        self.assertTrue(type(self.sqlite3.get_data_properties('users')[0][0]) == unicode)
+        self.assertTrue(type(self.mysql.get_data_properties('users')[0][0]) == unicode)
+
         # also check the properties from other tables pointing to Users as well
         self.assertEqual(len(self.sqlite3.get_data_properties('users', from_related=True)), 9)
         self.assertEqual(len(self.mysql.get_data_properties('users', from_related=True)), 7)

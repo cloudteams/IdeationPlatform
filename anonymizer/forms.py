@@ -86,4 +86,17 @@ class UserTableSelectionForm(forms.Form):
         for table in not_suggested:
             choices.append((table, table))
 
-        self.fields['user_table'] = forms.ChoiceField(choices=choices)
+        self.fields['users_table'] = forms.ChoiceField(choices=choices)
+
+
+class ColumnSelectionForm(forms.Form):
+
+    def __init__(self, connection, users_table, *args, **kwargs):
+        super(ColumnSelectionForm, self).__init__(*args, **kwargs)
+
+        columns = connection.get_data_properties(users_table, from_related=True)
+        choices = [(column[0], column[0] + ' ' + column[1]) for column in columns]
+
+        import pdb;pdb.set_trace()
+        self.fields['columns'] = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple,
+                                                           choices=choices)

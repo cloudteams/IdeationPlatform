@@ -87,7 +87,7 @@ class Connection:
             if self.is_sqlite3():
                 query = "PRAGMA table_info('%s')" % table
                 for row in self.execute(query).fetchall():
-                    result.append((row[0], row[1]))
+                    result.append((row[1], row[2]))
             elif self.is_mysql():
                 query = "SHOW COLUMNS FROM %s;" % table
                 for row in self.execute(query).fetchall():

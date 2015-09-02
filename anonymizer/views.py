@@ -3,7 +3,8 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import CreateView
 from anonymizer.datasource.connections import ConnectionManager
-from forms import ConnectionConfigurationForm, Sqlite3ConnectionForm, MySQLConnectionForm, UserTableSelectionForm
+from forms import ConnectionConfigurationForm, Sqlite3ConnectionForm, MySQLConnectionForm, UserTableSelectionForm, \
+    ColumnSelectionForm
 from models import ConnectionConfiguration
 
 
@@ -107,12 +108,31 @@ def suggest_users_table(request, pk):
     elif request.method == 'POST':
         form = UserTableSelectionForm(connection, request.POST)
         if form.is_valid():
-            config.user_table = form.cleaned_data['user_table']
+            config.users_table = form.cleaned_data['users_table']
             config.save()
 
-            redirect('/anonymizer/connection/%d/suggest-columns/')
+            import pdb;pdb.set_trace()
+            return redirect('/anonymizer/connection/%d/select-columns/' % config.pk)
         else:
             status = 400
             params['form'] = form
 
-    return render(request, 'anonymizer/connection/update_info.html', params, status=status)
+    return render(request, 'anonymizer/connection/suggest_user_table.html', params, status=status)
+
+
+def select_columns(request, pk):
+    """
+    Choose which columns to keep
+    """
+    params = {}
+    status = 200
+
+    config = get_object_or_404(ConnectionConfiguration, pk=pk)
+    print config
+    manager = ConnectionManager(config.info_to_json())
+    connection = manager.get(config.name)
+
+    if request.method == 'GET':
+        params['form'] = ColumnSelectionForm(connection, config.users_table)
+
+    return render(request, 'anonymizer/connection/select_columns.html', params, status=status)

@@ -14,4 +14,5 @@ urlpatterns = [
 
     # pick user table & columns
     url(r'^connection/(?P<pk>\d+)/suggest-user-table/$', views.suggest_users_table),
+    url(r'^connection/(?P<pk>\d+)/select-columns/$', views.select_columns),
 ]

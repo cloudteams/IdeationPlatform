@@ -77,9 +77,9 @@ class UserTableSelectionFormTests(TestCase):
         super(UserTableSelectionFormTests, self).setUp()
 
     def test_table_selection(self):
-        f = UserTableSelectionForm(self.connection, data={'user_table': 'Users'})
+        f = UserTableSelectionForm(self.connection, data={'users_table': 'Users'})
         self.assertTrue(f.is_valid())
 
     def test_table_not_exists(self):
-        f = UserTableSelectionForm(self.connection, data={'user_table': 'Users_wrong'})
+        f = UserTableSelectionForm(self.connection, data={'users_table': 'Users_wrong'})
         self.assertFalse(f.is_valid())
