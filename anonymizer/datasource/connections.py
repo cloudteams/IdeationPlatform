@@ -106,7 +106,7 @@ class Connection:
 
                 is_joined = False
                 for row in self.execute(query).fetchall():
-                    if row[2] == table_name:  # 2nd column is target table
+                    if row[2].lower() == table_name.lower():  # 2nd column is target table
                         is_joined = True
                         break
 
