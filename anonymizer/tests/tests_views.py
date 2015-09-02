@@ -96,3 +96,39 @@ class ConnectionViewTests(TestCase):
         response = self.client.post(form_url, data=data)
         self.assertEqual(response.status_code, 400)
 
+    def test_select_user_table(self):
+        ConnectionConfiguration.objects.create(name='test_connection',
+                                               connection_type='django.db.backends.sqlite3',
+                                               info='"name": "test_site.sqlite3"')
+
+        form_url = '/anonymizer/connection/1/suggest-user-table/'
+
+        # test that we can get the form
+        response = self.client.get(form_url)
+        self.assertEqual(response.status_code, 200)
+
+        # test that we can't set wrong the users table
+        data = {
+            'users_table': 'Users_wrong'
+        }
+        response = self.client.post(form_url, data=data)
+        self.assertEqual(response.status_code, 400)
+
+        # test that we can set the users table
+        data = {
+            'users_table': 'Users'
+        }
+        response = self.client.post(form_url, data=data)
+        self.assertEqual(response.status_code, 302)
+
+    def test_select_properties(self):
+        ConnectionConfiguration.objects.create(name='test_connection',
+                                               connection_type='django.db.backends.sqlite3',
+                                               info='"name": "test_site.sqlite3"',
+                                               users_table='Users')
+
+        form_url = '/anonymizer/connection/1/select-columns/'
+
+        # test that we can get the form
+        response = self.client.get(form_url)
+        self.assertEqual(response.status_code, 200)
