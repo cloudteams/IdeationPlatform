@@ -1,9 +1,10 @@
 __author__ = 'dipap'
 
-from util import configuration
-from connections import connection_manager
+from util import Configuration
+from connections import ConnectionManager
 from pydoc import locate
 import re
+
 
 class PropertyManagerException(Exception):
     """
@@ -44,7 +45,8 @@ class Property:
     """
     A single property
     """
-    def __init__(self, source, user_fk, name=None, tp=None, aggregate=None):
+    def __init__(self, connection_manager, source, user_fk, name=None, tp=None, aggregate=None):
+        self.connection_manager = connection_manager
         self.source = source
         self.table = source.split('@')[0].split('.')[0]
         self.column = source.split('@')[0].split('.')[1]
@@ -66,7 +68,7 @@ class Property:
             # find responsible db connection
             conn_name = source.split('@')[1]
             for c in connection_manager.connections:
-                if c['ID'] == conn_name:
+                if c['id'] == conn_name:
                     self.connection = c['conn']
                     break
 
@@ -74,7 +76,7 @@ class Property:
                 raise PropertyManagerException('Database not found in test_config.json: ' + conn_name)
 
             if user_fk:
-                self.user_fk = Property(user_fk, user_fk=None)
+                self.user_fk = Property(self.connection_manager, user_fk, user_fk=None)
             else:
                 self.user_fk = None
         else:
@@ -106,12 +108,14 @@ class PropertyManager:
     """
     The manager for all properties
     """
-    def __init__(self):
-        self.user_pk = Property(configuration.data['sites'][0]['user_pk'], user_fk=None)
+    def __init__(self, connection_manager, configuration):
+        self.connection_manager = connection_manager
+        self.configuration = configuration
+        self.user_pk = Property(self.connection_manager, self.configuration.data['sites'][0]['user_pk'], user_fk=None)
 
         self.properties = [self.user_pk]
 
-        for property_info in configuration.data['sites'][0]['properties']:
+        for property_info in self.configuration.data['sites'][0]['properties']:
             if 'user_fk' in property_info:
                 user_fk = property_info['user_fk']
             else:
@@ -122,7 +126,7 @@ class PropertyManager:
             else:
                 aggregate = None
 
-            prop = Property(property_info['source'], user_fk=user_fk, name=property_info['name'],
+            prop = Property(self.connection_manager, property_info['source'], user_fk=user_fk, name=property_info['name'],
                             tp=property_info['type'], aggregate=aggregate)
 
             self.properties.append(prop)
@@ -186,6 +190,9 @@ class PropertyManager:
     def all(self):
         query = self.query()
 
+        group_by = ' GROUP BY ' + self.user_pk.full()
+        query += group_by
+
         # execute query & return results
         return [self.info(row) for row in self.user_pk.connection.cursor().execute(query).fetchall()]
 
@@ -233,8 +240,10 @@ class UserManager:
     """
     The User manager is responsible for fetching and filtering user information
     """
-    def __init__(self):
-        self.pm = PropertyManager()
+    def __init__(self, config_file):
+        self.config = Configuration(config_file)
+        self.cm = ConnectionManager(self.config)
+        self.pm = PropertyManager(self.cm, self.config)
 
     def get(self, pk):
         # Ensures the user exists
@@ -254,5 +263,3 @@ class UserManager:
 
     def all(self):
         return self.pm.all()
-
-user_manager = UserManager()
