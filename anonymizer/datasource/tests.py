@@ -11,10 +11,10 @@ from django.test import TestCase
 class ConnectionTests(TestCase):
 
     def setUp(self):
-        config = Configuration('config/sqlite3_config.json')
+        config = Configuration('test-data/config/sqlite3_config.json')
         self.sqlite3 = ConnectionManager(config.get_connection_info()).get('my_site_db')
 
-        config = Configuration('config/mysql_config.json')
+        config = Configuration('test-data/config/mysql_config.json')
         self.mysql = ConnectionManager(config.get_connection_info()).get('my_other_db')
 
         super(ConnectionTests, self).setUp()
@@ -52,7 +52,7 @@ class ConnectionTests(TestCase):
 class ConnectionManagerTests(TestCase):
 
     def test_exception_connection_not_found(self):
-        config = Configuration('config/sqlite3_config.json')
+        config = Configuration('test-data/config/sqlite3_config.json')
         cm = ConnectionManager(config.get_connection_info())
 
         with self.assertRaises(ConnectionNotFound):
@@ -62,7 +62,7 @@ class ConnectionManagerTests(TestCase):
 class PropertyTests(TestCase):
 
     def setUp(self):
-        self.um = UserManager('config/sqlite3_config.json')
+        self.um = UserManager('test-data/config/sqlite3_config.json')
         super(PropertyTests, self).setUp()
 
     def test_load_existing_provider(self):
@@ -80,7 +80,7 @@ class PropertyTests(TestCase):
 class UserManagerTests(TestCase):
 
     def setUp(self):
-        self.um = UserManager('config/sqlite3_config.json')
+        self.um = UserManager('test-data/config/sqlite3_config.json')
         super(UserManagerTests, self).setUp()
 
     def test_user_exists(self):
