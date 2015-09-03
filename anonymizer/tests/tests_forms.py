@@ -49,7 +49,7 @@ class Sqlite3FormTests(TestCase):
     def test_correct_file_type(self):
         data = {
             'name': 'my_name',
-            'path': 'test_site.sqlite3'
+            'path': 'test-data/test_site.sqlite3'
         }
 
         f = Sqlite3ConnectionForm(data=data)
@@ -93,7 +93,7 @@ class UserTableSelectionFormTests(TestCase):
 
     def setUp(self):
         config = ConnectionConfiguration.objects.create(name='my_name', connection_type='django.db.backends.sqlite3',
-                                                        info='"name": "test_site.sqlite3"')
+                                                        info='"name": "test-data/test_site.sqlite3"')
 
         # get connection
         manager = ConnectionManager(config.info_to_json())

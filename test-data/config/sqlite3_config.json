@@ -7,7 +7,7 @@
         {
           "id": "my_site_db",
           "engine": "django.db.backends.sqlite3",
-          "name": "test_site.sqlite3"
+          "name": "test-data/test_site.sqlite3"
         }
       ],
 

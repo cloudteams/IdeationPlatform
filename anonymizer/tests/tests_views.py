@@ -59,14 +59,14 @@ class ConnectionViewTests(TestCase):
 
         # test that we can create a connection to the right type of file
         data = {
-            'path': 'test_site.sqlite3'
+            'path': 'test-data/test_site.sqlite3'
         }
         response = self.client.post(form_url, data=data)
         self.assertNotEqual(response.status_code, 400)
 
         # test that we can't create a connection to a file that does not exist
         data = {
-            'path': 'test_site.sqlite31'
+            'path': 'test-data/test_site.sqlite31'
         }
         response = self.client.post(form_url, data=data)
         self.assertEqual(response.status_code, 400)
@@ -100,7 +100,7 @@ class ConnectionViewTests(TestCase):
     def test_select_user_table(self):
         ConnectionConfiguration.objects.create(name='test_connection',
                                                connection_type='django.db.backends.sqlite3',
-                                               info='"name": "test_site.sqlite3"')
+                                               info='"name": "test-data/test_site.sqlite3"')
 
         form_url = '/anonymizer/connection/1/suggest-user-table/'
 
@@ -201,7 +201,7 @@ class ConnectionViewTests(TestCase):
         config = ConnectionConfiguration.objects.get(pk=config.pk)
 
         # assert the correct total json has been created
-        expected_config = json.loads(open('config/mysql_default_config.json').read())
+        expected_config = json.loads(open('test-data/config/mysql_default_config.json').read())
         total_config = json.loads(config.total)
 
         self.assertEqual(expected_config, total_config)
