@@ -1,0 +1,10 @@
+{% if configurations %}
+    <h4>Existing data</h4>
+    <ul>
+        {% for configuration in configurations %}
+            <li>{% include "anonymizer/connection/configuration/teaser.html" %}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No configurations found</p>
+{% endif %}

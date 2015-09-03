@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>CloudTeams Anonymizer</h1>
+    <em>publish you data/protect your users</em>
+
+    {% include "anonymizer/connection/configuration/list.html" %}
+
+    <p><a href="/anonymizer/connection/create/">+ Publish more data</a></p>
+
+{% endblock %}

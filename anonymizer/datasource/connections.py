@@ -53,7 +53,6 @@ class Connection:
 
         return self.execute(query).fetchall()
 
-    ###PRAGMA foreign_key_list('Running')
     def primary_key_of(self, table_name):
         """
         :return: the primary key of this table
@@ -87,12 +86,12 @@ class Connection:
             if self.is_sqlite3():
                 query = "PRAGMA table_info('%s')" % table
                 for row in self.execute(query).fetchall():
-                    result.append((row[1], row[2], '%s.%s' % (row[1], table)))
+                    result.append((row[1], row[2], '%s.%s' % (table, row[1])))
             elif self.is_mysql():
                 query = "SHOW COLUMNS FROM %s;" % table
                 for row in self.execute(query).fetchall():
                     if ('auto' not in row[5]) and ('MUL' not in row[3]):
-                        result.append((row[0], row[1], '%s.%s' % (row[0], table)))
+                        result.append((row[0], row[1], '%s.%s' % (table, row[0])))
 
         return result
 

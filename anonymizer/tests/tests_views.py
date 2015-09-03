@@ -1,3 +1,4 @@
+import json
 from anonymizer.models import ConnectionConfiguration
 
 __author__ = 'dipap'
@@ -121,14 +122,86 @@ class ConnectionViewTests(TestCase):
         response = self.client.post(form_url, data=data)
         self.assertEqual(response.status_code, 302)
 
+    def get_test_column_data(self):
+        return {
+            'form-TOTAL_FORMS': '6',
+            'form-INITIAL_FORMS': '6',
+            'form-MIN_NUM_FORMS': '0',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-name': 'firstname',
+            'form-0-c_type': 'varchar(255)',
+            'form-0-aggregate': '',
+            'form-0-source': 'users.firstname',
+            'form-1-name': 'lastname',
+            'form-1-c_type': 'varchar(255)',
+            'form-1-aggregate': '',
+            'form-1-source': 'users.lastname',
+            'form-2-include': 'on',
+            'form-2-name': 'gender',
+            'form-2-c_type': 'text',
+            'form-2-aggregate': '',
+            'form-2-source': 'users.gender',
+            'form-3-include': 'on',
+            'form-3-name': 'age',
+            'form-3-c_type': 'mediumint(9)',
+            'form-3-aggregate': '',
+            'form-3-source': 'users.age',
+            'form-4-include': 'on',
+            'form-4-name': 'address',
+            'form-4-c_type': 'varchar(255)',
+            'form-4-aggregate': '',
+            'form-4-source': 'users.address',
+            'form-5-include': 'on',
+            'form-5-name': 'running_duration',
+            'form-5-c_type': 'int(11)',
+            'form-5-aggregate': '',
+            'form-5-source': 'running.duration'
+        }
+
     def test_select_properties(self):
-        ConnectionConfiguration.objects.create(name='test_connection',
-                                               connection_type='django.db.backends.sqlite3',
-                                               info='"name": "test_site.sqlite3"',
-                                               users_table='Users')
+        connection_info = '"name":"test_database","user":"root","password":"","host":"127.0.0.1","port":"3306"'
+        config = ConnectionConfiguration.objects.create(name='test_connection',
+                                                        connection_type='django.db.backends.mysql',
+                                                        info=connection_info,
+                                                        users_table='users')
 
         form_url = '/anonymizer/connection/1/select-columns/'
 
         # test that we can get the form
         response = self.client.get(form_url)
         self.assertEqual(response.status_code, 200)
+
+        # test than we can post to this form
+        data = self.get_test_column_data()
+
+        response = self.client.post(form_url, data=data)
+        self.assertEqual(response.status_code, 302)
+
+        # test that we can't post a column with no name
+        data['form-0-name'] = ''
+        response = self.client.post(form_url, data=data)
+        self.assertEqual(response.status_code, 400)
+
+    def test_edit_configuration(self):
+        connection_info = '"name":"test_database","user":"root","password":"","host":"127.0.0.1","port":"3306"'
+        config = ConnectionConfiguration.objects.create(name='test_connection',
+                                                        connection_type='django.db.backends.mysql',
+                                                        info=connection_info,
+                                                        users_table='users')
+
+        form_url = '/anonymizer/connection/1/select-columns/'
+
+        # post column info
+        data = self.get_test_column_data()
+
+        response = self.client.post(form_url, data=data)
+        self.assertEqual(response.status_code, 302)
+
+        # reload object after post
+        config = ConnectionConfiguration.objects.get(pk=config.pk)
+
+        # assert the correct total json has been created
+        expected_config = json.loads(open('config/mysql_default_config.json').read())
+        total_config = json.loads(config.total)
+
+        self.assertEqual(expected_config, total_config)

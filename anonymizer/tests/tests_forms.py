@@ -10,6 +10,24 @@ from anonymizer.forms import Sqlite3ConnectionForm, MySQLConnectionForm, UserTab
 # sqlite3 form tests
 class Sqlite3FormTests(TestCase):
 
+    def test_no_name(self):
+        data = {
+            'name': '',
+            'path': 'test_site_wrong.sqlite3'
+        }
+
+        f = Sqlite3ConnectionForm(data=data)
+        self.assertFalse(f.is_valid())
+
+    def test_no_path(self):
+        data = {
+            'name': 'my_name',
+            'path': ''
+        }
+
+        f = Sqlite3ConnectionForm(data=data)
+        self.assertFalse(f.is_valid())
+
     def test_file_not_exists(self):
         data = {
             'name': 'my_name',
@@ -50,6 +68,13 @@ class MySQLFormTests(TestCase):
             'password': '',
             'database': 'test_database',
         }
+
+    def test_host_not_specified(self):
+        data = self.get_test_data()
+        data['host'] = ''
+
+        f = MySQLConnectionForm(data=data)
+        self.assertFalse(f.is_valid())
 
     def test_not_existing_connection(self):
         data = self.get_test_data()

@@ -1,0 +1,43 @@
+{
+    "sites": [
+        {
+            "connections": [
+                [
+                    {
+                        "engine": "django.db.backends.mysql",
+                        "name": "test_database",
+                        "id": "test_connection",
+                        "host": "127.0.0.1",
+                        "user": "root",
+                        "password": "",
+                        "port": "3306"
+                    }
+                ]
+            ],
+            "user_pk": "users.id@test_connection",
+            "name": "test_connection",
+            "properties": [
+                {
+                    "source": "users.gender",
+                    "type": "text",
+                    "name": "gender"
+                },
+                {
+                    "source": "users.age",
+                    "type": "mediumint(9)",
+                    "name": "age"
+                },
+                {
+                    "source": "users.address",
+                    "type": "varchar(255)",
+                    "name": "address"
+                },
+                {
+                    "source": "running.duration",
+                    "type": "int(11)",
+                    "name": "running_duration"
+                }
+            ]
+        }
+    ]
+}

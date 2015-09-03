@@ -1,11 +1,12 @@
 from functools import partial, wraps
+import json
 from django.forms import formset_factory
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView
 from anonymizer.datasource.connections import ConnectionManager
 from forms import ConnectionConfigurationForm, Sqlite3ConnectionForm, MySQLConnectionForm, UserTableSelectionForm, \
-    ColumnForm
+    ColumnForm, ConnectionConfigurationManualForm
 from models import ConnectionConfiguration
 
 
@@ -17,7 +18,15 @@ def get_current_configuration():
     if not qs:
         return None
 
-    return qs[0]
+    return qs[len(qs) - 1]
+
+
+def home(request):
+    params = {
+        'configurations': ConnectionConfiguration.objects.all(),
+    }
+
+    return render(request, 'anonymizer/connection/home.html', params)
 
 
 class ConnectionConfigurationCreateView(CreateView):
@@ -135,8 +144,16 @@ def select_columns(request, pk):
         initial = []
         columns = connection.get_data_properties(config.users_table, from_related=True)
         for column in columns:
+            # auto-create property name
+            from_table = column[2].split('.')[0]
+            if from_table.lower() == config.users_table.lower():
+                name = column[0]
+            else:
+                name = from_table + '_' + column[0]
+
+            # set initial form data
             initial.append({
-                'name': column[0],
+                'name': name,
                 'c_type': column[1],
                 'source': column[2],
             })
@@ -152,9 +169,40 @@ def select_columns(request, pk):
 
         formset = ColumnFormset(request.POST)
         if formset.is_valid():
-            import pdb;pdb.set_trace()
+            properties = []
+            for form in formset:
+                if form.cleaned_data['include']:  # ignore forms with include=False
+                    p = {
+                        'name': form.cleaned_data['name'],
+                        'type': form.cleaned_data['c_type'],
+                        'source': form.cleaned_data['source'],
+                    }
+                    if form.cleaned_data['aggregate']:
+                        p['aggregate'] = form.cleaned_data['aggregate']
+
+                    properties.append(p)
+
+            # update configuration object
+            config.properties = json.dumps(properties)
+            config.total = config.create_json(user_pk_source=connection.primary_key_of(config.users_table),
+                                              properties=properties)
+            config.save()
+
+            return redirect('/anonymizer/connection/%d/edit/' % config.pk)
         else:
             status = 400
             params['formset'] = formset
 
     return render(request, 'anonymizer/connection/select_columns.html', params, status=status)
+
+
+class ConnectionConfigurationManualUpdateView(UpdateView):
+    """
+    Allows the manual update of the created json configuration
+    """
+    model = ConnectionConfiguration
+    form_class = ConnectionConfigurationManualForm
+    template_name = 'anonymizer/connection/update_manual.html'
+    success_url = '/anonymizer/'
+
+update_configuration = ConnectionConfigurationManualUpdateView.as_view()

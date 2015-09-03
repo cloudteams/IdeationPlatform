@@ -5,6 +5,9 @@ __author__ = 'dipap'
 
 
 urlpatterns = [
+    # home page of the tool
+    url(r'^$', views.home),
+
     # connection urls
     url(r'^connection/create/$', views.create_configuration),
 
@@ -15,4 +18,7 @@ urlpatterns = [
     # pick user table & columns
     url(r'^connection/(?P<pk>\d+)/suggest-user-table/$', views.suggest_users_table),
     url(r'^connection/(?P<pk>\d+)/select-columns/$', views.select_columns),
+
+    # manual update
+    url(r'^connection/(?P<pk>\d+)/edit/$', views.update_configuration),
 ]

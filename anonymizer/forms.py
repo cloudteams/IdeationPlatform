@@ -20,6 +20,9 @@ class Sqlite3ConnectionForm(forms.Form):
         # default validation
         super(Sqlite3ConnectionForm, self).clean()
 
+        if self.errors:
+            return self.cleaned_data
+
         # check that the file already exists -- we don't want to create a new database
         f = None
         ima = ''
@@ -56,6 +59,9 @@ class MySQLConnectionForm(forms.Form):
         # default validation
         super(MySQLConnectionForm, self).clean()
 
+        if self.errors:
+            return self.cleaned_data
+
         # test connection
         try:
             mysql_connect(host=self.cleaned_data['host'], port=self.cleaned_data['port'],
@@ -91,7 +97,7 @@ class UserTableSelectionForm(forms.Form):
 
 
 class ColumnForm(forms.Form):
-    include = forms.BooleanField(initial=True)
+    include = forms.BooleanField(initial=True, required=False)
     name = forms.CharField()
     c_type = forms.CharField(required=False)
     aggregate = forms.ChoiceField(choices=AGGREGATE_LIST, required=False)
@@ -106,3 +112,12 @@ class ColumnForm(forms.Form):
         choices += PROVIDER_PLUGINS
 
         self.fields['source'] = forms.ChoiceField(choices=choices)
+
+
+class ConnectionConfigurationManualForm(forms.ModelForm):
+    class Meta:
+        model = ConnectionConfiguration
+        fields = ['total', ]
+        widgets = {
+            'total': forms.widgets.Textarea(attrs={'cols': 80, 'rows': 20}),
+        }
