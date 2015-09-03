@@ -13,6 +13,9 @@ install:
 branches:
  only:
   - master
+before_script:
+  - python manage.py makemigrations
+  - python manage.py migrate
 script: coverage run --source=. manage.py test
 after_success:
   - coverage report
