@@ -267,7 +267,7 @@ def query_connection(request, pk):
                 result = simplejson.dumps(result, indent=4)
         except Exception as e:
             status = 400
-            result = e.message
+            result = str(e)
 
     return HttpResponse(result, status=status)
 

@@ -155,7 +155,7 @@ class ConnectionViewTests(TestCase):
             'form-5-include': 'on',
             'form-5-name': 'running_duration',
             'form-5-c_type': 'int(11)',
-            'form-5-aggregate': '',
+            'form-5-aggregate': 'avg',
             'form-5-source': 'running.duration@test_connection'
         }
 
@@ -226,3 +226,16 @@ class ConnectionViewTests(TestCase):
         # test that the query view expects a ?q argument
         with self.assertRaises(MultiValueDictKeyError):
             self.client.get(query_url)
+
+        # test all command
+        response = self.client.get(query_url + '?q=all()')
+        self.assertEqual(response.status_code, 200)
+
+        # test help command
+        response = self.client.get(query_url + '?q=help')
+        self.assertEqual(response.status_code, 200)
+
+        # test filter command
+        response = self.client.get(query_url + '?q=filter(running_duration>35)')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(json.loads(response.content)), 4)

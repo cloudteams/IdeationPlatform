@@ -34,7 +34,8 @@
                     "source": "running.duration@test_connection", 
                     "user_fk": "running.user@test_connection", 
                     "type": "int(11)", 
-                    "name": "running_duration"
+                    "name": "running_duration",
+                    "aggregate": "avg"
                 }
             ]
         }

@@ -200,22 +200,12 @@ class PropertyManager:
         if not type(filters) == list:
             filters = [filters]
 
-        # separate filters between those on simple columns and those on aggregates
-        filters_concrete = [f for f in filters if self.get_property_by_name(re.split('[=<>]', f)[0]).aggregate is None]
-        filters_aggegate = set(filters) - set(filters_concrete)
-
-        # construct where clause
-        where_clause = 'WHERE ' + ' AND '.join(filters_concrete)
-        query += where_clause
-
         # construct group by clause
         group_by = ' GROUP BY ' + self.user_pk.full()
         query += group_by
 
-        # aggregate filters must go after the group by in the `having` clause
-        if filters_aggegate:
-            having_clause = ' HAVING ' + ' AND '.join(filters_aggegate)
-            query += having_clause
+        having_clause = ' HAVING ' + ' AND '.join(filters)
+        query += having_clause
 
         # execute query & return results
         return [self.info(row) for row in self.user_pk.connection.execute(query).fetchall()]
