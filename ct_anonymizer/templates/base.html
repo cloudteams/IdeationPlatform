@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <title>CloudTeams Persona Builder</title>
     <style>
+        #test-console {
+            width: 100%;
+            height: 500px;
+            background: #333;
+            color: #fff;
+        }
+
         form p > * {
             vertical-align: top;
         }
@@ -20,7 +27,36 @@
         .errorlist {
             color: red;
         }
+
+        .action-container {
+            margin: 10px 0;
+        }
     </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script>
+        function add_form_click() {
+            //get last form
+            var form_html = $('.form-list .column-form:last-of-type').html();
+
+            //create a copy of it with increased counter
+            var n = Number($('#id_form-TOTAL_FORMS').val());
+
+            //replace all manually - form html has too weird chars to bother with a regex
+            var old_form_html = '';
+            while (old_form_html != form_html) {
+                old_form_html = form_html;
+                form_html = form_html.replace('form-' + (n - 1) + '-', 'form-' + (n) + '-');
+            }
+
+            form_html = '<div class="column-form">' + form_html + '</div>';
+            $('.form-list').append(form_html);
+
+            //update the management form
+            $('#id_form-TOTAL_FORMS').val(n + 1);
+            $('#id_form-INITIAL_FORMS').val(n + 1);
+        }
+    </script>
 </head>
 <body>
 

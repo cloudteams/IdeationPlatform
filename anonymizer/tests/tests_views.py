@@ -1,4 +1,5 @@
 import json
+from django.utils.datastructures import MultiValueDictKeyError
 from anonymizer.models import ConnectionConfiguration
 
 __author__ = 'dipap'
@@ -131,31 +132,31 @@ class ConnectionViewTests(TestCase):
             'form-0-name': 'firstname',
             'form-0-c_type': 'varchar(255)',
             'form-0-aggregate': '',
-            'form-0-source': 'users.firstname',
+            'form-0-source': 'users.firstname@test_connection',
             'form-1-name': 'lastname',
             'form-1-c_type': 'varchar(255)',
             'form-1-aggregate': '',
-            'form-1-source': 'users.lastname',
+            'form-1-source': 'users.lastname@test_connection',
             'form-2-include': 'on',
             'form-2-name': 'gender',
             'form-2-c_type': 'text',
             'form-2-aggregate': '',
-            'form-2-source': 'users.gender',
+            'form-2-source': 'users.gender@test_connection',
             'form-3-include': 'on',
             'form-3-name': 'age',
             'form-3-c_type': 'mediumint(9)',
             'form-3-aggregate': '',
-            'form-3-source': 'users.age',
+            'form-3-source': 'users.age@test_connection',
             'form-4-include': 'on',
             'form-4-name': 'address',
             'form-4-c_type': 'varchar(255)',
             'form-4-aggregate': '',
-            'form-4-source': 'users.address',
+            'form-4-source': 'users.address@test_connection',
             'form-5-include': 'on',
             'form-5-name': 'running_duration',
             'form-5-c_type': 'int(11)',
             'form-5-aggregate': '',
-            'form-5-source': 'running.duration'
+            'form-5-source': 'running.duration@test_connection'
         }
 
     def test_select_properties(self):
@@ -182,26 +183,46 @@ class ConnectionViewTests(TestCase):
         response = self.client.post(form_url, data=data)
         self.assertEqual(response.status_code, 400)
 
-    def test_edit_configuration(self):
+    def test_setup_standard_connection(self):
         connection_info = '"name":"test_database","user":"root","password":"","host":"127.0.0.1","port":"3306"'
-        config = ConnectionConfiguration.objects.create(name='test_connection',
-                                                        connection_type='django.db.backends.mysql',
-                                                        info=connection_info,
-                                                        users_table='users')
+        ConnectionConfiguration.objects.create(name='test_connection',
+                                               connection_type='django.db.backends.mysql',
+                                               info=connection_info,
+                                               users_table='users')
 
         form_url = '/anonymizer/connection/1/select-columns/'
 
         # post column info
         data = self.get_test_column_data()
-
         response = self.client.post(form_url, data=data)
         self.assertEqual(response.status_code, 302)
 
-        # reload object after post
-        config = ConnectionConfiguration.objects.get(pk=config.pk)
+    def test_edit_configuration(self):
+        self.test_setup_standard_connection()
+
+        # load object after post
+        config = ConnectionConfiguration.objects.get(pk=1)
 
         # assert the correct total json has been created
         expected_config = json.loads(open('test-data/config/mysql_default_config.json').read())
         total_config = json.loads(config.total)
 
         self.assertEqual(expected_config, total_config)
+
+    def test_console(self):
+        self.test_setup_standard_connection()
+
+        console_url = '/anonymizer/connection/1/console/'
+        query_url = '/anonymizer/connection/1/query/'
+
+        # test the console view responds
+        response = self.client.get(console_url)
+        self.assertEqual(response.status_code, 200)
+
+        # test the query view returns correct results
+        response = self.client.get(query_url + '?q=')
+        self.assertEqual(response.status_code, 200)
+
+        # test that the query view expects a ?q argument
+        with self.assertRaises(MultiValueDictKeyError):
+            self.client.get(query_url)

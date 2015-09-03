@@ -1,12 +1,14 @@
 from functools import partial, wraps
 import json
 from django.forms import formset_factory
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import CreateView, UpdateView
+import simplejson
 from anonymizer.datasource.connections import ConnectionManager
+from anonymizer.datasource.managers import UserManager
 from forms import ConnectionConfigurationForm, Sqlite3ConnectionForm, MySQLConnectionForm, UserTableSelectionForm, \
-    ColumnForm, ConnectionConfigurationManualForm
+    ColumnForm, ConnectionConfigurationManualForm, validate_unique_across
 from models import ConnectionConfiguration
 
 
@@ -139,11 +141,14 @@ def select_columns(request, pk):
     manager = ConnectionManager(config.info_to_json())
     connection = manager.get(config.name)
 
+    columns = connection.get_data_properties(config.users_table, from_related=True)
+    columns.insert(0, ('', '', '.'))
+
     if request.method == 'GET':
         # gather suggestions
         initial = []
-        columns = connection.get_data_properties(config.users_table, from_related=True)
-        for column in columns:
+
+        for column in columns[1:]:
             # auto-create property name
             from_table = column[2].split('.')[0]
             if from_table.lower() == config.users_table.lower():
@@ -164,10 +169,12 @@ def select_columns(request, pk):
 
         params['formset'] = formset
     else:
-        columns = connection.get_data_properties(config.users_table, from_related=True)
         ColumnFormset = formset_factory(wraps(ColumnForm)(partial(ColumnForm, all_properties=columns)))
-
         formset = ColumnFormset(request.POST)
+
+        if formset.is_valid():
+            validate_unique_across(formset, ['name'])
+
         if formset.is_valid():
             properties = []
             for form in formset:
@@ -179,6 +186,11 @@ def select_columns(request, pk):
                     }
                     if form.cleaned_data['aggregate']:
                         p['aggregate'] = form.cleaned_data['aggregate']
+
+                    if p['source'][0] != '^':  # don't try to join provider data
+                        table_name = p['source'].split('.')[0]
+                        if table_name.lower() != config.users_table.lower():
+                            p['user_fk'] = connection.get_foreign_key_between(table_name, config.users_table)
 
                     properties.append(p)
 
@@ -206,3 +218,63 @@ class ConnectionConfigurationManualUpdateView(UpdateView):
     success_url = '/anonymizer/'
 
 update_configuration = ConnectionConfigurationManualUpdateView.as_view()
+
+
+def query_connection(request, pk):
+    """
+    Execute a query against a connection
+    """
+    status = 200
+
+    config = get_object_or_404(ConnectionConfiguration, pk=pk)
+    user_manager = UserManager(from_str=config.total)
+
+    if request.method != 'GET':
+        return HttpResponseForbidden('Only GET requests are allowed')
+
+    q = request.GET['q']
+    result = ''
+
+    if q:
+        try:
+            if q == 'all()':
+                result = user_manager.all()
+            elif q.startswith('filter'):
+                pos = len('filter(')
+                filters = q[pos:-1]
+
+                result = user_manager.filter(filters)
+            elif q == 'help':
+                result = """
+    Commands:
+        - all()
+        - filter(some_filter)
+
+    Examples of filter usage:
+        - filter(age>30)
+        - filter(age<20 and run_distance>500)
+
+    Available data properties:
+"""
+
+                for p in user_manager.pm.properties:
+                    result += "        %s\n" % p.name
+
+            else:
+                raise Exception('Unknown command: %s' % q)
+
+            if q != 'help':
+                result = simplejson.dumps(result, indent=4)
+        except Exception as e:
+            status = 400
+            result = e.message
+
+    return HttpResponse(result, status=status)
+
+
+def console(request, pk):
+    params = {
+        'configuration': get_object_or_404(ConnectionConfiguration, pk=pk)
+    }
+
+    return render(request, 'anonymizer/connection/test_console.html', params)

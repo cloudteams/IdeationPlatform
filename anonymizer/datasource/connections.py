@@ -86,14 +86,34 @@ class Connection:
             if self.is_sqlite3():
                 query = "PRAGMA table_info('%s')" % table
                 for row in self.execute(query).fetchall():
-                    result.append((row[1], row[2], '%s.%s' % (table, row[1])))
+                    result.append((row[1], row[2], '%s.%s@%s' % (table, row[1], self.id)))
             elif self.is_mysql():
                 query = "SHOW COLUMNS FROM %s;" % table
                 for row in self.execute(query).fetchall():
                     if ('auto' not in row[5]) and ('MUL' not in row[3]):
-                        result.append((row[0], row[1], '%s.%s' % (table, row[0])))
+                        result.append((row[0], row[1], '%s.%s@%s' % (table, row[0], self.id)))
 
         return result
+
+    def get_foreign_key_between(self, from_table, to_table):
+        if self.is_sqlite3():
+            query = "PRAGMA foreign_key_list('%s')" % from_table
+            for row in self.execute(query).fetchall():
+                if row[2].lower() == to_table.lower():
+                    return '%s.%s@%s' % (from_table, row[3], self.id)
+
+            return None
+        elif self.is_mysql():
+            query = """
+                SELECT COLUMN_NAME
+                FROM
+                    information_schema.KEY_COLUMN_USAGE
+                WHERE
+                    TABLE_NAME = '%s' AND
+                    REFERENCED_TABLE_NAME = '%s'
+            """ % (from_table, to_table)
+
+            return '%s.%s@%s' % (from_table, self.execute(query).fetchone()[0], self.id)
 
     def get_related_tables(self, table_name):
         if self.is_sqlite3():

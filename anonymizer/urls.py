@@ -21,4 +21,8 @@ urlpatterns = [
 
     # manual update
     url(r'^connection/(?P<pk>\d+)/edit/$', views.update_configuration),
+
+    # query & console to run them
+    url(r'^connection/(?P<pk>\d+)/query/$', views.query_connection),
+    url(r'^connection/(?P<pk>\d+)/console/$', views.console),
 ]

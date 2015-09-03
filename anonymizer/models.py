@@ -37,7 +37,7 @@ class ConnectionConfiguration(models.Model):
             "sites": [{
                 "name": self.name,
 
-                "connections": [self.info_to_json()],
+                "connections": self.info_to_json(),
 
                 "user_pk": user_pk_source,
                 "properties": properties

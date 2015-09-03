@@ -234,8 +234,11 @@ class UserManager:
     """
     The User manager is responsible for fetching and filtering user information
     """
-    def __init__(self, config_file):
-        self.config = Configuration(config_file)
+    def __init__(self, config_file='', from_str=''):
+        if config_file:
+            from_str = open(config_file).read()
+
+        self.config = Configuration(from_str=from_str)
         self.cm = ConnectionManager(self.config.get_connection_info())
         self.pm = PropertyManager(self.cm, self.config)
 

@@ -114,6 +114,23 @@ class ColumnForm(forms.Form):
         self.fields['source'] = forms.ChoiceField(choices=choices)
 
 
+def validate_unique_across(formset, fields):
+    """
+    :param formset: A validated formset instance
+    :param fields: A list of field names that must be unique across all forms in the formset
+    :return: The form with a set error in the non_form_errors list foreach field that is not unique across forms
+    """
+    for field in fields:
+        for form in formset:
+            for form2 in formset:
+                if form != form2:
+                    if form.cleaned_data[field] == form2.cleaned_data[field]:
+                        e_msg = 'Field %s is not unique across all forms' % field
+                        errors = formset.non_form_errors()
+                        if e_msg not in errors:
+                            errors.append(e_msg)
+
+
 class ConnectionConfigurationManualForm(forms.ModelForm):
     class Meta:
         model = ConnectionConfiguration

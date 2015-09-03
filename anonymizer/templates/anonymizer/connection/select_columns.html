@@ -5,13 +5,21 @@
     <h2>Select the required information</h2>
 
     <form method="POST" action=".">{% csrf_token %}
+        {{formset.non_form_errors}}
         {{formset.management_form}}
 
-        {% for form in formset %}
-            <div class="column-form">
-                {{form.as_p}}
-            </div>
-        {% endfor %}
+        <div class="form-list">
+            {% for form in formset %}
+                <div class="column-form">
+                    {{form.as_p}}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="action-container">
+            <button type="button" onclick="add_form_click()">Add more data</button>
+        </div>
+
         <input type="submit" value="Continue" />
     </form>
 
