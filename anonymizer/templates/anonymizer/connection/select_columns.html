@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load static from staticfiles %}
+
 {% block content %}
     <h1>Select your data</h1>
     <h2>Select the required information</h2>
@@ -16,11 +18,16 @@
             {% endfor %}
         </div>
 
-        <div class="action-container">
-            <button type="button" onclick="add_form_click()">Add more data</button>
+        <div class="action-container clearfix">
+            <div class="btn btn-success add-property-row">Add more data</div>
+            <input type="submit" value="Continue" class="btn btn-default pull-right" />
         </div>
 
-        <input type="submit" value="Continue" />
+
     </form>
 
+{% endblock %}
+
+{% block js %}
+    <script src="{% static "anonymizer/js/columns.js" %}"></script>
 {% endblock %}

@@ -1,66 +1,31 @@
+{% load static from staticfiles %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>CloudTeams Persona Builder</title>
-    <style>
-        #test-console {
-            width: 100%;
-            height: 500px;
-            background: #333;
-            color: #fff;
-        }
 
-        form p > * {
-            vertical-align: top;
-        }
-
-        .column-form p {
-            display: inline-block;
-            margin-right: 40px;
-        }
-
-        .column-form .errorlist {
-            display: inline-block;
-        }
-
-        .errorlist {
-            color: red;
-        }
-
-        .action-container {
-            margin: 10px 0;
-        }
-    </style>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script>
-        function add_form_click() {
-            //get last form
-            var form_html = $('.form-list .column-form:last-of-type').html();
-
-            //create a copy of it with increased counter
-            var n = Number($('#id_form-TOTAL_FORMS').val());
-
-            //replace all manually - form html has too weird chars to bother with a regex
-            var old_form_html = '';
-            while (old_form_html != form_html) {
-                old_form_html = form_html;
-                form_html = form_html.replace('form-' + (n - 1) + '-', 'form-' + (n) + '-');
-            }
-
-            form_html = '<div class="column-form">' + form_html + '</div>';
-            $('.form-list').append(form_html);
-
-            //update the management form
-            $('#id_form-TOTAL_FORMS').val(n + 1);
-            $('#id_form-INITIAL_FORMS').val(n + 1);
-        }
-    </script>
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Inconsolata">
+    <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="{% static "anonymizer/css/style.css" %}">
+    {% block css %}
+    {% endblock %}
 </head>
 <body>
 
 </body>
-{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="main-wrapper">
+        {% block content %}
+        {% endblock %}
+        </div>
+    </div>
+</div>
+
+<script src="{% static "js/jquery.min.js" %}"></script>
+{% block js %}
 {% endblock %}
 </html>

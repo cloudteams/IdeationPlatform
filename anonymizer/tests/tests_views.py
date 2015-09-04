@@ -1,4 +1,5 @@
 import json
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.utils.datastructures import MultiValueDictKeyError
 from anonymizer.models import ConnectionConfiguration
 
@@ -253,3 +254,4 @@ class ConnectionViewTests(TestCase):
         response = self.client.post(form_url)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(ConnectionConfiguration.objects.all().count(), 0)
+
