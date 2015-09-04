@@ -25,4 +25,7 @@ urlpatterns = [
     # query & console to run them
     url(r'^connection/(?P<pk>\d+)/query/$', views.query_connection),
     url(r'^connection/(?P<pk>\d+)/console/$', views.console),
+
+    # delete configuration
+    url(r'^connection/(?P<pk>\d+)/delete/$', views.delete_view),
 ]

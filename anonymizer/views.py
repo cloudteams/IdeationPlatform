@@ -3,7 +3,7 @@ import json
 from django.forms import formset_factory
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, DeleteView
 import simplejson
 from anonymizer.datasource.connections import ConnectionManager
 from anonymizer.datasource.managers import UserManager
@@ -278,3 +278,12 @@ def console(request, pk):
     }
 
     return render(request, 'anonymizer/connection/test_console.html', params)
+
+
+class ConnectionConfigurationManualDeleteView(DeleteView):
+    model = ConnectionConfiguration
+    template_name = 'anonymizer/connection/delete.html'
+    context_object_name = 'configuration'
+    success_url = '/anonymizer/'
+
+delete_view = ConnectionConfigurationManualDeleteView.as_view()

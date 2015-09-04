@@ -239,3 +239,17 @@ class ConnectionViewTests(TestCase):
         response = self.client.get(query_url + '?q=filter(running_duration>35)')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(json.loads(response.content)), 4)
+
+    def test_delete_view(self):
+        self.test_setup_standard_connection()
+
+        form_url = '/anonymizer/connection/1/delete/'
+
+        # check that we can get the delete form
+        response = self.client.get(form_url)
+        self.assertEqual(response.status_code, 200)
+
+        # check that we can post to the form & the configuration is deleted
+        response = self.client.post(form_url)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(ConnectionConfiguration.objects.all().count(), 0)
