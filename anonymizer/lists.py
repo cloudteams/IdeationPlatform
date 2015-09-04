@@ -18,8 +18,10 @@ AGGREGATE_LIST = [
 
 PROVIDER_PLUGINS = [
     # providers.Person
-    ('^Person.first_name()', 'Random name'),
-    ('^Person.first_name(Male,Male,Female)', 'Random male name'),
-    ('^Person.first_name(Male,Male,Female)', 'Random female name'),
-    ('^Person.last_name_initial()', 'Random last name (initial)'),
+    ('^Person.first_name', 'Random name', [
+        ('gender', 'The gender of this person'),
+        ('male_val', 'Male gender value'),
+        ('female_val', 'Female gender value'),
+    ]),
+    ('^Person.last_name_initial', 'Random last name (initial)'),
 ]

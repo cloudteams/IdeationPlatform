@@ -7,6 +7,7 @@ from django.views.generic import CreateView, UpdateView, DeleteView
 import simplejson
 from anonymizer.datasource.connections import ConnectionManager
 from anonymizer.datasource.managers import UserManager
+from anonymizer.lists import PROVIDER_PLUGINS
 from forms import ConnectionConfigurationForm, Sqlite3ConnectionForm, MySQLConnectionForm, UserTableSelectionForm, \
     ColumnForm, validate_unique_across
 from models import ConnectionConfiguration
@@ -163,6 +164,19 @@ def select_columns(request, pk):
         # gather suggestions
         initial = json.loads(config.properties)
 
+        # resolve providers
+        for initial_form in initial:
+            for plugin in PROVIDER_PLUGINS:
+                total_source = initial_form['source']
+                initial_form['source'] = total_source.split('(')[0]
+
+                if len(plugin) > 2:
+                    if initial_form['source'].split('(')[0] == plugin[0]:
+                        plugin_params = total_source.split('(')[1][:-1]
+
+                        for idx, option in enumerate(plugin_params.split(',')):
+                            initial_form[plugin[0] + '__param__' + plugin[2][idx][0]] = option
+
         # create formset
         ColumnFormset = formset_factory(wraps(ColumnForm)(partial(ColumnForm, all_properties=columns)), extra=0)
         formset = ColumnFormset(initial=initial)
@@ -201,7 +215,24 @@ def select_columns(request, pk):
                         if table_name.lower() != config.users_table.lower():
                             p['user_fk'] = connection.get_foreign_key_between(table_name, config.users_table)
                     else:
-                        p['type'] = 'VARCHAR(255)'
+                        p['type'] = 'VARCHAR(255)'  # TODO: plugins should manifest their return type
+
+                        # read plugin options
+                        plugin_options = [plugin_info[2] for plugin_info in PROVIDER_PLUGINS if
+                                             plugin_info[0] == p['source'] and len(plugin_info) > 2]
+                        if plugin_options:
+                            plugin_options = plugin_options[0]
+                            plugin_name = p['source']
+
+                            option_values = []
+                            for option in plugin_options:
+                                key = plugin_name + '__param__' + option[0]
+                                if key in form.cleaned_data:
+                                    option_values.append(form.cleaned_data[key])
+
+                            p['source'] = '%s(%s)' % (plugin_name, ','.join(option_values))
+                        else:
+                            p['source'] = '%s()' % p['source']
 
                     properties.append(p)
 

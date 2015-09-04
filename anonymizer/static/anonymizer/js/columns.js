@@ -1,4 +1,10 @@
+    function on_option_input_change(selector) {
+        $(selector).closest('.column-form').find('.option-input').closest('p').addClass('hidden');
+        $(selector).closest('.column-form').find('.option-input[data-about="' + $(selector).val() + '"]').closest('p').removeClass('hidden');
+    }
+
 $(function() {
+    /*Add a new property*/
     $('body').on('click', '.add-property-row', function() {
         //get last form
         var form_html = $('.form-list .column-form:last-of-type').html();
@@ -19,9 +25,18 @@ $(function() {
         //clear initial values
         $('.form-list .column-form:last-of-type input').val('');
         $('.form-list .column-form:last-of-type select').val('');
-        
+        $('.form-list .column-form:last-of-type select').change();
+
         //update the management form
         $('#id_form-TOTAL_FORMS').val(n + 1);
         $('#id_form-INITIAL_FORMS').val(n + 1);
+    });
+
+    /*Show only appropriate option fields at start*/
+    $('.option-input').closest('p').addClass('hidden');
+
+    /* Update shown option fields on change*/
+    $('body').on('change', 'select.source-options', function() {
+        on_option_input_change(this);
     });
 });

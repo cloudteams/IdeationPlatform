@@ -115,9 +115,17 @@ class ColumnForm(forms.Form):
         for p in all_properties:
             choices.append((p[2], p[0]))
 
-        choices += PROVIDER_PLUGINS
+        for plugin in PROVIDER_PLUGINS:
+            choices.append((plugin[0], plugin[1],))
 
-        self.fields['source'] = forms.ChoiceField(choices=choices)
+        self.fields['source'] = forms.ChoiceField(choices=choices, widget=forms.Select(attrs={'class': 'source-options'}))
+
+        for plugin in PROVIDER_PLUGINS:
+            if len(plugin) > 2:  # plugin requires parameters
+                for parameter in plugin[2]:
+                    field_name = plugin[0] + '__param__' + parameter[0]
+                    widget = forms.TextInput(attrs={'class': 'option-input', 'data-about': plugin[0]})
+                    self.fields[field_name] = forms.CharField(label=parameter[1], required=False, widget=widget)
 
 
 def validate_unique_across(formset, fields):
