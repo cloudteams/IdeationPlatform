@@ -8,7 +8,7 @@ import simplejson
 from anonymizer.datasource.connections import ConnectionManager
 from anonymizer.datasource.managers import UserManager
 from forms import ConnectionConfigurationForm, Sqlite3ConnectionForm, MySQLConnectionForm, UserTableSelectionForm, \
-    ColumnForm, ConnectionConfigurationManualForm, validate_unique_across
+    ColumnForm, validate_unique_across
 from models import ConnectionConfiguration
 
 
@@ -120,6 +120,16 @@ def suggest_users_table(request, pk):
         form = UserTableSelectionForm(connection, request.POST)
         if form.is_valid():
             config.users_table = form.cleaned_data['users_table']
+
+            # detect primary key
+            config.user_pk = connection.primary_key_of(config.users_table)
+
+            # load default properties
+            columns = connection.get_data_properties(config.users_table, from_related=True)
+            columns.insert(0, ('', '', '.'))
+            config.properties = config.get_default_properties(columns)
+
+            # save changes
             config.save()
 
             return redirect('/anonymizer/connection/%d/select-columns/' % config.pk)
@@ -144,24 +154,16 @@ def select_columns(request, pk):
     columns = connection.get_data_properties(config.users_table, from_related=True)
     columns.insert(0, ('', '', '.'))
 
+    if not config.properties:
+        # setup default properties
+        config.properties = config.get_default_properties(columns)
+        config.save()
+
     if request.method == 'GET':
         # gather suggestions
-        initial = []
-
-        for column in columns[1:]:
-            # auto-create property name
-            from_table = column[2].split('.')[0]
-            if from_table.lower() == config.users_table.lower():
-                name = column[0]
-            else:
-                name = from_table + '_' + column[0]
-
-            # set initial form data
-            initial.append({
-                'name': name,
-                'c_type': column[1],
-                'source': column[2],
-            })
+        initial = json.loads(config.properties)
+        for p in initial:
+            p['c_type'] = p['type']
 
         # create formset
         ColumnFormset = formset_factory(wraps(ColumnForm)(partial(ColumnForm, all_properties=columns)), extra=0)
@@ -196,28 +198,14 @@ def select_columns(request, pk):
 
             # update configuration object
             config.properties = json.dumps(properties)
-            config.total = config.create_json(user_pk_source=connection.primary_key_of(config.users_table),
-                                              properties=properties)
             config.save()
 
-            return redirect('/anonymizer/connection/%d/edit/' % config.pk)
+            return redirect('/anonymizer/')
         else:
             status = 400
             params['formset'] = formset
 
     return render(request, 'anonymizer/connection/select_columns.html', params, status=status)
-
-
-class ConnectionConfigurationManualUpdateView(UpdateView):
-    """
-    Allows the manual update of the created json configuration
-    """
-    model = ConnectionConfiguration
-    form_class = ConnectionConfigurationManualForm
-    template_name = 'anonymizer/connection/update_manual.html'
-    success_url = '/anonymizer/'
-
-update_configuration = ConnectionConfigurationManualUpdateView.as_view()
 
 
 def query_connection(request, pk):
@@ -227,7 +215,7 @@ def query_connection(request, pk):
     status = 200
 
     config = get_object_or_404(ConnectionConfiguration, pk=pk)
-    user_manager = UserManager(from_str=config.total)
+    user_manager = UserManager(from_str=config.to_json())
 
     if request.method != 'GET':
         return HttpResponseForbidden('Only GET requests are allowed')

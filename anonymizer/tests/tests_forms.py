@@ -130,3 +130,7 @@ class ColumnFormTests(TestCase):
         # assert name required
         data['name'] = ''
         self.assertFalse(f.is_valid())
+
+        # assert name is slug
+        f = ColumnForm([('property name', 'int', 't1.p1@test')], data=data)
+        self.assertFalse(f.is_valid())

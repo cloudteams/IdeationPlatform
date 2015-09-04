@@ -1,4 +1,5 @@
 from django import forms
+from django.core import validators
 from django.core.exceptions import ValidationError
 from mysql.connector import connect as mysql_connect, InterfaceError, ProgrammingError
 from anonymizer.lists import AGGREGATE_LIST, PROVIDER_PLUGINS
@@ -98,7 +99,13 @@ class UserTableSelectionForm(forms.Form):
 
 class ColumnForm(forms.Form):
     include = forms.BooleanField(initial=True, required=False)
-    name = forms.CharField()
+    name = forms.CharField(
+        help_text='Required. Letters, digits and @/./+/-/_ only.',
+        validators=[
+            validators.RegexValidator(r'^[\w.@+-]+$',
+                                      'Enter a valid property name. This value may contain only letters, numbers ' +
+                                      'and @/./+/-/_ characters.', 'invalid'),
+        ])
     c_type = forms.CharField(required=False)
     aggregate = forms.ChoiceField(choices=AGGREGATE_LIST, required=False)
 
@@ -130,11 +137,3 @@ def validate_unique_across(formset, fields):
                         if e_msg not in errors:
                             errors.append(e_msg)
 
-
-class ConnectionConfigurationManualForm(forms.ModelForm):
-    class Meta:
-        model = ConnectionConfiguration
-        fields = ['total', ]
-        widgets = {
-            'total': forms.widgets.Textarea(attrs={'cols': 80, 'rows': 20}),
-        }

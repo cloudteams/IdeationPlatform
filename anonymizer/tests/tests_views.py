@@ -1,6 +1,7 @@
-import json
+import simplejson as json
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.utils.datastructures import MultiValueDictKeyError
+from anonymizer.datasource.connections import Connection, ConnectionManager
 from anonymizer.models import ConnectionConfiguration
 
 __author__ = 'dipap'
@@ -186,10 +187,11 @@ class ConnectionViewTests(TestCase):
 
     def test_setup_standard_connection(self):
         connection_info = '"name":"test_database","user":"root","password":"","host":"127.0.0.1","port":"3306"'
-        ConnectionConfiguration.objects.create(name='test_connection',
-                                               connection_type='django.db.backends.mysql',
-                                               info=connection_info,
-                                               users_table='users')
+        config = ConnectionConfiguration.objects.create(name='test_connection',
+                                                        connection_type='django.db.backends.mysql',
+                                                        info=connection_info,
+                                                        users_table='users',
+                                                        user_pk='users.id@test_connection')
 
         form_url = '/anonymizer/connection/1/select-columns/'
 
@@ -206,7 +208,7 @@ class ConnectionViewTests(TestCase):
 
         # assert the correct total json has been created
         expected_config = json.loads(open('test-data/config/mysql_default_config.json').read())
-        total_config = json.loads(config.total)
+        total_config = json.loads(config.to_json())
 
         self.assertEqual(expected_config, total_config)
 

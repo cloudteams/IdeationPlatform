@@ -9,7 +9,9 @@ class ConnectionConfiguration(models.Model):
     info = models.CharField(max_length=8128)
 
     users_table = models.CharField(max_length=256, default='')
-    total = models.CharField(max_length=16384, default='')
+    user_pk = models.CharField(max_length=256, default='')
+
+    properties = models.CharField(max_length=16384, default='')
 
     def update_info_url(self):
         base_url = '/anonymizer/connection/update-info'
@@ -18,6 +20,26 @@ class ConnectionConfiguration(models.Model):
             return '{0}/{1}/sqlite3/'.format(base_url, self.pk)
         elif self.connection_type == 'django.db.backends.mysql':
             return '{0}/{1}/mysql/'.format(base_url, self.pk)
+
+    def get_default_properties(self, columns):
+        properties = []
+
+        for column in columns[1:]:
+            # auto-create property name
+            from_table = column[2].split('.')[0]
+            if from_table.lower() == self.users_table.lower():
+                name = column[0]
+            else:
+                name = from_table + '_' + column[0]
+
+            # set initial form data
+            properties.append({
+                'name': name,
+                'type': column[1],
+                'source': column[2],
+            })
+
+        return json.dumps(properties)
 
     def info_to_json(self):
         """
@@ -29,7 +51,7 @@ class ConnectionConfiguration(models.Model):
 
         return obj
 
-    def create_json(self, user_pk_source, properties):
+    def to_json(self):
         """
         :return: The whole configuration as a json string
         """
@@ -39,8 +61,8 @@ class ConnectionConfiguration(models.Model):
 
                 "connections": self.info_to_json(),
 
-                "user_pk": user_pk_source,
-                "properties": properties
+                "user_pk": self.user_pk,
+                "properties": json.loads(self.properties),
             }]
         }
 
