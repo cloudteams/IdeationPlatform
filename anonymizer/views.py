@@ -126,7 +126,7 @@ def suggest_users_table(request, pk):
 
             # load default properties
             columns = connection.get_data_properties(config.users_table, from_related=True)
-            columns.insert(0, ('', '', '.'))
+            columns.insert(0, ('', '', ''))
             config.properties = config.get_default_properties(columns)
 
             # save changes
@@ -152,7 +152,7 @@ def select_columns(request, pk):
     connection = manager.get(config.name)
 
     columns = connection.get_data_properties(config.users_table, from_related=True)
-    columns.insert(0, ('', '', '.'))
+    columns.insert(0, ('', '', ''))
 
     if not config.properties:
         # setup default properties
@@ -162,8 +162,6 @@ def select_columns(request, pk):
     if request.method == 'GET':
         # gather suggestions
         initial = json.loads(config.properties)
-        for p in initial:
-            p['c_type'] = p['type']
 
         # create formset
         ColumnFormset = formset_factory(wraps(ColumnForm)(partial(ColumnForm, all_properties=columns)), extra=0)
@@ -183,7 +181,6 @@ def select_columns(request, pk):
                 if form.cleaned_data['include']:  # ignore forms with include=False
                     p = {
                         'name': form.cleaned_data['name'],
-                        'type': form.cleaned_data['c_type'],
                         'source': form.cleaned_data['source'],
                     }
                     if form.cleaned_data['aggregate']:
@@ -191,8 +188,20 @@ def select_columns(request, pk):
 
                     if p['source'][0] != '^':  # don't try to join provider data
                         table_name = p['source'].split('.')[0]
+
+                        # get type
+                        if 'aggregate' in p and p['aggregate'] == 'avg':
+                            p['type'] = 'FLOAT'
+                        else:
+                            for column in columns:
+                                if p['source'] == column[2]:
+                                    p['type'] = column[1]
+                                    break
+
                         if table_name.lower() != config.users_table.lower():
                             p['user_fk'] = connection.get_foreign_key_between(table_name, config.users_table)
+                    else:
+                        p['type'] = 'VARCHAR(255)'
 
                     properties.append(p)
 

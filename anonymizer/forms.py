@@ -106,7 +106,6 @@ class ColumnForm(forms.Form):
                                       'Enter a valid property name. This value may contain only letters, numbers ' +
                                       'and @/./+/-/_ characters.', 'invalid'),
         ])
-    c_type = forms.CharField(required=False)
     aggregate = forms.ChoiceField(choices=AGGREGATE_LIST, required=False)
 
     def __init__(self, all_properties, *args, **kwargs):

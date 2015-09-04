@@ -3,39 +3,39 @@
         {
             "connections": [
                 {
-                    "engine": "django.db.backends.mysql", 
-                    "name": "test_database", 
-                    "port": "3306", 
-                    "host": "127.0.0.1", 
-                    "user": "root", 
-                    "password": "", 
+                    "engine": "django.db.backends.mysql",
+                    "name": "test_database",
+                    "port": "3306",
+                    "host": "127.0.0.1",
+                    "user": "root",
+                    "password": "",
                     "id": "test_connection"
                 }
-            ], 
-            "user_pk": "users.id@test_connection", 
-            "name": "test_connection", 
+            ],
+            "user_pk": "users.id@test_connection",
+            "name": "test_connection",
             "properties": [
                 {
-                    "source": "users.gender@test_connection", 
-                    "type": "text", 
+                    "source": "users.gender@test_connection",
+                    "type": "text",
                     "name": "gender"
-                }, 
+                },
                 {
-                    "source": "users.age@test_connection", 
-                    "type": "mediumint(9)", 
+                    "source": "users.age@test_connection",
+                    "type": "mediumint(9)",
                     "name": "age"
-                }, 
+                },
                 {
-                    "source": "users.address@test_connection", 
-                    "type": "varchar(255)", 
+                    "source": "users.address@test_connection",
+                    "type": "varchar(255)",
                     "name": "address"
-                }, 
+                },
                 {
-                    "source": "running.duration@test_connection", 
-                    "user_fk": "running.user@test_connection", 
-                    "type": "int(11)", 
-                    "name": "running_duration",
-                    "aggregate": "avg"
+                    "aggregate": "avg",
+                    "source": "running.duration@test_connection",
+                    "user_fk": "running.user@test_connection",
+                    "type": "FLOAT",
+                    "name": "running_duration"
                 }
             ]
         }

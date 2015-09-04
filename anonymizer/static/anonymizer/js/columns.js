@@ -16,6 +16,10 @@ $(function() {
         form_html = '<div class="column-form">' + form_html + '</div>';
         $('.form-list').append(form_html);
 
+        //clear initial values
+        $('.form-list .column-form:last-of-type input').val('');
+        $('.form-list .column-form:last-of-type select').val('');
+        
         //update the management form
         $('#id_form-TOTAL_FORMS').val(n + 1);
         $('#id_form-INITIAL_FORMS').val(n + 1);
