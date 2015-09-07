@@ -16,6 +16,16 @@
             "name": "test_connection",
             "properties": [
                 {
+                    "source": "^Person.first_name(@gender,Male,Female)",
+                    "type": "VARCHAR(255)",
+                    "name": "firstname"
+                },
+                {
+                    "source": "^Person.last_name_initial()",
+                    "type": "VARCHAR(255)",
+                    "name": "lastname"
+                },
+                {
                     "source": "users.gender@test_connection",
                     "type": "text",
                     "name": "gender"

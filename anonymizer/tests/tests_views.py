@@ -135,6 +135,7 @@ class ConnectionViewTests(TestCase):
             'form-INITIAL_FORMS': '6',
             'form-MIN_NUM_FORMS': '0',
             'form-MAX_NUM_FORMS': '1000',
+            'form-0-include': 'on',
             'form-0-name': 'firstname',
             'form-0-c_type': 'varchar(255)',
             'form-0-aggregate': '',
@@ -142,6 +143,7 @@ class ConnectionViewTests(TestCase):
             'form-0-^Person.first_name__param__gender': '@gender',
             'form-0-^Person.first_name__param__male_val': 'Male',
             'form-0-^Person.first_name__param__female_val': 'Female',
+            'form-1-include': 'on',
             'form-1-name': 'lastname',
             'form-1-c_type': 'varchar(255)',
             'form-1-aggregate': '',
@@ -262,12 +264,10 @@ class ConnectionViewTests(TestCase):
         self.assertEqual(response.status_code, 400)
 
         # test query on generated attributes
-        """
         response = self.client.get(query_url + '?q=filter(firstname=Nick)')
         self.assertEqual(response.status_code, 200)
         response = self.client.get(query_url + '?q=filter(firstname="Nick")')
         self.assertEqual(response.status_code, 200)
-        """
 
         # test count query
         response = self.client.get(query_url + '?q=count(gender="Male")')

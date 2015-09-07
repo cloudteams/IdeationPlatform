@@ -24,7 +24,8 @@ $(function() {
         $('.form-list').append(form_html);
 
         //clear initial values
-        $('.form-list .column-form:last-of-type input').val('');
+        $('.form-list .column-form:last-of-type input[type="checkbox"]').prop("checked", true);
+        $('.form-list .column-form:last-of-type input[type="text"]').val('');
         $('.form-list .column-form:last-of-type select').val('');
         $('.form-list .column-form:last-of-type select').change();
 
