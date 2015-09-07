@@ -152,14 +152,15 @@ def select_columns(request, pk):
         for initial_form in initial:
             for plugin in PROVIDER_PLUGINS:
                 total_source = initial_form['source']
+                if total_source.split('(')[0] != plugin[0]:
+                    continue
                 initial_form['source'] = total_source.split('(')[0]
 
                 if len(plugin) > 2:
-                    if initial_form['source'].split('(')[0] == plugin[0]:
-                        plugin_params = total_source.split('(')[1][:-1]
+                    plugin_params = total_source.split('(')[1][:-1]
 
-                        for idx, option in enumerate(plugin_params.split(',')):
-                            initial_form[plugin[0] + '__param__' + plugin[2][idx][0]] = option
+                    for idx, option in enumerate(plugin_params.split(',')):
+                        initial_form[plugin[0] + '__param__' + plugin[2][idx][0]] = option
 
         # create formset
         ColumnFormset = formset_factory(wraps(ColumnForm)(partial(ColumnForm, all_properties=columns)), extra=0)
@@ -283,6 +284,7 @@ def query_connection(request, pk):
 
             if q != 'help':
                 result = simplejson.dumps(result, indent=4)
+
         except Exception as e:
             status = 400
             result = str(e)

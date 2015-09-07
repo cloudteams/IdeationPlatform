@@ -53,20 +53,20 @@ class RangesTests(TestCase):
 
     def test_from_int_value(self):
         # test simple ranges
-        v = from_int_value(('1..10,11..20,21..30', 7))
-        self.assertEqual(v, '"1..10"')
+        v = from_int_value(('1~10|11~20|21~30', 7))
+        self.assertEqual(v, '1~10')
 
         # test named ranges
-        v = from_int_value(('1..10=Low,11..20=Medium,21..30=High', 11))
-        self.assertEqual(v, '"Medium"')
+        v = from_int_value(('1~10=Low|11~20=Medium|21~30=High', 11))
+        self.assertEqual(v, 'Medium')
 
         # test infinite-sized ranges
-        v = from_int_value(('..10=Low,11..20=Medium,21..=High', 56))
-        self.assertEqual(v, '"High"')
+        v = from_int_value(('~10=Low|11~20=Medium|21~=High', 56))
+        self.assertEqual(v, 'High')
 
         # test float ranges
-        v = from_float_value(('..10=Low,10..20=Medium,20..=High', -4))
-        self.assertEqual(v, '"Low"')
+        v = from_float_value(('~10=Low|10~20=Medium|20~=High', -4))
+        self.assertEqual(v, 'Low')
 
-        v = from_float_value(('..10=Low,10..20=Medium,20..=High', 20))
-        self.assertEqual(v, '"High"')
+        v = from_float_value(('~10=Low|10~20=Medium|20~=High', 20))
+        self.assertEqual(v, 'High')
