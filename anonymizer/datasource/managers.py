@@ -139,16 +139,20 @@ class PropertyManager:
             else:
                 label = property_info['name']
 
+            if 'expose' in property_info:
+                expose = property_info['expose']
+            else:
+                expose = True
+
             prop = Property(self.connection_manager, property_info['source'], user_fk=user_fk, name=property_info['name'],
-                            tp=property_info['type'], aggregate=aggregate, label=label)
+                            tp=property_info['type'], aggregate=aggregate, label=label, filter_by=expose)
 
             self.properties.append(prop)
 
     def get_property_by_name(self, name):
         for prop in self.properties:
-            if prop.filter_by:
-                if prop.name == name:
-                    return prop
+            if prop.name == name:
+                return prop
 
         return None
 
@@ -194,7 +198,14 @@ class PropertyManager:
                 # apply function and save the result
                 result[prop.name] = prop.fn(fn_args)
 
-        return result
+        # removed non-exposed properties
+        final_result = {}
+        for key in result:
+            prop = self.get_property_by_name(key)
+            if prop.filter_by:
+                final_result[key] = result[prop.name]
+
+        return final_result
 
     def matches(self, val, filter_exp):
         """

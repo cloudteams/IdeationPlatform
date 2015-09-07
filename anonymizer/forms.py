@@ -98,7 +98,7 @@ class UserTableSelectionForm(forms.Form):
 
 
 class ColumnForm(forms.Form):
-    include = forms.BooleanField(initial=True, required=False)
+    expose = forms.BooleanField(initial=True, required=False)
     name = forms.CharField(
         help_text='Required. Letters, digits and @/./+/-/_ only.',
         validators=[

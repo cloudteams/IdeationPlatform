@@ -177,49 +177,54 @@ def select_columns(request, pk):
         if formset.is_valid():
             properties = []
             for form in formset:
-                if form.cleaned_data['include']:  # ignore forms with include=False
-                    p = {
-                        'name': form.cleaned_data['name'],
-                        'source': form.cleaned_data['source'],
-                    }
-                    if form.cleaned_data['aggregate']:
-                        p['aggregate'] = form.cleaned_data['aggregate']
+                p = {
+                    'name': form.cleaned_data['name'],
+                    'source': form.cleaned_data['source'],
+                }
 
-                    if p['source'][0] != '^':  # don't try to join provider data
-                        table_name = p['source'].split('.')[0]
+                if 'expose' in form.cleaned_data:
+                    p['expose'] = bool(form.cleaned_data['expose'])
+                else:
+                    p['expose'] = False
 
-                        # get type
-                        if 'aggregate' in p and p['aggregate'] == 'avg':
-                            p['type'] = 'FLOAT'
-                        else:
-                            for column in columns:
-                                if p['source'] == column[2]:
-                                    p['type'] = column[1]
-                                    break
+                if form.cleaned_data['aggregate']:
+                    p['aggregate'] = form.cleaned_data['aggregate']
 
-                        if table_name.lower() != config.users_table.lower():
-                            p['user_fk'] = connection.get_foreign_key_between(table_name, config.users_table)
+                if p['source'][0] != '^':  # don't try to join provider data
+                    table_name = p['source'].split('.')[0]
+
+                    # get type
+                    if 'aggregate' in p and p['aggregate'] == 'avg':
+                        p['type'] = 'FLOAT'
                     else:
-                        p['type'] = 'VARCHAR(255)'  # TODO: plugins should manifest their return type
+                        for column in columns:
+                            if p['source'] == column[2]:
+                                p['type'] = column[1]
+                                break
 
-                        # read plugin options
-                        plugin_options = [plugin_info[2] for plugin_info in PROVIDER_PLUGINS if
-                                             plugin_info[0] == p['source'] and len(plugin_info) > 2]
-                        if plugin_options:
-                            plugin_options = plugin_options[0]
-                            plugin_name = p['source']
+                    if table_name.lower() != config.users_table.lower():
+                        p['user_fk'] = connection.get_foreign_key_between(table_name, config.users_table)
+                else:
+                    p['type'] = 'VARCHAR(255)'  # TODO: plugins should manifest their return type
 
-                            option_values = []
-                            for option in plugin_options:
-                                key = plugin_name + '__param__' + option[0]
-                                if key in form.cleaned_data:
-                                    option_values.append(form.cleaned_data[key])
+                    # read plugin options
+                    plugin_options = [plugin_info[2] for plugin_info in PROVIDER_PLUGINS if
+                                         plugin_info[0] == p['source'] and len(plugin_info) > 2]
+                    if plugin_options:
+                        plugin_options = plugin_options[0]
+                        plugin_name = p['source']
 
-                            p['source'] = '%s(%s)' % (plugin_name, ','.join(option_values))
-                        else:
-                            p['source'] = '%s()' % p['source']
+                        option_values = []
+                        for option in plugin_options:
+                            key = plugin_name + '__param__' + option[0]
+                            if key in form.cleaned_data:
+                                option_values.append(form.cleaned_data[key])
 
-                    properties.append(p)
+                        p['source'] = '%s(%s)' % (plugin_name, ','.join(option_values))
+                    else:
+                        p['source'] = '%s()' % p['source']
+
+                properties.append(p)
 
             # update configuration object
             config.properties = json.dumps(properties)
