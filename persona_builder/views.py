@@ -33,7 +33,7 @@ def edit_persona_properties(request, pk):
     status = 200
 
     if request.method == 'GET':
-        form = PersonaPropertiesForm(None)  # not necessary for getting the form, just when validating
+        form = PersonaPropertiesForm(None, initial={'query': persona.query})  # not necessary for getting the form, just when validating
 
     elif request.method == 'POST':
         form = PersonaPropertiesForm(user_manager, request.POST)
@@ -44,6 +44,7 @@ def edit_persona_properties(request, pk):
             persona.users = json.dumps(user_manager.filter(persona.query))
 
             # save changes & show full persona view
+            persona.is_ready = True
             persona.save()
             return redirect(persona.get_absolute_url())
         else:
@@ -80,5 +81,8 @@ class PersonaListView(ListView):
     model = Persona
     template_name = 'persona_builder/persona/list.html'
     context_object_name = 'personas'
+
+    def get_queryset(self):
+        return super(PersonaListView, self).get_queryset().filter(is_ready=True)
 
 list_personas = PersonaListView.as_view()

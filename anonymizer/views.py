@@ -1,12 +1,10 @@
 from functools import partial, wraps
 import json
 from django.forms import formset_factory
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import CreateView, UpdateView, DeleteView
+from django.views.generic import CreateView, DeleteView
 import simplejson
-from anonymizer.datasource.connections import ConnectionManager
-from anonymizer.datasource.managers import UserManager
 from anonymizer.lists import PROVIDER_PLUGINS
 from forms import ConnectionConfigurationForm, Sqlite3ConnectionForm, MySQLConnectionForm, UserTableSelectionForm, \
     ColumnForm, validate_unique_across
@@ -244,7 +242,7 @@ def query_connection(request, pk):
     user_manager = config.get_user_manager()
 
     if request.method != 'GET':
-        return HttpResponseForbidden('Only GET requests are allowed')
+        return HttpResponse('Only GET requests are allowed', status=400)
 
     q = request.GET['q']
     result = ''

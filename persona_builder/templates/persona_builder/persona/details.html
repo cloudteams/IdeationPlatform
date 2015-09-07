@@ -4,6 +4,7 @@
 {% load app_filters %}
 
 {% block content %}
+    <a href="/persona-builder/personas/" class="btn btn-default pull-right">Back to Persona Pool</a>
     <a href="{{persona.get_edit_properties_url}}" class="btn btn-default pull-right">Edit persona</a>
 
     {% include "persona_builder/persona/teaser.html" %}

@@ -3,7 +3,7 @@
 {% load static from staticfiles %}
 
 {% block content %}
-    <h1>Create new Persona</h1>
+    <h1>Persona Builder</h1>
 
     <form class="persona-filters-form" method="POST" action=".">{% csrf_token %}
         {% include "persona_builder/persona/teaser.html" %}

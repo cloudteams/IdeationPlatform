@@ -11,7 +11,7 @@ class PersonaForm(forms.ModelForm):
         exclude = ['owner', ]
 
 
-class PersonaPropertiesForm(forms.Form, ):
+class PersonaPropertiesForm(forms.Form):
     query = forms.CharField()
 
     def __init__(self, user_manager, *args, **kwargs):
