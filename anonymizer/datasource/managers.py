@@ -45,12 +45,14 @@ class Property:
     """
     A single property
     """
-    def __init__(self, connection_manager, source, user_fk, name=None, tp=None, aggregate=None):
+    def __init__(self, connection_manager, source, user_fk, name=None, tp=None, aggregate=None, label=None,
+                 filter_by=True):
         self.connection_manager = connection_manager
         self.source = source
         self.table = source.split('@')[0].split('.')[0]
         self.column = source.split('@')[0].split('.')[1]
         self.aggregate = aggregate
+        self.filter_by = filter_by
 
         if not name:
             self.name = self.column
@@ -58,6 +60,10 @@ class Property:
                 self.name += '__' + aggregate
         else:
             self.name = name
+
+        self.label = label
+        if not label:
+            self.label = self.name
 
         if tp:
             self.type = tp
@@ -105,9 +111,10 @@ class PropertyManager:
     def __init__(self, connection_manager, configuration):
         self.connection_manager = connection_manager
         self.configuration = configuration
-        self.user_pk = Property(self.connection_manager, self.configuration.data['sites'][0]['user_pk'], user_fk=None)
+        self.user_pk = Property(self.connection_manager, self.configuration.data['sites'][0]['user_pk'], user_fk=None,
+                                filter_by=False)
 
-        self.properties = [self.user_pk]
+        self.properties = []
 
         for property_info in self.configuration.data['sites'][0]['properties']:
             if 'user_fk' in property_info:
@@ -120,17 +127,35 @@ class PropertyManager:
             else:
                 aggregate = None
 
+            if 'label' in property_info:
+                label = property_info['label']
+            else:
+                label = property_info['name']
+
             prop = Property(self.connection_manager, property_info['source'], user_fk=user_fk, name=property_info['name'],
-                            tp=property_info['type'], aggregate=aggregate)
+                            tp=property_info['type'], aggregate=aggregate, label=label)
 
             self.properties.append(prop)
 
     def get_property_by_name(self, name):
         for prop in self.properties:
-            if prop.name == name:
-                return prop
+            if prop.filter_by:
+                if prop.name == name:
+                    return prop
 
         return None
+
+    def list_filters(self):
+        filters = []
+        for p in self.properties:
+            if p.filter_by:
+                # ignore properties we're not allowed to filter by
+                filters.append({
+                    'name': p.name,
+                    'label': p.label
+                })
+
+        return filters
 
     def info(self, row):
         idx = 0
@@ -250,3 +275,17 @@ class UserManager:
 
     def all(self):
         return self.pm.all()
+
+    def count(self, filters=None):
+        if filters:
+            qs = self.pm.filter(filters)
+        else:
+            qs = self.pm.all()
+
+        return len(qs)
+
+    def list_filters(self):
+        return self.pm.list_filters()
+
+    def list_properties(self):
+        return self.pm.list_properties()

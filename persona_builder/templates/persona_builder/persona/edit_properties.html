@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% load static from staticfiles %}
+
+{% block content %}
+    <h1>Create new Persona</h1>
+
+    <form class="persona-filters-form" method="POST" action=".">{% csrf_token %}
+        {% include "persona_builder/persona/teaser.html" %}
+
+        {{form.non_field_errors}}
+        <div class="query-box">
+            {{form.as_p}}
+        </div>
+
+        <div class="property-row-container">
+            <div class="property-row">
+                <select class="filter-select">
+                    <option value=""></option>
+                    {% for filter in filters %}
+                        <option value="{{filter.name}}">{{filter.label}}</option>
+                    {% endfor %}
+                </select>
+
+                <select class="comparison-select">
+                    <option value=""></option>
+                    <option value="=">=</option>
+                    <option value=">">&gt;</option>
+                    <option value=">=">&gt;=</option>
+                    <option value="<">&lt;</option>
+                    <option value="<=">&lt;=</option>
+                    <option value="!=">!=</option>
+                </select>
+
+                <input type="text" value=""/>
+
+                <span class="remove-row">x</span>
+            </div>
+        </div>
+
+        <div class="clearfix">
+            <div class="btn btn-default add-property-row">+ Add property</div>
+
+            <input class="btn btn-primary pull-right" type="submit" value="Save persona" />
+        </div>
+    </form>
+
+{% endblock %}
+
+{% block js %}
+    <script src="{% static "persona_builder/js/edit_properties.js" %}"></script>
+{% endblock %}

@@ -1,0 +1,9 @@
+<div class="persona-teaser">
+    <img src="{{persona.get_avatar_url}}" width="36" />
+    <h4>{{persona.name}}</h4>
+    <p>{{persona.description}}</p>
+
+    {% if more_link %}
+        <a href="{{persona.get_absolute_url}}">More</a>
+    {% endif %}
+</div>

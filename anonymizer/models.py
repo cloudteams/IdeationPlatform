@@ -1,5 +1,7 @@
 import json
 from django.db import models
+from anonymizer.datasource.connections import ConnectionManager
+from anonymizer.datasource.managers import UserManager
 from lists import DATABASE_CONNECTION_TYPES
 
 
@@ -67,3 +69,10 @@ class ConnectionConfiguration(models.Model):
         }
 
         return json.dumps(obj, indent=4)
+
+    def get_connection(self):
+        manager = ConnectionManager(self.info_to_json())
+        return manager.get(self.name)
+
+    def get_user_manager(self):
+        return UserManager(from_str=self.to_json())

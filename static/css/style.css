@@ -41,3 +41,20 @@ form p > * {
 .action-container {
     margin: 10px 0;
 }
+
+.query-box {
+    display: none;
+}
+
+.property-row {
+    padding: 10px 0;
+}
+
+.remove-row {
+    cursor: pointer;
+    color: #aaa;
+}
+
+.persona-teaser {
+    margin: 20px 0;
+}

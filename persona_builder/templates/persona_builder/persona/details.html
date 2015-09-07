@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% load static from staticfiles %}
+{% load app_filters %}
+
+{% block content %}
+    <a href="{{persona.get_edit_properties_url}}" class="btn btn-default pull-right">Edit persona</a>
+
+    {% include "persona_builder/persona/teaser.html" %}
+
+    <p><em>Users matching this profile:</em></p>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                {% for property in properties %}
+                    <th>{{property.label}}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    {% for property in properties %}
+                        {% with p_key=property.name %}
+                            <td>{{user|get_property:p_key}}</td>
+                        {% endwith %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

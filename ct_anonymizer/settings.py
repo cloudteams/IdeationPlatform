@@ -106,6 +106,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Additional locations of static files
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
+
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
@@ -114,4 +119,7 @@ STATICFILES_DIRS = (
 )
 
 MEDIA_ROOT = 'media/'
+MEDIA_URL = '/media/'
 
+# minimum number of users a persona must contain
+MIN_USERS_IN_PERSONA = 5

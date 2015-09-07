@@ -13,9 +13,10 @@ Including another URLconf
     1. Add an import:  from blog import urls as blog_urls
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
-from django.conf.urls import include, url
+from django.conf.urls import include, url, patterns
 from django.contrib import admin
 import anonymizer
+from ct_anonymizer import settings
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
@@ -26,3 +27,9 @@ urlpatterns = [
     # persona builder
     url(r'^persona-builder/', include('persona_builder.urls')),
 ]
+
+if settings.DEBUG:
+    # media files should only be served from the django server in DEBUG mode
+    urlpatterns += patterns('',
+                            (r'^media/(?P<path>.*)$', 'django.views.static.serve', {
+                                'document_root': settings.MEDIA_ROOT}))

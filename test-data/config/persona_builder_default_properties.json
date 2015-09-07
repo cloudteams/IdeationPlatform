@@ -1,0 +1,29 @@
+[
+    {
+        "source":"^Person.first_name(@gender,Male,Female)",
+        "type":"VARCHAR(255)",
+        "name":"firstname"
+    },
+    {
+        "source":"^Person.last_name_initial()",
+        "type":"VARCHAR(255)",
+        "name":"lastname"
+    },
+    {
+        "source":"users.gender@test_connection",
+        "type":"text",
+        "name":"gender"
+    },
+    {
+        "source":"users.age@test_connection",
+        "type":"mediumint(9)",
+        "name":"age"
+    },
+    {
+        "aggregate":"avg",
+        "source":"running.duration@test_connection",
+        "user_fk":"running.user@test_connection",
+        "type":"FLOAT",
+        "name":"running_duration"
+    }
+]

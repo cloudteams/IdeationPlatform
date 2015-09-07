@@ -100,8 +100,7 @@ def suggest_users_table(request, pk):
     status = 200
 
     config = get_object_or_404(ConnectionConfiguration, pk=pk)
-    manager = ConnectionManager(config.info_to_json())
-    connection = manager.get(config.name)
+    connection = config.get_connection()
 
     if request.method == 'GET':
         params['form'] = UserTableSelectionForm(connection)
@@ -137,8 +136,7 @@ def select_columns(request, pk):
     status = 200
 
     config = get_object_or_404(ConnectionConfiguration, pk=pk)
-    manager = ConnectionManager(config.info_to_json())
-    connection = manager.get(config.name)
+    connection = config.get_connection()
 
     columns = connection.get_data_properties(config.users_table, from_related=True)
     columns.insert(0, ('', '', ''))
@@ -243,7 +241,7 @@ def query_connection(request, pk):
     status = 200
 
     config = get_object_or_404(ConnectionConfiguration, pk=pk)
-    user_manager = UserManager(from_str=config.to_json())
+    user_manager = config.get_user_manager()
 
     if request.method != 'GET':
         return HttpResponseForbidden('Only GET requests are allowed')
