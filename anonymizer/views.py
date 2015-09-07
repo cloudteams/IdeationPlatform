@@ -256,11 +256,17 @@ def query_connection(request, pk):
                 filters = q[pos:-1]
 
                 result = user_manager.filter(filters)
+            elif q.startswith('count'):
+                pos = len('count(')
+                filters = q[pos:-1]
+
+                result = user_manager.count(filters)
             elif q == 'help':
                 result = """
     Commands:
         - all()
         - filter(some_filter)
+        - count(some_filters)
 
     Examples of filter usage:
         - filter(age>30)

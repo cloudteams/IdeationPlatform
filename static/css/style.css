@@ -53,6 +53,8 @@ form p > * {
 .remove-row {
     cursor: pointer;
     color: #aaa;
+    display: inline-block;
+    margin-left: 15px;
 }
 
 .persona-teaser {

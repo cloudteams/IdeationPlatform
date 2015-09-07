@@ -258,6 +258,10 @@ class ConnectionViewTests(TestCase):
         response = self.client.get(query_url + '?q=filter(wrong>35)')
         self.assertEqual(response.status_code, 400)
 
+        # test count query
+        response = self.client.get(query_url + '?q=count(gender="Male")')
+        self.assertEqual(response.content, '50')
+
         # test wrong command
         response = self.client.get(query_url + '?q=wrong()')
         self.assertEqual(response.status_code, 400)
