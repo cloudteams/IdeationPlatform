@@ -12,6 +12,10 @@ from django.test import TestCase
 
 class ConnectionViewTests(TestCase):
 
+    def test_home_view(self):
+        response = self.client.get('/anonymizer/')
+        self.assertEqual(response.status_code, 200)
+
     def test_create_connection(self):
         form_url = '/anonymizer/connection/create/'
 
@@ -134,11 +138,14 @@ class ConnectionViewTests(TestCase):
             'form-0-name': 'firstname',
             'form-0-c_type': 'varchar(255)',
             'form-0-aggregate': '',
-            'form-0-source': 'users.firstname@test_connection',
+            'form-0-source': '^Person.first_name',
+            'form-0-^Person.first_name__param__gender': '@gender',
+            'form-0-^Person.first_name__param__male_val': 'Male',
+            'form-0-^Person.first_name__param__female_val': 'Female',
             'form-1-name': 'lastname',
             'form-1-c_type': 'varchar(255)',
             'form-1-aggregate': '',
-            'form-1-source': 'users.lastname@test_connection',
+            'form-1-source': '^Person.last_name_initial',
             'form-2-include': 'on',
             'form-2-name': 'gender',
             'form-2-c_type': 'text',

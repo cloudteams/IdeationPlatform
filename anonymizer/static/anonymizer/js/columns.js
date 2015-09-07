@@ -1,9 +1,10 @@
+
+$(function() {
     function on_option_input_change(selector) {
         $(selector).closest('.column-form').find('.option-input').closest('p').addClass('hidden');
         $(selector).closest('.column-form').find('.option-input[data-about="' + $(selector).val() + '"]').closest('p').removeClass('hidden');
     }
 
-$(function() {
     /*Add a new property*/
     $('body').on('click', '.add-property-row', function() {
         //get last form
@@ -34,6 +35,9 @@ $(function() {
 
     /*Show only appropriate option fields at start*/
     $('.option-input').closest('p').addClass('hidden');
+    for (var i=0; i<$('.source-options').length; i++) {
+        on_option_input_change('#' + $('.source-options')[i].id);
+    }
 
     /* Update shown option fields on change*/
     $('body').on('change', 'select.source-options', function() {

@@ -22,4 +22,7 @@ urlpatterns = [
 
     # anonymizer
     url(r'^anonymizer/', include('anonymizer.urls')),
+
+    # persona builder
+    url(r'^persona-builder/', include('persona_builder.urls')),
 ]

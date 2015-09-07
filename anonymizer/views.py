@@ -13,17 +13,6 @@ from forms import ConnectionConfigurationForm, Sqlite3ConnectionForm, MySQLConne
 from models import ConnectionConfiguration
 
 
-def get_current_configuration():
-    """
-    Get the current connection
-    """
-    qs = ConnectionConfiguration.objects.all()
-    if not qs:
-        return None
-
-    return qs[len(qs) - 1]
-
-
 def home(request):
     params = {
         'configurations': ConnectionConfiguration.objects.all(),
@@ -41,8 +30,7 @@ class ConnectionConfigurationCreateView(CreateView):
     template_name = 'anonymizer/connection/create.html'
 
     def get_success_url(self):
-        return get_current_configuration().update_info_url()
-
+        return self.object.update_info_url()
 
 create_configuration = ConnectionConfigurationCreateView.as_view()
 
