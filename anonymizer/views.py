@@ -167,6 +167,7 @@ def select_columns(request, pk):
 
         params['formset'] = formset
     else:
+        import pdb;pdb.set_trace()
         ColumnFormset = formset_factory(wraps(ColumnForm)(partial(ColumnForm, all_properties=columns)))
         formset = ColumnFormset(request.POST)
 

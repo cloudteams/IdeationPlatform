@@ -181,16 +181,18 @@ class ConnectionViewTests(TestCase):
         response = self.client.get(form_url)
         self.assertEqual(response.status_code, 200)
 
+        # test that we can't post a column with no name
+        data = self.get_test_column_data()
+
+        data['form-0-name'] = ''
+        response = self.client.post(form_url, data=data)
+        self.assertEqual(response.status_code, 400)
+
         # test than we can post to this form
         data = self.get_test_column_data()
 
         response = self.client.post(form_url, data=data)
         self.assertEqual(response.status_code, 302)
-
-        # test that we can't post a column with no name
-        data['form-0-name'] = ''
-        response = self.client.post(form_url, data=data)
-        self.assertEqual(response.status_code, 400)
 
     def test_setup_standard_connection(self):
         connection_info = '"name":"test_database","user":"root","password":"","host":"127.0.0.1","port":"3306"'
@@ -204,6 +206,7 @@ class ConnectionViewTests(TestCase):
 
         # post column info
         data = self.get_test_column_data()
+
         response = self.client.post(form_url, data=data)
         self.assertEqual(response.status_code, 302)
 
@@ -257,6 +260,14 @@ class ConnectionViewTests(TestCase):
         # test malformed query
         response = self.client.get(query_url + '?q=filter(wrong>35)')
         self.assertEqual(response.status_code, 400)
+
+        # test query on generated attributes
+        """
+        response = self.client.get(query_url + '?q=filter(firstname=Nick)')
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(query_url + '?q=filter(firstname="Nick")')
+        self.assertEqual(response.status_code, 200)
+        """
 
         # test count query
         response = self.client.get(query_url + '?q=count(gender="Male")')

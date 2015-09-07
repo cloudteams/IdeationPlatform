@@ -41,6 +41,13 @@ class PropertyNotFoundException(Exception):
     pass
 
 
+class UnknownOperatorException(Exception):
+    """
+    Raised when a logical expression contains an invalid operator
+    """
+    pass
+
+
 class Property:
     """
     A single property
@@ -189,6 +196,57 @@ class PropertyManager:
 
         return result
 
+    def matches(self, val, filter_exp):
+        """
+        Checks if the value `val` follows the filter expression
+        E.g val = "5", filter_exp = ">10" returns false
+        """
+        f_name = re.split('[=<>]', filter_exp)[0]
+        operator = ''
+        exp = ''
+
+        for char in filter_exp[len(f_name):]:
+            if not exp:
+                if char in ['=', '<', '>', '!']:
+                    operator += char
+                else:
+                    exp = char
+            else:
+                exp += char
+
+        if (exp[0] == exp[-1] == '"') or (exp[0] == exp[-1] == "'"):
+            exp = exp[1:-1]
+
+        if operator == '=':
+            return val == exp
+        elif operator == '!=':
+            return val != exp
+        elif operator == '>':
+            return val > exp
+        elif operator == '>=':
+            return val >= exp
+        elif operator == '<':
+            return val < exp
+        elif operator == '<=':
+            return val <= exp
+        else:
+            raise UnknownOperatorException(operator)
+
+    def filter_by_generated(self, results, generated_filters):
+        for g_filter in generated_filters:
+            f_name = re.split('[=<>]', g_filter)[0]
+            prop = self.get_property_by_name(f_name)
+
+            if prop.is_generated():
+                new_results = []
+                for result in results:
+                    if self.matches(result[prop.name], g_filter):
+                        new_results.append(result)
+
+                results = new_results
+
+        return results
+
     def query(self):
         select_clause = 'SELECT ' + \
                         ','.join([prop.full() + ' AS ' + prop.name for prop in self.properties if not prop.is_generated()]) + ' '
@@ -209,6 +267,7 @@ class PropertyManager:
     def all(self):
         query = self.query()
 
+        # construct group by clause
         group_by = ' GROUP BY ' + self.user_pk.full()
         query += group_by
 
@@ -223,17 +282,40 @@ class PropertyManager:
 
         # create where clause
         if not type(filters) == list:
-            filters = [filters]
+            filters = filters.replace(' and ', ' AND ').split(' AND ')
+
+        # separate filters between those on simple columns and those on aggregates
+        filters_generated = []
+        filters_concrete = []
+        filters_aggregate = []
+        for f in filters:
+            prop = self.get_property_by_name(re.split('[=<>]', f)[0])
+            if prop.is_generated():
+                filters_generated.append(f)
+            elif prop.aggregate is None:
+                filters_concrete.append(f)
+            else:
+                filters_aggregate.append(f)
+
+        # construct where clause
+        if filters_concrete:
+            where_clause = 'WHERE ' + ' AND '.join(filters_concrete)
+            query += where_clause
 
         # construct group by clause
         group_by = ' GROUP BY ' + self.user_pk.full()
         query += group_by
 
-        having_clause = ' HAVING ' + ' AND '.join(filters)
-        query += having_clause
+        # aggregate filters must go after the group by in the `having` clause
+        if filters_aggregate:
+            having_clause = ' HAVING ' + ' AND '.join(filters_aggregate)
+            query += having_clause
 
-        # execute query & return results
-        return [self.info(row) for row in self.user_pk.connection.execute(query).fetchall()]
+        # execute query & get results
+        result = [self.info(row) for row in self.user_pk.connection.execute(query).fetchall()]
+
+        # filter by generated fields & return result
+        return self.filter_by_generated(result, filters_generated)
 
     def get(self, pk):
         where_clause = 'WHERE {0}={1}'.format(self.user_pk.full(), pk)
