@@ -1,5 +1,5 @@
 from anonymizer.datasource.managers import Property, \
-    UserManagerException, ProviderNotFound, ProviderMethodNotFound, UserManager
+    UserManagerException, ProviderNotFound, ProviderMethodNotFound, UserManager, PropertyNotFoundException
 from anonymizer.datasource.connections import ConnectionManager, ConnectionNotFound
 from anonymizer.datasource.util import Configuration
 
@@ -105,6 +105,7 @@ class PropertyTests(TestCase):
         self.assertTrue(Property.matches(5, '>=5'))
         self.assertFalse(Property.matches(4, '>=5'))
 
+
 class UserManagerTests(TestCase):
 
     def setUp(self):
@@ -137,4 +138,9 @@ class UserManagerTests(TestCase):
     def test_aggregate_filter(self):
         res = self.um.filter(['age=37', 'run_duration_avg<13'])
         self.assertEqual(len(res), 1)
+
+    def test_non_exposed_filter(self):
+        um = UserManager('test-data/config/sqlite3_config_hide-age.json')
+        with self.assertRaises(PropertyNotFoundException):
+            um.filter('age=37')
 

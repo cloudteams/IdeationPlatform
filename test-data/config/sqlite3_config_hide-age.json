@@ -1,0 +1,51 @@
+{
+  "sites": [
+    {
+      "name": "my_site",
+
+      "connections": [
+        {
+          "id": "my_site_db",
+          "engine": "django.db.backends.sqlite3",
+          "name": "test-data/test_site.sqlite3"
+        }
+      ],
+
+      "user_pk": "Users.id@my_site_db",
+
+      "properties": [
+        {
+          "expose": false,
+          "name": "age",
+          "type": "int",
+          "source": "Users.age@my_site_db"
+        },
+        {
+          "name": "gender",
+          "type": "[Male,Female]",
+          "source": "Users.gender@my_site_db"
+        },
+        {
+          "name": "first_name",
+          "label": "first name",
+          "type": "string",
+          "source": "^Person.first_name(@gender,Male,Female)"
+        },
+        {
+          "name": "last_name",
+          "label": "last name (initial)",
+          "type": "string",
+          "source": "^Person.last_name_initial()"
+        },
+        {
+          "name": "run_duration_avg",
+          "label": "run duration (minutes)",
+          "type": "float",
+          "aggregate": "avg",
+          "source": "Running.duration@my_site_db",
+          "user_fk": "Running.user@my_site_db"
+        }
+      ]
+    }
+  ]
+}

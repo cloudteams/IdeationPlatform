@@ -329,6 +329,8 @@ class PropertyManager:
         filters_aggregate = []
         for f in filters:
             prop = self.get_property_by_name(re.split('[=<>]', f)[0])
+            if not prop.filter_by:
+                raise PropertyNotFoundException('Property "%s" was not found.' % prop.name)
             if prop.is_generated():
                 filters_generated.append(f)
             elif prop.aggregate is None:
