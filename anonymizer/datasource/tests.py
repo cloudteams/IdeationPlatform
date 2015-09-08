@@ -105,7 +105,6 @@ class PropertyTests(TestCase):
         self.assertTrue(Property.matches(5, '>=5'))
         self.assertFalse(Property.matches(4, '>=5'))
 
-        
 class UserManagerTests(TestCase):
 
     def setUp(self):

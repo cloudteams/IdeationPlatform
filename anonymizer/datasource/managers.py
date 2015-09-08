@@ -149,6 +149,16 @@ class Property:
         if (exp[0] == exp[-1] == '"') or (exp[0] == exp[-1] == "'"):
             exp = exp[1:-1]
 
+        # read as number if possible
+        try:
+            exp = int(exp)
+        except ValueError:
+            try:
+                exp = float(exp)
+            except ValueError:
+                pass
+
+        # apply the operator
         if operator == '=':
             return val == exp
         elif operator == '!=':
