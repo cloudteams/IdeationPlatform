@@ -60,3 +60,7 @@ form p > * {
 .persona-teaser {
     margin: 20px 0;
 }
+
+select.val-input {
+    width: 170px;
+}

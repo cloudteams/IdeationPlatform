@@ -106,11 +106,15 @@ $(function() {
             for (var i=0; i<options.length; i++) {
                 //format option text
                 var text = options[i];
+                var opt_val = options[i];
+
                 if (options[i].indexOf('=') >= 0) {
-                    text = options[i].split('=')[1] + ' (' + options[i].split('=')[0] + ')';
+                    var arr = options[i].split('=')
+                    opt_val = arr[1];
+                    text = arr[1] + ' (' + arr[0] + ')';
                 }
 
-                $(val_control).append('<option value="' + options[i]  + '">' + text + '</option>');
+                $(val_control).append('<option value="' + opt_val  + '">' + text + '</option>');
             }
         } else {
             val_control = $('<input type="text" class="val-input" value=""/>');

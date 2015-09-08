@@ -1,4 +1,5 @@
-from anonymizer.datasource.providers.Ranges import from_int_value, from_float_value
+from anonymizer.datasource.providers.Ranges import from_int_value, from_float_value, \
+    from_int_value__type, from_float_value__type
 
 __author__ = 'dipap'
 
@@ -51,7 +52,20 @@ class PersonTests(TestCase):
 
 class RangesTests(TestCase):
 
-    def test_from_int_value(self):
+    def test_from_value__type(self):
+        # test int return type
+        tp = from_int_value__type(('1..10|11..20|21..30', 7))
+        self.assertEqual(tp, 'Scalar(1..10,11..20,21..30)')
+
+        # test float return type
+        tp = from_float_value__type(('1..10|10..20|20..30', 7))
+        self.assertEqual(tp, 'Scalar(1..10,10..20,20..30)')
+
+        # test names in scalar type
+        tp = from_float_value__type(('1..10=L|10..20=M|20..30=H', 7))
+        self.assertEqual(tp, 'Scalar(1..10=L,10..20=M,20..30=H)')
+
+    def test_from_value(self):
         # test simple ranges
         v = from_int_value(('1..10|11..20|21..30', 7))
         self.assertEqual(v, '1..10')

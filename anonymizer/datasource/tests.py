@@ -76,7 +76,36 @@ class PropertyTests(TestCase):
         with self.assertRaises(ProviderMethodNotFound):
             Property(self.um, '^Person.first_name_wrong', None)
 
+    def test_dynamic_type_with_helper(self):
+        p = Property(self.um, '^Ranges.from_float_value(10..20|20..30|30..40, 35)', None, tp='###')
+        self.assertEqual(p.tp, 'Scalar(10..20,20..30,30..40)')
 
+    def test_exception_on_missing_type_helper(self):
+        with self.assertRaises(ProviderMethodNotFound):
+            Property(self.um, '^Person.first_name', None, tp='###')
+
+    def test_matches(self):
+        self.assertTrue(Property.matches(5, '=5'))
+        self.assertFalse(Property.matches(6, '=5'))
+
+        self.assertFalse(Property.matches(6, '!=5'))
+        self.assertTrue(Property.matches(5, '!=5'))
+
+        self.assertTrue(Property.matches(4, '<5'))
+        self.assertFalse(Property.matches(5, '<5'))
+
+        self.assertTrue(Property.matches(6, '>5'))
+        self.assertFalse(Property.matches(5, '>5'))
+
+        self.assertTrue(Property.matches(4, '<=5'))
+        self.assertTrue(Property.matches(5, '<=5'))
+        self.assertFalse(Property.matches(6, '<=5'))
+
+        self.assertTrue(Property.matches(6, '>=5'))
+        self.assertTrue(Property.matches(5, '>=5'))
+        self.assertFalse(Property.matches(4, '>=5'))
+
+        
 class UserManagerTests(TestCase):
 
     def setUp(self):
@@ -109,3 +138,4 @@ class UserManagerTests(TestCase):
     def test_aggregate_filter(self):
         res = self.um.filter(['age=37', 'run_duration_avg<13'])
         self.assertEqual(len(res), 1)
+

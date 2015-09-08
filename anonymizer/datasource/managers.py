@@ -115,7 +115,7 @@ class Property:
                     raise ProviderMethodNotFound('Provider method ' + fn_name + ' declared dynamic type but function ' +
                                                  fn_name + '__type was not found')
 
-                self.tp = fn_type(self.fn_args)
+                self.tp = fn_type(self.fn_args[:])
 
     def is_generated(self):
         return self.source[0] in ['^']
@@ -126,6 +126,43 @@ class Property:
             result = self.aggregate + '(' + result + ')'
 
         return result
+
+    @staticmethod
+    def matches(val, filter_exp):
+        """
+        Checks if the value `val` follows the filter expression
+        E.g val = "5", filter_exp = ">10" returns false
+        """
+        f_name = re.split('[=<>]', filter_exp)[0]
+        operator = ''
+        exp = ''
+
+        for char in filter_exp[len(f_name):]:
+            if not exp:
+                if char in ['=', '<', '>', '!']:
+                    operator += char
+                else:
+                    exp = char
+            else:
+                exp += char
+
+        if (exp[0] == exp[-1] == '"') or (exp[0] == exp[-1] == "'"):
+            exp = exp[1:-1]
+
+        if operator == '=':
+            return val == exp
+        elif operator == '!=':
+            return val != exp
+        elif operator == '>':
+            return val > exp
+        elif operator == '>=':
+            return val >= exp
+        elif operator == '<':
+            return val < exp
+        elif operator == '<=':
+            return val <= exp
+        else:
+            raise UnknownOperatorException(operator)
 
 
 class PropertyManager:
@@ -199,14 +236,14 @@ class PropertyManager:
         # generate other properties
         for prop in self.properties:
             if prop.is_generated():
-                fn_args = prop.fn_args
+                fn_args = prop.fn_args[:]
 
                 # search for 'special' arguments the must be replaced
                 # e.g property names like `@age`
                 for idx, fn_arg in enumerate(fn_args):
                     if fn_arg:
                         # replace property names with their values
-                        if fn_arg[0] == '@':
+                        if type(fn_arg) == str and fn_arg[0] == '@':
                             try:
                                 fn_args[idx] = result[fn_arg[1:]]
                             except KeyError:
@@ -224,43 +261,6 @@ class PropertyManager:
 
         return final_result
 
-    @staticmethod
-    def matches(val, filter_exp):
-        """
-        Checks if the value `val` follows the filter expression
-        E.g val = "5", filter_exp = ">10" returns false
-        """
-        f_name = re.split('[=<>]', filter_exp)[0]
-        operator = ''
-        exp = ''
-
-        for char in filter_exp[len(f_name):]:
-            if not exp:
-                if char in ['=', '<', '>', '!']:
-                    operator += char
-                else:
-                    exp = char
-            else:
-                exp += char
-
-        if (exp[0] == exp[-1] == '"') or (exp[0] == exp[-1] == "'"):
-            exp = exp[1:-1]
-
-        if operator == '=':
-            return val == exp
-        elif operator == '!=':
-            return val != exp
-        elif operator == '>':
-            return val > exp
-        elif operator == '>=':
-            return val >= exp
-        elif operator == '<':
-            return val < exp
-        elif operator == '<=':
-            return val <= exp
-        else:
-            raise UnknownOperatorException(operator)
-
     def filter_by_generated(self, results, generated_filters):
         for g_filter in generated_filters:
             f_name = re.split('[=<>]', g_filter)[0]
@@ -269,7 +269,7 @@ class PropertyManager:
             if prop.is_generated():
                 new_results = []
                 for result in results:
-                    if self.matches(result[prop.name], g_filter):
+                    if prop.matches(result[prop.name], g_filter):
                         new_results.append(result)
 
                 results = new_results

@@ -33,7 +33,8 @@ def edit_persona_properties(request, pk):
     status = 200
 
     if request.method == 'GET':
-        form = PersonaPropertiesForm(None, initial={'query': persona.query})  # not necessary for getting the form, just when validating
+        # not necessary for getting the form, just when validating
+        form = PersonaPropertiesForm(None, initial={'query': persona.query})
 
     elif request.method == 'POST':
         form = PersonaPropertiesForm(user_manager, request.POST)
