@@ -18,7 +18,7 @@
                 <select class="filter-select">
                     <option value=""></option>
                     {% for filter in filters %}
-                        <option value="{{filter.name}}">{{filter.label}}</option>
+                        <option value="{{filter.name}}" data-type="{{filter.type}}">{{filter.label}}</option>
                     {% endfor %}
                 </select>
 
@@ -32,7 +32,7 @@
                     <option value="!=">!=</option>
                 </select>
 
-                <input type="text" value=""/>
+                <input type="text" class="val-input" value=""/>
 
                 <span class="remove-row">x</span>
             </div>

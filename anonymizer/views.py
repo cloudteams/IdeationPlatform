@@ -30,6 +30,7 @@ class ConnectionConfigurationCreateView(CreateView):
     def get_success_url(self):
         return self.object.update_info_url()
 
+
 create_configuration = ConnectionConfigurationCreateView.as_view()
 
 
@@ -152,15 +153,15 @@ def select_columns(request, pk):
         for initial_form in initial:
             for plugin in PROVIDER_PLUGINS:
                 total_source = initial_form['source']
-                if total_source.split('(')[0] != plugin[0]:
+                if total_source.split('(')[0] != plugin['source']:
                     continue
                 initial_form['source'] = total_source.split('(')[0]
 
-                if len(plugin) > 2:
+                if 'args' in plugin:
                     plugin_params = total_source.split('(')[1][:-1]
 
                     for idx, option in enumerate(plugin_params.split(',')):
-                        initial_form[plugin[0] + '__param__' + plugin[2][idx][0]] = option
+                        initial_form[plugin['source'] + '__param__' + plugin['args'][idx][0]] = option
 
         # create formset
         ColumnFormset = formset_factory(wraps(ColumnForm)(partial(ColumnForm, all_properties=columns)), extra=0)
@@ -205,13 +206,16 @@ def select_columns(request, pk):
                     if table_name.lower() != config.users_table.lower():
                         p['user_fk'] = connection.get_foreign_key_between(table_name, config.users_table)
                 else:
-                    p['type'] = 'VARCHAR(255)'  # TODO: plugins should manifest their return type
-
                     # read plugin options
-                    plugin_options = [plugin_info[2] for plugin_info in PROVIDER_PLUGINS if
-                                         plugin_info[0] == p['source'] and len(plugin_info) > 2]
-                    if plugin_options:
-                        plugin_options = plugin_options[0]
+                    plugin_info = [plugin_info for plugin_info in PROVIDER_PLUGINS if
+                                   plugin_info['source'] == p['source']][0]
+
+                    # plugin return type
+                    p['type'] = plugin_info['type']
+
+                    # argument management
+                    if 'args' in plugin_info:
+                        plugin_options = plugin_info['args']
                         plugin_name = p['source']
 
                         option_values = []
@@ -281,8 +285,8 @@ def query_connection(request, pk):
     Available data properties:
 """
 
-                for p in user_manager.pm.properties:
-                    result += "        %s\n" % p.name
+                for f in user_manager.list_filters():
+                    result += "        %s\n" % f['name']
 
             else:
                 raise Exception('Unknown command: %s' % q)
@@ -310,5 +314,6 @@ class ConnectionConfigurationManualDeleteView(DeleteView):
     template_name = 'anonymizer/connection/delete.html'
     context_object_name = 'configuration'
     success_url = '/anonymizer/'
+
 
 delete_view = ConnectionConfigurationManualDeleteView.as_view()

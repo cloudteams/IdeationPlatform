@@ -9,7 +9,7 @@ $(function() {
         /* clean values */
         $('.property-row:last-of-type select.filter-select').val('0');
         $('.property-row:last-of-type select.comparison-select').val('0');
-        $('.property-row:last-of-type input').val('');
+        $('.property-row:last-of-type .val-input').val('');
     });
 
     /* Remove an existing property */
@@ -18,7 +18,7 @@ $(function() {
             //clean this row
             $(this).find('select.filter-select').val('0');
             $(this).find('select.comparison-select').val('0');
-            $(this).find('input').val('');
+            $(this).find('.val-input').val('');
         } else {
             //remove this row
             $(this).closest('.property-row').remove();
@@ -36,7 +36,6 @@ $(function() {
             var pos = 0;
 
             var filter = filters[f];
-            console.log(filter);
             for (var i=0; i<filter.length; i++) {
                 //detect in which part of the query we are
                 if (['>', '<', '=', '!'].indexOf(filter[i]) >= 0) {
@@ -58,8 +57,9 @@ $(function() {
         //create the UI elements again
         for (var i=0; i<infos.length; i++) { //foreach filter
             $('.property-row:last-of-type').find('select.filter-select').val(infos[i]['name']);
+            $('.property-row:last-of-type').find('select.filter-select').trigger('change');
             $('.property-row:last-of-type').find('select.comparison-select').val(infos[i]['comp']);
-            $('.property-row:last-of-type').find('input').val(infos[i]['val']);
+            $('.property-row:last-of-type').find('.val-input').val(infos[i]['val']);
 
             //add new row
             if (i < infos.length - 1) {
@@ -67,8 +67,6 @@ $(function() {
             }
         }
     }
-
-    load_query($('.query-box input').val());
 
     /* Create the query from rows */
     $('body').on('submit', '.persona-filters-form', function() {
@@ -82,10 +80,45 @@ $(function() {
             }
 
             if (row.find('select.filter-select').val() != '') {
-                query += row.find('select.filter-select').val() + row.find('select.comparison-select').val() + row.find('input').val();
+                query += row.find('select.filter-select').val() + row.find('select.comparison-select').val() + row.find('.val-input').val();
             }
         }
 
         $('.query-box input').val(query);
     });
+
+    /* Change value input widget on different variables */
+    $('body').on('change', '.filter-select', function() {
+        var tp = $(this).find(':selected').data('type');
+        var row = $(this).closest('.property-row')
+
+        //remove previous input
+        $(row).find('.val-input').remove();
+
+        var val_control = '';
+        if (tp.startsWith('Scalar')) {
+            val_control = $('<select class="val-input"><option value=""></option></select>');
+
+            var start = tp.indexOf('(') + 1;
+            var end = tp.length - start - 1;
+
+            var options = tp.substr(start, end).split(',');
+            for (var i=0; i<options.length; i++) {
+                //format option text
+                var text = options[i];
+                if (options[i].indexOf('=') >= 0) {
+                    text = options[i].split('=')[1] + ' (' + options[i].split('=')[0] + ')';
+                }
+
+                $(val_control).append('<option value="' + options[i]  + '">' + text + '</option>');
+            }
+        } else {
+            val_control = $('<input type="text" class="val-input" value=""/>');
+        }
+
+        $(val_control).insertBefore($(row).find('.remove-row'));
+    });
+
+
+    load_query($('.query-box input').val());
 });

@@ -4,6 +4,7 @@ from util import Configuration
 from connections import ConnectionManager
 from pydoc import locate
 import re
+import csv
 
 
 class PropertyManagerException(Exception):
@@ -73,9 +74,9 @@ class Property:
             self.label = self.name
 
         if tp:
-            self.type = tp
+            self.tp = tp
         else:
-            self.tp = 'string'
+            self.tp = 'VARCHAR'
 
         if not self.is_generated():
             # find responsible db connection
@@ -99,6 +100,22 @@ class Property:
                 self.fn = getattr(cls, fn_name)
             except AttributeError:
                 raise ProviderMethodNotFound('Provider method ' + fn_name + ' was not found')
+
+            # load arguments
+            pos = self.source.find('(')
+            args_str = self.source[pos+1:-1]
+            reader = csv.reader([args_str], delimiter=',')
+            self.fn_args = next(reader)
+
+            # if the type must be inferred execute the __type helper
+            if self.tp == '###':
+                try:
+                    fn_type = getattr(cls, fn_name + '__type')
+                except AttributeError:
+                    raise ProviderMethodNotFound('Provider method ' + fn_name + ' declared dynamic type but function ' +
+                                                 fn_name + '__type was not found')
+
+                self.tp = fn_type(self.fn_args)
 
     def is_generated(self):
         return self.source[0] in ['^']
@@ -163,7 +180,8 @@ class PropertyManager:
                 # ignore properties we're not allowed to filter by
                 filters.append({
                     'name': p.name,
-                    'label': p.label
+                    'label': p.label,
+                    'type': p.tp,
                 })
 
         return filters
@@ -181,8 +199,7 @@ class PropertyManager:
         # generate other properties
         for prop in self.properties:
             if prop.is_generated():
-                # get function argument
-                fn_args = prop.source.split('.')[1].split('(')[1][:-1].split(',')
+                fn_args = prop.fn_args
 
                 # search for 'special' arguments the must be replaced
                 # e.g property names like `@age`
@@ -207,7 +224,8 @@ class PropertyManager:
 
         return final_result
 
-    def matches(self, val, filter_exp):
+    @staticmethod
+    def matches(val, filter_exp):
         """
         Checks if the value `val` follows the filter expression
         E.g val = "5", filter_exp = ">10" returns false

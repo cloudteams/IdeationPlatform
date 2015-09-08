@@ -18,20 +18,39 @@ AGGREGATE_LIST = [
 
 PROVIDER_PLUGINS = [
     # providers.Person
-    ('^Person.first_name', 'Random name', [
-        ('gender', 'The gender of this person'),
-        ('male_val', 'Male gender value'),
-        ('female_val', 'Female gender value'),
-    ]),
-    ('^Person.last_name_initial', 'Random last name (initial)'),
+    {
+        'source': '^Person.first_name',
+        'label': 'Random name',
+        'args': [
+            ('gender', 'The gender of this person'),
+            ('male_val', 'Male gender value'),
+            ('female_val', 'Female gender value'),
+        ],
+        'type': 'VARCHAR(255)'
+    },
+    {
+        'source': '^Person.last_name_initial',
+        'label': 'Random last name (initial)',
+        'type': 'VARCHAR(2)'
+    },
 
     # providers.Ranges
-    ('^Ranges.from_int_value', 'Int value to range', [
-        ('ranges', 'A set of ranges (e.g 1~10|11~20|21~30). Can also contain names like 1~10=Low'),
-        ('value', 'The value that must be matched with the appropriate range'),
-    ]),
-    ('^Ranges.from_float_value', 'Float value to range', [
-        ('ranges', 'A set of ranges (e.g 1~10|10~20|20~30). Can also contain names like 1~10=Low. Top limit of each range is NOT inclusive'),
-        ('value', 'The value that must be matched with the appropriate range'),
-    ]),
+    {
+        'source': '^Ranges.from_int_value',
+        'label': 'Int value to range',
+        'args': [
+            ('ranges', 'A set of ranges (e.g 1..10|11..20|21..30). Can also contain names like 1..10=Low'),
+            ('value', 'The value that must be matched with the appropriate range')
+        ],
+        'type': '###',
+    },
+    {
+        'source': '^Ranges.from_float_value',
+        'label': 'Float value to range',
+        'args': [
+            ('ranges', 'A set of ranges (e.g 1..10|10..20|20..30). Can also contain names like 1..10=Low. Top limit of each range is NOT inclusive'),
+            ('value', 'The value that must be matched with the appropriate range'),
+        ],
+        'type': '###',
+    },
 ]
