@@ -7,6 +7,7 @@
     <div class="btn-group pull-right">
         <a href="/persona-builder/personas/" class="btn btn-default">Back to Persona Pool</a>
         <a href="{{persona.get_edit_properties_url}}" class="btn btn-default">Edit persona</a>
+        <a href="{{persona.get_absolute_url}}delete/" class="btn btn-danger">Delete</a>
     </div>
 
     {% include "persona_builder/persona/teaser.html" %}

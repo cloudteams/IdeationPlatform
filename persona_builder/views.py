@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import CreateView, DetailView, ListView
+from django.views.generic import CreateView, DetailView, ListView, DeleteView
 from anonymizer.models import ConnectionConfiguration
 from persona_builder.forms import PersonaForm, PersonaPropertiesForm
 from persona_builder.models import Persona
@@ -87,3 +87,13 @@ class PersonaListView(ListView):
         return super(PersonaListView, self).get_queryset().filter(is_ready=True)
 
 list_personas = PersonaListView.as_view()
+
+
+class PersonaDeleteView(DeleteView):
+    model = Persona
+    template_name = 'persona_builder/persona/delete.html'
+    context_object_name = 'persona'
+    success_url = '/persona-builder/personas/'
+
+
+delete_persona = PersonaDeleteView.as_view()

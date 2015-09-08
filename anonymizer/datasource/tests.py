@@ -22,7 +22,7 @@ class ConnectionTests(TestCase):
     def test_tables(self):
         # sqlite also reports the system special table
         self.assertEqual(len(self.sqlite3.tables()), 3)
-        self.assertEqual(len(self.mysql.tables()), 2)
+        self.assertEqual(len(self.mysql.tables()), 3)
 
     def test_table_primary_key(self):
         self.assertEqual(self.sqlite3.primary_key_of('users'), 'users.id@my_site_db')

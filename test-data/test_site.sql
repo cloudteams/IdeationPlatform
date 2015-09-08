@@ -516,3 +516,9 @@ INSERT INTO `running` VALUES (399,41,9);
 INSERT INTO `running` VALUES (400,92,18);
 INSERT INTO `running` VALUES (401,24,14);
 
+CREATE TABLE `other` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `key` varchar(45) NOT NULL,
+  `value` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);

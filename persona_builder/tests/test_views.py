@@ -1,5 +1,6 @@
 from django.test import TestCase
 from anonymizer.models import ConnectionConfiguration
+from persona_builder.models import Persona
 
 __author__ = 'dipap'
 
@@ -55,6 +56,13 @@ class PersonaViewTests(TestCase):
         # test persona details view
         response = self.client.get('/persona-builder/personas/1/')
         self.assertEqual(response.status_code, 200)
+
+    def test_delete_persona(self):
+        self.create_persona()
+
+        response = self.client.post('/persona-builder/personas/1/delete/')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Persona.objects.all().count(), 0)
 
     def test_personas_list(self):
         response = self.client.get('/persona-builder/personas/')
