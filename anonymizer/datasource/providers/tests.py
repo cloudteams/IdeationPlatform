@@ -1,3 +1,4 @@
+from anonymizer.datasource.providers.Location import address_to_city, address_to_country
 from anonymizer.datasource.providers.Ranges import from_int_value, from_float_value, \
     from_int_value__type, from_float_value__type
 
@@ -84,3 +85,12 @@ class RangesTests(TestCase):
 
         v = from_float_value(('..10=Low|10..20=Medium|20..=High', 20))
         self.assertEqual(v, 'High')
+
+
+class LocationTests(TestCase):
+
+    def test_address_to_city(self):
+        self.assertEqual(address_to_city(('Markou Mpotsari 19, Nikea',)), 'Nikea')
+
+    def test_address_to_country(self):
+        self.assertEqual(address_to_country(('Markou Mpotsari 19, Nikea',)), 'Greece')

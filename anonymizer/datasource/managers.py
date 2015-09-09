@@ -127,13 +127,12 @@ class Property:
 
         return result
 
-    @staticmethod
-    def matches(val, filter_exp):
+    def matches(self, val, filter_exp):
         """
         Checks if the value `val` follows the filter expression
         E.g val = "5", filter_exp = ">10" returns false
         """
-        f_name = re.split('[=<>]', filter_exp)[0]
+        f_name = re.split('[=!<>]', filter_exp)[0]
         operator = ''
         exp = ''
 
@@ -146,33 +145,59 @@ class Property:
             else:
                 exp += char
 
+        # remove quotes
+        if type(val) in [str, unicode]:
+            if (val[0] == val[-1] == '"') or (val[0] == val[-1] == "'"):
+                val = val[1:-1]
+
         if (exp[0] == exp[-1] == '"') or (exp[0] == exp[-1] == "'"):
             exp = exp[1:-1]
 
-        # read as number if possible
-        try:
-            exp = int(exp)
-        except ValueError:
+        if self.tp.lower().startswith('scalar'):
+            ranges = self.tp.split('(')[1][:-1].split(',')
+
+            for idx, r in enumerate(ranges):
+                r_arr = r.split('=')
+                if len(r_arr) == 1:
+                    r_arr.append(r_arr[0])
+
+                if val in r_arr:
+                    val = idx
+                if exp in r_arr:
+                    exp = idx
+
+            if type(val) != int:
+                raise ValueError('Invalid option: ' + str(val))
+
+            if type(exp) != int:
+                raise ValueError('Invalid option: ' + str(exp))
+        else:
+            # read as number if possible
             try:
-                exp = float(exp)
+                exp = int(exp)
             except ValueError:
-                pass
+                try:
+                    exp = float(exp)
+                except ValueError:
+                    pass
 
         # apply the operator
         if operator == '=':
-            return val == exp
+            result = val == exp
         elif operator == '!=':
-            return val != exp
+            result = val != exp
         elif operator == '>':
-            return val > exp
+            result = val > exp
         elif operator == '>=':
-            return val >= exp
+            result = val >= exp
         elif operator == '<':
-            return val < exp
+            result = val < exp
         elif operator == '<=':
-            return val <= exp
+            result = val <= exp
         else:
             raise UnknownOperatorException(operator)
+
+        return result
 
 
 class PropertyManager:
