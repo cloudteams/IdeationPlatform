@@ -1,5 +1,6 @@
 from anonymizer.datasource.managers import Property, \
-    UserManagerException, ProviderNotFound, ProviderMethodNotFound, UserManager, PropertyNotFoundException
+    UserManagerException, ProviderNotFound, ProviderMethodNotFound, UserManager, PropertyNotFoundException, \
+    UnknownOperatorException
 from anonymizer.datasource.connections import ConnectionManager, ConnectionNotFound
 from anonymizer.datasource.util import Configuration
 
@@ -107,6 +108,10 @@ class PropertyTests(TestCase):
         self.assertTrue(p.matches(5, '>=5'))
         self.assertFalse(p.matches(4, '>=5'))
 
+        # test wrong operator
+        with self.assertRaises(UnknownOperatorException):
+            self.assertFalse(p.matches(4, '<>5'))
+
     def test_matches_string(self):
         p = Property(self.um, '^Person.first_name', None)
 
@@ -115,6 +120,9 @@ class PropertyTests(TestCase):
         self.assertFalse(p.matches('Nick', '!=Nick'))
         self.assertTrue(p.matches('Nick', '!=John'))
 
+        # test quoted
+        self.assertTrue(p.matches('Nick', '="Nick"'))
+
     def test_matches_scalar(self):
         p = Property(self.um, '^Ranges.from_float_value(10..20|20..30|30..40, 35)', None, tp='###')
 
@@ -122,6 +130,13 @@ class PropertyTests(TestCase):
         self.assertFalse(p.matches('10..20', '<10..20'))
         self.assertTrue(p.matches('20..30', '>10..20'))
         self.assertTrue(p.matches('20..30', '!=10..20'))
+
+        # test wrong ranges
+        with self.assertRaises(ValueError):
+            self.assertTrue(p.matches('20..29', '>10..20'))
+
+        with self.assertRaises(ValueError):
+            self.assertTrue(p.matches('20..30', '!=10..15'))
 
     def test_matches_named_scalar(self):
         p = Property(self.um, '^Ranges.from_float_value(10..20=L|20..30=M|30..40=H, 35)', None, tp='###')
