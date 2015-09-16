@@ -42,6 +42,12 @@ class Connection:
 
         return cursor
 
+    def commit(self):
+        """
+        Commits the cursor
+        """
+        self.conn.commit()
+
     def tables(self):
         """
         :return: a list of all tables in this connection

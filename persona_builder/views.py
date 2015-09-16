@@ -43,6 +43,7 @@ def edit_persona_properties(request, pk):
         if form.is_valid():
             # if the query changes, we have to update the UUID of the persona
             if persona.query != form.cleaned_data['query']:
+                print form.cleaned_data['query']
                 persona.uuid = uuid.uuid4()
                 persona.query = form.cleaned_data['query']
 

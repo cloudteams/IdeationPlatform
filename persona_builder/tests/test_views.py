@@ -73,6 +73,7 @@ class PersonaViewTests(TestCase):
 
         connection = ConnectionConfiguration.objects.get(pk=1).get_connection()
         connection.execute("UPDATE users SET gender='Female' WHERE users.id=3;")
+        connection.commit()
         users = Persona.objects.get(pk=1).users
 
         response = self.client.post('/persona-builder/personas/1/update-users/')
@@ -80,6 +81,7 @@ class PersonaViewTests(TestCase):
         self.assertNotEqual(users, Persona.objects.get(pk=1).users)
 
         connection.execute("UPDATE users SET gender='Male' WHERE users.id=3;")
+        connection.commit()
 
     def test_delete_persona(self):
         self.create_persona()

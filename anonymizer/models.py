@@ -75,5 +75,8 @@ class ConnectionConfiguration(models.Model):
         manager = ConnectionManager(self.info_to_json())
         return manager.get(self.name)
 
-    def get_user_manager(self, token=uuid.uuid4):
+    def get_user_manager(self, token=None):
+        if not token:
+            token = uuid.uuid4()
+
         return UserManager(from_str=self.to_json(), token=token)

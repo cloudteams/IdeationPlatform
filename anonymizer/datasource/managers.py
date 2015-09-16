@@ -487,6 +487,7 @@ class UserManager:
             # try to find user in the old list
             for old_user in old_list:
                 if old_user[pk.name] == user[pk.name]:
+                    import pdb;pdb.set_trace()
                     found = True
                     u = user.copy()
                     for prop in self.pm.properties:
