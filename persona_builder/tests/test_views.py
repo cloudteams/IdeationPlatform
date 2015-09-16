@@ -68,9 +68,7 @@ class PersonaViewTests(TestCase):
         response = self.client.get('/persona-builder/personas/1/')
         self.assertEqual(response.status_code, 200)
 
-    def test_update_users(self):
-        self.create_persona()
-
+        # test update users
         connection = ConnectionConfiguration.objects.get(pk=1).get_connection()
         connection.execute("UPDATE users SET gender='Female' WHERE users.id=3;")
         connection.commit()

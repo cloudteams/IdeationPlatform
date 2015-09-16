@@ -10,8 +10,8 @@ class Persona(models.Model):
     name = models.CharField(max_length=256, null=False, blank=False, unique=True)
     description = models.CharField(max_length=4096, null=False, blank=False)
     avatar = models.ImageField(upload_to='persona-avatars')
-    query = models.CharField(max_length=4096, editable=False)
-    users = models.CharField(max_length=16256, editable=False, default='[]')
+    query = models.TextField(editable=False)
+    users = models.TextField(editable=False, default='[]')
     is_ready = models.BooleanField(default=False, editable=False)
     is_public = models.BooleanField(default=False)
 

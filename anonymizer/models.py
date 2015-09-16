@@ -14,7 +14,7 @@ class ConnectionConfiguration(models.Model):
     users_table = models.CharField(max_length=256, default='')
     user_pk = models.CharField(max_length=256, default='')
 
-    properties = models.CharField(max_length=16384, default='')
+    properties = models.TextField(default='')
 
     def update_info_url(self):
         base_url = '/anonymizer/connection/update-info'

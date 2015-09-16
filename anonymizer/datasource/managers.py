@@ -434,7 +434,7 @@ class UserManager:
     """
     The User manager is responsible for fetching and filtering user information
     """
-    def __init__(self, config_file='', from_str='', token=uuid.uuid4):
+    def __init__(self, config_file='', from_str='', token=None):
         if config_file:
             from_str = open(config_file).read()
 
@@ -487,7 +487,6 @@ class UserManager:
             # try to find user in the old list
             for old_user in old_list:
                 if old_user[pk.name] == user[pk.name]:
-                    import pdb;pdb.set_trace()
                     found = True
                     u = user.copy()
                     for prop in self.pm.properties:
