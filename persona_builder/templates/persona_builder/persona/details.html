@@ -12,7 +12,14 @@
 
     {% include "persona_builder/persona/teaser.html" %}
 
-    <p><em>Users matching this profile:</em></p>
+    <div class="clearfix">
+        <em>Users matching this profile:</em>
+        <form action="{{persona.get_absolute_url}}update-users/" method="POST" class="pull-right">
+            {% csrf_token %}
+            <input type="submit" class="btn btn-primary" value="Refresh users" />
+        </form>
+    </div>
+
     <table class="table table-striped">
         <thead>
             <tr>

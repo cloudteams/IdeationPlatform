@@ -81,6 +81,12 @@ class PropertyTests(TestCase):
         p = Property(self.um, '^Ranges.from_float_value(10..20|20..30|30..40, 35)', None, tp='###')
         self.assertEqual(p.tp, 'Scalar(10..20,20..30,30..40)')
 
+    def test_dependencies(self):
+        gender = self.um.pm.get_property_by_name('gender')
+        first_name = self.um.pm.get_property_by_name('first_name')
+
+        self.assertEqual(self.um.pm.get_dependencies(first_name), [gender])
+
     def test_exception_on_missing_type_helper(self):
         with self.assertRaises(ProviderMethodNotFound):
             Property(self.um, '^Person.first_name', None, tp='###')
@@ -117,6 +123,7 @@ class PropertyTests(TestCase):
 
         self.assertTrue(p.matches('Nick', '=Nick'))
         self.assertFalse(p.matches('Nick', '=John'))
+
         self.assertFalse(p.matches('Nick', '!=Nick'))
         self.assertTrue(p.matches('Nick', '!=John'))
 

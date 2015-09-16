@@ -17,8 +17,8 @@ class PersonaViewTests(TestCase):
         """
         properties = open('test-data/config/persona_builder_default_properties.json').read()
 
-        ConnectionConfiguration.objects.create(name='test_connection', connection_type='django.db.backends.mysql', info=info,
-                                               user_pk='users.id@test_connection',
+        ConnectionConfiguration.objects.create(name='test_connection', connection_type='django.db.backends.mysql',
+                                               info=info, user_pk='users.id@test_connection',
                                                users_table='users', properties=properties)
 
     def create_persona(self):
@@ -49,13 +49,37 @@ class PersonaViewTests(TestCase):
         self.assertEqual(response.status_code, 400)
 
         # test correct query
+        old_uuid = Persona.objects.get(pk=1).uuid
         query = 'age<30 AND running_duration>10'
         response = self.client.post(form_url, data={'query': query})
         self.assertEqual(response.status_code, 302)
+        # test that the uuid has changed with the new query
+        new_uuid = Persona.objects.get(pk=1).uuid
+        self.assertNotEqual(old_uuid, new_uuid)
+
+        # change that uuid does not change if we post the same query
+        old_uuid = new_uuid
+        response = self.client.post(form_url, data={'query': query})
+        self.assertEqual(response.status_code, 302)
+        new_uuid = Persona.objects.get(pk=1).uuid
+        self.assertEqual(old_uuid, new_uuid)
 
         # test persona details view
         response = self.client.get('/persona-builder/personas/1/')
         self.assertEqual(response.status_code, 200)
+
+    def test_update_users(self):
+        self.create_persona()
+
+        connection = ConnectionConfiguration.objects.get(pk=1).get_connection()
+        connection.execute("UPDATE users SET gender='Female' WHERE users.id=3;")
+        users = Persona.objects.get(pk=1).users
+
+        response = self.client.post('/persona-builder/personas/1/update-users/')
+        self.assertEqual(response.status_code, 302)
+        self.assertNotEqual(users, Persona.objects.get(pk=1).users)
+
+        connection.execute("UPDATE users SET gender='Male' WHERE users.id=3;")
 
     def test_delete_persona(self):
         self.create_persona()

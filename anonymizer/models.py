@@ -1,4 +1,5 @@
 import json
+import uuid
 from django.db import models
 from anonymizer.datasource.connections import ConnectionManager
 from anonymizer.datasource.managers import UserManager
@@ -74,5 +75,5 @@ class ConnectionConfiguration(models.Model):
         manager = ConnectionManager(self.info_to_json())
         return manager.get(self.name)
 
-    def get_user_manager(self):
-        return UserManager(from_str=self.to_json())
+    def get_user_manager(self, token=uuid.uuid4):
+        return UserManager(from_str=self.to_json(), token=token)

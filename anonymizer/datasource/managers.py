@@ -1,8 +1,11 @@
+import uuid
+
 __author__ = 'dipap'
 
 from util import Configuration
 from connections import ConnectionManager
 from pydoc import locate
+import hashlib
 import re
 import csv
 
@@ -54,13 +57,14 @@ class Property:
     A single property
     """
     def __init__(self, connection_manager, source, user_fk, name=None, tp=None, aggregate=None, label=None,
-                 filter_by=True):
+                 filter_by=True, is_pk=False):
         self.connection_manager = connection_manager
         self.source = source
         self.table = source.split('@')[0].split('.')[0]
         self.column = source.split('@')[0].split('.')[1]
         self.aggregate = aggregate
         self.filter_by = filter_by
+        self.is_pk = is_pk
 
         if not name:
             self.name = self.column
@@ -204,13 +208,13 @@ class PropertyManager:
     """
     The manager for all properties
     """
-    def __init__(self, connection_manager, configuration):
+    def __init__(self, connection_manager, configuration, token=None):
         self.connection_manager = connection_manager
         self.configuration = configuration
         self.user_pk = Property(self.connection_manager, self.configuration.data['sites'][0]['user_pk'], user_fk=None,
-                                filter_by=False)
+                                is_pk=True)
 
-        self.properties = []
+        self.properties = [self.user_pk]
 
         for property_info in self.configuration.data['sites'][0]['properties']:
             if 'user_fk' in property_info:
@@ -238,6 +242,18 @@ class PropertyManager:
 
             self.properties.append(prop)
 
+        # generate manager token
+        if not token:
+            token = uuid.uuid4()
+        self.token = token
+
+    def get_primary_key(self):
+        for prop in self.properties:
+            if prop.is_pk:
+                return prop
+
+        return None
+
     def get_property_by_name(self, name):
         for prop in self.properties:
             if prop.name == name:
@@ -258,6 +274,21 @@ class PropertyManager:
 
         return filters
 
+    def get_dependencies(self, prop):
+        if prop.is_generated():
+            result = []
+
+            for p_name in prop.fn_args:
+                if p_name[0] == '@':
+                    dep_prop = self.get_property_by_name(p_name[1:])
+                    result.append(dep_prop)
+                    # the dependencies of this dependency property are also mine
+                    result += self.get_dependencies(dep_prop)
+
+            return result
+        else:
+            return []
+
     def info(self, row):
         idx = 0
         result = {}
@@ -265,7 +296,12 @@ class PropertyManager:
         # fill property values from database
         for prop in self.properties:
             if not prop.is_generated():
-                result[prop.name] = row[idx]
+                if prop.is_pk:
+                    # primary key
+                    result[prop.name] = hashlib.sha1(str(self.token) + '###' + str(row[idx])).hexdigest()
+                else:
+                    # default property
+                    result[prop.name] = row[idx]
                 idx += 1
 
         # generate other properties
@@ -313,7 +349,8 @@ class PropertyManager:
 
     def query(self):
         select_clause = 'SELECT ' + \
-                        ','.join([prop.full() + ' AS ' + prop.name for prop in self.properties if not prop.is_generated()]) + ' '
+                        ','.join([prop.full() + ' AS ' + prop.name
+                                  for prop in self.properties if not prop.is_generated()]) + ' '
 
         from_clause = 'FROM {0} '.format(self.user_pk.table)
 
@@ -397,13 +434,13 @@ class UserManager:
     """
     The User manager is responsible for fetching and filtering user information
     """
-    def __init__(self, config_file='', from_str=''):
+    def __init__(self, config_file='', from_str='', token=uuid.uuid4):
         if config_file:
             from_str = open(config_file).read()
 
         self.config = Configuration(from_str=from_str)
         self.cm = ConnectionManager(self.config.get_connection_info())
-        self.pm = PropertyManager(self.cm, self.config)
+        self.pm = PropertyManager(self.cm, self.config, token=token)
 
     def get(self, pk):
         # Ensures the user exists
@@ -437,3 +474,41 @@ class UserManager:
 
     def list_properties(self):
         return self.pm.list_properties()
+
+    # combine two lists of users, an old and a new version
+    # for users in both lists, keep generated information from the old (original) list
+    def combine(self, old_list, new_list):
+        pk = self.pm.get_primary_key()
+        result = []
+
+        for user in new_list:
+            found = False
+
+            # try to find user in the old list
+            for old_user in old_list:
+                if old_user[pk.name] == user[pk.name]:
+                    found = True
+                    u = user.copy()
+                    for prop in self.pm.properties:
+                        if prop.is_generated():
+                            # check if this property depends on any other that has changes
+                            dependencies = self.pm.get_dependencies(prop)
+                            dirty = False
+                            for dependency in dependencies:
+                                if (dependency.name not in old_user) or (dependency.name not in u):
+                                    dirty = True
+                                    break
+                                elif u[dependency.name] != old_user[dependency.name]:
+                                    dirty = True
+                                    break
+
+                            if not dirty:
+                                u[prop.name] = old_user[prop.name]
+
+                    result.append(u)
+                    break
+
+            if not found:
+                result.append(user)
+
+        return result
