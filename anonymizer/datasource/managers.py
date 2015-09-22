@@ -56,6 +56,7 @@ class Property:
     """
     A single property
     """
+
     def __init__(self, connection_manager, source, user_fk, name=None, tp=None, aggregate=None, label=None,
                  filter_by=True, is_pk=False):
         self.connection_manager = connection_manager
@@ -107,7 +108,7 @@ class Property:
 
             # load arguments
             pos = self.source.find('(')
-            args_str = self.source[pos+1:-1]
+            args_str = self.source[pos + 1:-1]
             reader = csv.reader([args_str], delimiter=',')
             self.fn_args = next(reader)
 
@@ -208,6 +209,7 @@ class PropertyManager:
     """
     The manager for all properties
     """
+
     def __init__(self, connection_manager, configuration, token=None):
         self.connection_manager = connection_manager
         self.configuration = configuration
@@ -217,6 +219,9 @@ class PropertyManager:
         self.properties = [self.user_pk]
 
         for property_info in self.configuration.data['sites'][0]['properties']:
+            if property_info['source'] == self.user_pk.source:
+                continue
+
             if 'user_fk' in property_info:
                 user_fk = property_info['user_fk']
             else:
@@ -237,7 +242,8 @@ class PropertyManager:
             else:
                 expose = True
 
-            prop = Property(self.connection_manager, property_info['source'], user_fk=user_fk, name=property_info['name'],
+            prop = Property(self.connection_manager, property_info['source'], user_fk=user_fk,
+                            name=property_info['name'],
                             tp=property_info['type'], aggregate=aggregate, label=label, filter_by=expose)
 
             self.properties.append(prop)
@@ -264,7 +270,7 @@ class PropertyManager:
     def list_filters(self):
         filters = []
         for p in self.properties:
-            if p.filter_by:
+            if p.filter_by and not p.is_pk:
                 # ignore properties we're not allowed to filter by
                 filters.append({
                     'name': p.name,
@@ -348,19 +354,21 @@ class PropertyManager:
         return results
 
     def query(self):
-        select_clause = 'SELECT ' + \
-                        ','.join([prop.full() + ' AS ' + prop.name
-                                  for prop in self.properties if not prop.is_generated()]) + ' '
+        select_clause = 'SELECT ' + ','.join([prop.full() + ' AS ' + prop.name
+                                             for prop in self.properties if not prop.is_generated()]) + ' '
 
         from_clause = 'FROM {0} '.format(self.user_pk.table)
 
         # find all joins
         join_clause = ''
+        joined_tables = []
         for prop in self.properties:
             if not prop.is_generated():
                 if prop.user_fk:
-                    join_clause += 'LEFT OUTER JOIN {0} ON {1}={2} '\
-                        .format(prop.table, prop.user_fk.full(), self.user_pk.full())
+                    if prop.table not in joined_tables:
+                        joined_tables.append(prop.table)
+                        join_clause += 'LEFT OUTER JOIN {0} ON {1}={2} ' \
+                            .format(prop.table, prop.user_fk.full(), self.user_pk.full())
 
         # return the `all` query
         return select_clause + from_clause + join_clause
@@ -372,6 +380,7 @@ class PropertyManager:
         group_by = ' GROUP BY ' + self.user_pk.full()
         query += group_by
 
+        print query
         # execute query & return results
         return [self.info(row) for row in self.user_pk.connection.execute(query).fetchall()]
 
@@ -434,6 +443,7 @@ class UserManager:
     """
     The User manager is responsible for fetching and filtering user information
     """
+
     def __init__(self, config_file='', from_str='', token=None):
         if config_file:
             from_str = open(config_file).read()

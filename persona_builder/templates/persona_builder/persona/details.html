@@ -32,9 +32,11 @@
             {% for user in users %}
                 <tr>
                     {% for property in properties %}
-                        {% with p_key=property.name %}
-                            <td>{{user|get_property:p_key}}</td>
-                        {% endwith %}
+                        {% if not property.is_pk %}
+                            {% with p_key=property.name %}
+                                <td>{{user|get_property:p_key}}</td>
+                            {% endwith %}
+                        {% endif %}
                     {% endfor %}
                 </tr>
             {% endfor %}

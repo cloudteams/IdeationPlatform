@@ -1,5 +1,8 @@
 
 $(function() {
+    /* Initially add remove form button */
+    $('.column-form').prepend('<span class="remove-form pull-right">x</span>');
+
     function on_option_input_change(selector) {
         $(selector).closest('.column-form').find('.option-input').closest('p').addClass('hidden');
         $(selector).closest('.column-form').find('.option-input[data-about="' + $(selector).val() + '"]').closest('p').removeClass('hidden');
@@ -43,5 +46,30 @@ $(function() {
     /* Update shown option fields on change*/
     $('body').on('change', 'select.source-options', function() {
         on_option_input_change(this);
+    });
+
+    /* Remove a form */
+    $('body').on('click', '.column-form .remove-form', function() {
+        //get the position of the removed form
+        var name = $(this).closest('.column-form').find('p:first-of-type input').attr('name');
+        var current = Number(name.split('-')[1]);
+
+        //remove this form
+        var form_list = $(this).closest('.form-list');
+        $(this).closest('.column-form').remove();
+
+        //update all forms after this one
+        var n = Number($('#id_form-TOTAL_FORMS').val());
+        var html_as_str = form_list.html();
+        for (var i=current; i<n; i++) {
+            while (html_as_str.indexOf('form-' + (i+1) + '-') >= 0) {
+                html_as_str = html_as_str.replace('form-' + (i+1) + '-', 'form-' + i + '-');
+            }
+        }
+        form_list.html(html_as_str);
+
+        //update the management form
+        $('#id_form-TOTAL_FORMS').val(n - 1);
+        $('#id_form-INITIAL_FORMS').val(n - 1);
     });
 });
