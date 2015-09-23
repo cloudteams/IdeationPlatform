@@ -53,4 +53,40 @@ PROVIDER_PLUGINS = [
         ],
         'type': '###',
     },
+
+    # providers.Location
+    {
+        'source': '^Location.address_to_city',
+        'label': 'Extracts the city from an address',
+        'args': [
+            ('address', 'Address'),
+        ],
+        'type': 'VARCHAR(255)',
+    },
+    {
+        'source': '^Location.address_to_country',
+        'label': 'Extracts the country from an address',
+        'args': [
+            ('address', 'Address'),
+        ],
+        'type': 'VARCHAR(255)',
+    },
+    {
+        'source': '^Location.address_to_city_country',
+        'label': 'Extracts the city and country from an address',
+        'args': [
+            ('address', 'Address'),
+        ],
+        'type': 'VARCHAR(255)',
+    },
+
+    # providers.Dates
+    {
+        'source': '^Dates.age_from_birthday',
+        'label': 'Calculate age based on birthday',
+        'args': [
+            ('birthday', 'The birthday date'),
+        ],
+        'type': 'INT(11)',
+    },
 ]

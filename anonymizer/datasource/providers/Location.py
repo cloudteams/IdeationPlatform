@@ -11,11 +11,10 @@ def get_address_info(address):
     return json.loads(requests.get(GEOCODE_API + 'json?address=%s&sensor=true' % address).content)
 
 
-def address_to_city(*args):
-    """
-    Given an address, detect the city where this address is located
-    """
-    info = get_address_info(zip(*args)[0][0])
+def address_to_city__helper(address, info=None):
+    if not info:
+        info = get_address_info(address)
+
     if not info['results']:
         return None
 
@@ -29,14 +28,24 @@ def address_to_city(*args):
         if city_name:
             break
 
-    return city_name
+    return city_name, info
 
 
-def address_to_country(*args):
+def address_to_city(*args):
     """
-    Given an address, detect the countrry where this address is located
+    Given an address, detect the city where this address is located
     """
-    info = get_address_info(zip(*args)[0][0])
+    address = zip(*args)[0][0]
+    if not address:
+        return None
+
+    return address_to_city__helper(address)[0]
+
+
+def address_to_country__helper(address, info=None):
+    if not info:
+        info = get_address_info(address)
+
     if not info['results']:
         return None
 
@@ -48,4 +57,34 @@ def address_to_country(*args):
         if country_name:
             break
 
-    return country_name
+    return country_name, info
+
+
+def address_to_country(*args):
+    """
+    Given an address, detect the country where this address is located
+    """
+    address = zip(*args)[0][0]
+    if not address:
+        return None
+
+    return address_to_country__helper(address)[0]
+
+
+def address_to_city_country(*args):
+    address = zip(*args)[0][0]
+    if not address:
+        return None
+
+    city, info = address_to_city__helper(address)
+    if not city:
+        city = ''
+
+    country, _ = address_to_country__helper(address, info)
+    if not country:
+        country = ''
+
+    if city and country:
+        return city + ', ' + country
+    else:
+        return city + country

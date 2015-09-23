@@ -1,4 +1,5 @@
-from anonymizer.datasource.providers.Location import address_to_city, address_to_country
+from anonymizer.datasource.providers.Dates import age_from_birthday, InvalidBirthday
+from anonymizer.datasource.providers.Location import address_to_city, address_to_country, address_to_city_country
 from anonymizer.datasource.providers.Ranges import from_int_value, from_float_value, \
     from_int_value__type, from_float_value__type
 
@@ -94,3 +95,20 @@ class LocationTests(TestCase):
 
     def test_address_to_country(self):
         self.assertEqual(address_to_country(('Markou Mpotsari 19, Nikea',)), 'Greece')
+
+    def test_address_to_city_country(self):
+        self.assertEqual(address_to_city_country(('Markou Mpotsari 19, Nikea',)), 'Nikea, Greece')
+
+
+class DatesTests(TestCase):
+
+    def test_birthday_to_age(self):
+        # greater or equal because we don't want the test to fail in a couple of months...
+        self.assertGreaterEqual(age_from_birthday(('1991-2-12',)), 24)
+        # check that we must pass exactly one argument
+        with self.assertRaises(ValueError):
+            age_from_birthday(('1991-2-12', 'unexpected'))
+        with self.assertRaises(ValueError):
+            age_from_birthday(())
+        with self.assertRaises(InvalidBirthday):
+            age_from_birthday(('undefined',))
