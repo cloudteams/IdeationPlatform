@@ -128,7 +128,11 @@ class Property:
     def full(self):
         result = self.table + '.' + self.column
         if self.aggregate:
-            result = self.aggregate + '(' + result + ')'
+            param_str = '@param'
+            if param_str not in self.aggregate:  # plain style
+                result = self.aggregate + '(%s)' % result
+            else:  # @param style
+                result = self.aggregate.replace(param_str, result)
 
         return result
 
@@ -248,6 +252,15 @@ class PropertyManager:
 
             self.properties.append(prop)
 
+        # group by tables
+        self.group_tables = []
+        for p in self.properties:
+            if not p.aggregate and not p.is_generated():
+                self.group_tables.append(p.table)
+
+        # unique tables
+        self.group_tables = list(set(self.group_tables))
+
         # generate manager token
         if not token:
             token = uuid.uuid4()
@@ -295,6 +308,63 @@ class PropertyManager:
         else:
             return []
 
+    def reduce(self, rows):
+        """
+        Expects the first row to be the user id and the result to be sorted
+        """
+        result_rows = []
+
+        # detect which properties are NOT grouped by
+        prop_idx = 0
+        non_grouped = []
+        for prop in self.properties:
+            if not prop.is_generated():
+                if (not prop.aggregate) and (prop.table != self.user_pk.table):
+                    non_grouped.append(prop_idx)
+                prop_idx += 1
+
+        # find common users -- users should be sorted
+        row_idx = -1
+        idx = 0
+        while idx < len(rows):
+            if row_idx < 0 or rows[idx][0] != rows[row_idx][0]:  # new user
+                row_idx = idx
+
+                result_rows.append(list(rows[idx]))
+                for prop_idx in non_grouped:
+                    result_rows[-1][prop_idx] = [rows[idx][prop_idx]]
+            else:  # same user
+                for prop_idx in non_grouped:
+                    result_rows[-1][prop_idx].append(rows[idx][prop_idx])
+
+            # move to next row
+            idx += 1
+
+        return result_rows
+
+    @staticmethod
+    def apply(fn, fn_args):
+        compound = False
+        for fn_arg in fn_args:
+            if type(fn_arg) == list:
+                compound = True
+                break
+
+        if not compound:
+            return fn(fn_args)
+        else:
+            n_of_recs = len(fn_args[0])
+            for fn_arg in fn_args[1:]:
+                if type(fn_arg) == list:
+                    if len(fn_arg) != n_of_recs:
+                        raise ValueError('Can not apply function to variable length lists')
+
+            arg_lists = []
+            for i in range(0, n_of_recs):
+                arg_lists.append([fn_arg[i] for fn_arg in fn_args])
+
+            return [fn(arg_list) for arg_list in arg_lists]
+
     def info(self, row):
         idx = 0
         result = {}
@@ -327,7 +397,8 @@ class PropertyManager:
                                 raise PropertyNotFoundException('Property "' + fn_arg[1:] + '" was not found.')
 
                 # apply function and save the result
-                result[prop.name] = prop.fn(fn_args)
+                # must apply multiple times for list arguments
+                result[prop.name] = self.apply(prop.fn, fn_args)
 
         # removed non-exposed properties
         final_result = {}
@@ -373,16 +444,19 @@ class PropertyManager:
         # return the `all` query
         return select_clause + from_clause + join_clause
 
-    def all(self):
-        query = self.query()
+    def group_by(self):
+        result = ' GROUP BY '
+        result += ','.join([self.user_pk.connection.primary_key_of(table).split('@')[0] for table in self.group_tables])
+        return result
 
-        # construct group by clause
-        group_by = ' GROUP BY ' + self.user_pk.full()
-        query += group_by
+    def all(self):
+        # construct query
+        query = self.query() + self.group_by()
 
         print query
+
         # execute query & return results
-        return [self.info(row) for row in self.user_pk.connection.execute(query).fetchall()]
+        return [self.info(row) for row in self.reduce(self.user_pk.connection.execute(query).fetchall())]
 
     def filter(self, filters):
         if not filters:
@@ -415,16 +489,17 @@ class PropertyManager:
             query += where_clause
 
         # construct group by clause
-        group_by = ' GROUP BY ' + self.user_pk.full()
-        query += group_by
+        query += self.group_by()
 
         # aggregate filters must go after the group by in the `having` clause
         if filters_aggregate:
             having_clause = ' HAVING ' + ' AND '.join(filters_aggregate)
             query += having_clause
 
+        print query
+
         # execute query & get results
-        result = [self.info(row) for row in self.user_pk.connection.execute(query).fetchall()]
+        result = [self.info(row) for row in self.reduce(self.user_pk.connection.execute(query).fetchall())]
 
         # filter by generated fields & return result
         return self.filter_by_generated(result, filters_generated)

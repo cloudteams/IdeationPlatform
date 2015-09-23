@@ -12,6 +12,8 @@ AGGREGATE_LIST = [
     ('', ''),
     ('avg', 'Average'),
     ('sum', 'Sum'),
+    ('count(DISTINCT @param)', 'Count'),
+    ('GROUP_CONCAT', 'Concatenate'),
 
     # TODO: expand aggregate list
 ]

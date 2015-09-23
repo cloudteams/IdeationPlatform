@@ -113,7 +113,7 @@ class ColumnForm(forms.Form):
 
         choices = []
         for p in all_properties:
-            choices.append((p[2], p[0]))
+            choices.append((p[2], p[2].split('@')[0]))
 
         for plugin in PROVIDER_PLUGINS:
             choices.append((plugin['source'], plugin['label'],))
@@ -143,7 +143,8 @@ def validate_unique_across(formset, fields):
             for form2 in formset:
                 if form != form2:
                     if form.cleaned_data[field] == form2.cleaned_data[field]:
-                        e_msg = 'Field %s is not unique across all forms' % field
+                        e_msg = 'Field %s is not unique across all forms - duplicate value "%s"' \
+                                % (field, form.cleaned_data[field])
                         errors = formset.non_form_errors()
                         if e_msg not in errors:
                             errors.append(e_msg)

@@ -69,7 +69,7 @@ class Connection:
                 if row[5]:  # 5th column is the `pk`
                     return '%s.%s@%s' % (table_name, row[1], self.id)
 
-            return None
+            raise ValueError('Could not find primary key of table "%s"' % table_name)
         elif self.is_mysql():
             query = "SHOW INDEX FROM %s where Key_name='PRIMARY'" % table_name
             row = self.execute(query).fetchone()

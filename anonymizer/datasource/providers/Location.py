@@ -7,8 +7,20 @@ __author__ = 'dipap'
 GEOCODE_API = 'http://maps.googleapis.com/maps/api/geocode/'
 
 
+address_info_cache = {}
+
+
 def get_address_info(address):
-    return json.loads(requests.get(GEOCODE_API + 'json?address=%s&sensor=true' % address).content)
+    """
+    Returns GoogleMaps-style info about an address
+    Caches the results without ever expiring them
+    """
+    if address in address_info_cache:
+        return address_info_cache[address]
+    else:
+        result = json.loads(requests.get(GEOCODE_API + 'json?address=%s&sensor=true' % address).content)
+        address_info_cache[address] = result
+        return result
 
 
 def address_to_city__helper(address, info=None):
@@ -16,13 +28,13 @@ def address_to_city__helper(address, info=None):
         info = get_address_info(address)
 
     if not info['results']:
-        return None
+        return '', info
 
     city_name = ''
     for component in info['results'][0]['address_components']:
-        if 'administrative_area_level_5' in component['types']:
+        if 'administrative_area_level_3' in component['types']:
             city_name = component['long_name']
-        elif 'administrative_area_level_3' in component['types']:
+        elif 'administrative_area_level_5' in component['types']:
             city_name = component['long_name']
 
         if city_name:
@@ -37,7 +49,7 @@ def address_to_city(*args):
     """
     address = zip(*args)[0][0]
     if not address:
-        return None
+        return ''
 
     return address_to_city__helper(address)[0]
 
@@ -47,7 +59,7 @@ def address_to_country__helper(address, info=None):
         info = get_address_info(address)
 
     if not info['results']:
-        return None
+        return '', info
 
     country_name = ''
     for component in info['results'][0]['address_components']:
@@ -66,7 +78,7 @@ def address_to_country(*args):
     """
     address = zip(*args)[0][0]
     if not address:
-        return None
+        return ''
 
     return address_to_country__helper(address)[0]
 
@@ -74,7 +86,7 @@ def address_to_country(*args):
 def address_to_city_country(*args):
     address = zip(*args)[0][0]
     if not address:
-        return None
+        return ''
 
     city, info = address_to_city__helper(address)
     if not city:

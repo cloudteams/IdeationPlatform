@@ -1,12 +1,23 @@
 var ConfigurationConsole = {
     start: function(id) {
         this.client_url = '/anonymizer/connection/' + id + '/query/?q=';
-    }
+    },
+
+    status: 'DEFAULT',
 };
 
 $(function() {
     $('body').on('keydown', "#test-console", function(e) {
         if (e.keyCode == 13) { //send request on enter
+            //allow only one request at a time
+            if (ConfigurationConsole.status == 'PENDING') {
+                e.preventDefault();
+                e.stopPropagation();
+
+                return;
+            }
+            ConfigurationConsole.status = 'PENDING';
+
             var that = this;
             var content = this.value;
             var q = content.substr(content.lastIndexOf("\n") + 2);
@@ -24,10 +35,12 @@ $(function() {
 
                     $(that).val(new_val);
                     $(that).scrollTop($(that)[0].scrollHeight);
+                    ConfigurationConsole.status = 'DEFAULT';
                 },
                 error: function(jqXHR, textStatus) {
                     $(that).val( $(that).val() + '\n[ERROR]: ' + jqXHR.responseText + '\n$');
                     $(that).scrollTop($(that)[0].scrollHeight);
+                    ConfigurationConsole.status = 'DEFAULT';
                 }
             });
 

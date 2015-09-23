@@ -60,13 +60,47 @@ $(function() {
 
         //update all forms after this one
         var n = Number($('#id_form-TOTAL_FORMS').val());
-        var html_as_str = form_list.html();
+        var labels = $(form_list).find('label');
+        var inputs = $(form_list).find('input');
+        var selects = $(form_list).find('select');
         for (var i=current; i<n; i++) {
-            while (html_as_str.indexOf('form-' + (i+1) + '-') >= 0) {
-                html_as_str = html_as_str.replace('form-' + (i+1) + '-', 'form-' + i + '-');
-            }
+            //foreach label
+            $(labels).each(function() {
+                //replace for
+                var _for = $(this).attr('for');
+                if (_for.indexOf('form-' + (i+1) + '-') >= 0) {
+                    $(this).attr('for', _for.replace('form-' + (i+1) + '-', 'form-' + i + '-'))
+                }
+            });
+
+            //foreach input
+            $(inputs).each(function() {
+                //replace id
+                var id = $(this).attr('id');
+                if (id.indexOf('form-' + (i+1) + '-') >= 0) {
+                    $(this).attr('id', id.replace('form-' + (i+1) + '-', 'form-' + i + '-'))
+                }
+                //replace name
+                var name = $(this).attr('name');
+                if (name.indexOf('form-' + (i+1) + '-') >= 0) {
+                    $(this).attr('name', name.replace('form-' + (i+1) + '-', 'form-' + i + '-'))
+                }
+            });
+
+            //foreach select
+            $(selects).each(function() {
+                //replace id
+                var id = $(this).attr('id');
+                if (id.indexOf('form-' + (i+1) + '-') >= 0) {
+                    $(this).attr('id', id.replace('form-' + (i+1) + '-', 'form-' + i + '-'))
+                }
+                //replace name
+                var name = $(this).attr('name');
+                if (name.indexOf('form-' + (i+1) + '-') >= 0) {
+                    $(this).attr('name', name.replace('form-' + (i+1) + '-', 'form-' + i + '-'))
+                }
+            });
         }
-        form_list.html(html_as_str);
 
         //update the management form
         $('#id_form-TOTAL_FORMS').val(n - 1);
