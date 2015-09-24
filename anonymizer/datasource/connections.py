@@ -87,6 +87,7 @@ class Connection:
         if from_related:
             tables += self.get_related_tables(table_name)
 
+        tables = list(set(tables))
         # look for columns in the table(s)
         for table in tables:
             if self.is_sqlite3():
@@ -121,25 +122,29 @@ class Connection:
 
             return '%s.%s@%s' % (from_table, self.execute(query).fetchone()[0], self.id)
 
-    def get_related_tables(self, table_name):
-        if self.is_sqlite3():
-            result = []
+    def get_related_tables(self, table_name, already_accessed=None):
+        if not already_accessed:
+            already_accessed = [table_name]
 
+        if self.is_sqlite3():
+            # foreign keys FROM table_name
+            query = "PRAGMA foreign_key_list('%s')" % table_name
+            result = [row[2] for row in self.execute(query).fetchall()]
+
+            # foreign keys TO table_name
             # no automated way - we have to go through every table
             for joined_table in self.tables():
-                query = "PRAGMA foreign_key_list('%s')" % joined_table[0]
+                if joined_table not in result:
+                    query = "PRAGMA foreign_key_list('%s')" % joined_table[0]
 
-                is_joined = False
-                for row in self.execute(query).fetchall():
-                    if row[2].lower() == table_name.lower():  # 2nd column is target table
-                        is_joined = True
-                        break
+                    is_joined = False
+                    for row in self.execute(query).fetchall():
+                        if row[2].lower() == table_name.lower():  # 2nd column is target table
+                            is_joined = True
+                            break
 
-                if is_joined:
-                    result.append(joined_table[0])
-
-            # return all connected tables
-            return result
+                    if is_joined:
+                        result.append(joined_table[0])
         elif self.is_mysql():
             query = """
                 SELECT DISTINCT TABLE_NAME
@@ -148,8 +153,26 @@ class Connection:
                 WHERE
                   REFERENCED_TABLE_NAME = '%s'
             """ % table_name
+            result = [row[0] for row in self.execute(query).fetchall() if row[0]]
 
-            return [row[0] for row in self.execute(query).fetchall()]
+            query = """
+                SELECT DISTINCT REFERENCED_TABLE_NAME
+                FROM
+                  information_schema.KEY_COLUMN_USAGE
+                WHERE
+                  TABLE_NAME = '%s'
+            """ % table_name
+            result += [row[0] for row in self.execute(query).fetchall() if row[0]]
+
+        final_result = []
+        for table in result:
+            if table not in already_accessed + final_result:
+                already_accessed.append(table)
+                final_result.append(table)
+                final_result += self.get_related_tables(table, already_accessed)
+
+        # return all connected tables
+        return final_result
 
 
 class ConnectionManager:
