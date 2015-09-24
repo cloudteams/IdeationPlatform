@@ -1,3 +1,4 @@
+import json
 import uuid
 
 __author__ = 'dipap'
@@ -57,7 +58,7 @@ class Property:
     A single property
     """
 
-    def __init__(self, connection_manager, source, user_fk, name=None, tp=None, aggregate=None, label=None,
+    def __init__(self, connection_manager, source, name=None, tp=None, aggregate=None, label=None,
                  filter_by=True, is_pk=False):
         self.connection_manager = connection_manager
         self.source = source
@@ -87,11 +88,6 @@ class Property:
             # find responsible db connection
             conn_name = source.split('@')[1]
             self.connection = connection_manager.get(conn_name)
-
-            if user_fk:
-                self.user_fk = Property(self.connection_manager, user_fk, user_fk=None)
-            else:
-                self.user_fk = None
         else:
             # load provider class
             cls_name = 'anonymizer.datasource.providers.' + self.source.split('.')[0][1:]
@@ -217,19 +213,13 @@ class PropertyManager:
     def __init__(self, connection_manager, configuration, token=None):
         self.connection_manager = connection_manager
         self.configuration = configuration
-        self.user_pk = Property(self.connection_manager, self.configuration.data['sites'][0]['user_pk'], user_fk=None,
-                                is_pk=True)
+        self.user_pk = Property(self.connection_manager, self.configuration.data['sites'][0]['user_pk'], is_pk=True)
 
         self.properties = [self.user_pk]
 
         for property_info in self.configuration.data['sites'][0]['properties']:
             if property_info['source'] == self.user_pk.source:
                 continue
-
-            if 'user_fk' in property_info:
-                user_fk = property_info['user_fk']
-            else:
-                user_fk = None
 
             if 'aggregate' in property_info:
                 aggregate = property_info['aggregate']
@@ -246,8 +236,7 @@ class PropertyManager:
             else:
                 expose = True
 
-            prop = Property(self.connection_manager, property_info['source'], user_fk=user_fk,
-                            name=property_info['name'],
+            prop = Property(self.connection_manager, property_info['source'], name=property_info['name'],
                             tp=property_info['type'], aggregate=aggregate, label=label, filter_by=expose)
 
             self.properties.append(prop)
@@ -265,6 +254,9 @@ class PropertyManager:
         if not token:
             token = uuid.uuid4()
         self.token = token
+
+        # save foreign keys
+        self.foreign_keys = self.configuration.data['sites'][0]['foreign_keys']
 
     def get_primary_key(self):
         for prop in self.properties:
@@ -431,16 +423,44 @@ class PropertyManager:
         from_clause = 'FROM {0} '.format(self.user_pk.table)
 
         # find all joins
-        join_clause = ''
-        joined_tables = []
-        for prop in self.properties:
-            if not prop.is_generated():
-                if prop.user_fk:
-                    if prop.table not in joined_tables:
-                        joined_tables.append(prop.table)
-                        join_clause += 'LEFT OUTER JOIN {0} ON {1}={2} ' \
-                            .format(prop.table, prop.user_fk.full(), self.user_pk.full())
+        current_keys = []
+        current_tables = []
+        for foreign_key in self.foreign_keys:
+            if foreign_key[0] not in current_tables:
+                in_original = False
+                for p in self.properties:
+                    if p.table == foreign_key[0]:
+                        in_original = True
+                        break
 
+                if in_original:
+                    current_keys.append(foreign_key)
+                    current_tables.append(foreign_key[0])
+
+        # add foreign keys that may be required even though they provide no properties themselves
+        while True:
+            new_current_keys = [self.user_pk.table, None, None] + current_keys[:]
+
+            for key in current_keys:
+                for key_2 in self.foreign_keys:
+                    if key_2[0] not in current_tables:
+                        if key_2[2].split('.')[0] == key[0]:
+                            import pdb;pdb.set_trace()
+                            new_current_keys.append(key_2)
+                            current_tables.append(key[0])
+
+            # TODO: FIX
+            # if current_keys == new_current_keys:
+            current_keys = new_current_keys
+            break
+
+        # create the join clause
+        join_clause = ''
+        for foreign_key in current_keys[1:]:
+            join_clause += 'LEFT OUTER JOIN {0} ON {1}={2} '.format(foreign_key[0], foreign_key[1].split('@')[0],
+                                                                    foreign_key[2].split('@')[0])
+
+        print select_clause + from_clause + join_clause
         # return the `all` query
         return select_clause + from_clause + join_clause
 

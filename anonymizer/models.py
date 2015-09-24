@@ -1,4 +1,4 @@
-import json
+import simplejson as json
 import uuid
 from django.db import models
 from anonymizer.datasource.connections import ConnectionManager
@@ -15,6 +15,7 @@ class ConnectionConfiguration(models.Model):
     user_pk = models.CharField(max_length=256, default='')
 
     properties = models.TextField(default='')
+    foreign_keys = models.TextField(default='', editable=False)
 
     def update_info_url(self):
         base_url = '/anonymizer/connection/update-info'
@@ -66,6 +67,7 @@ class ConnectionConfiguration(models.Model):
 
                 "user_pk": self.user_pk,
                 "properties": json.loads(self.properties),
+                "foreign_keys": json.loads(self.foreign_keys),
             }]
         }
 

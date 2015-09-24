@@ -41,9 +41,11 @@
           "label": "run duration (minutes)",
           "type": "float",
           "aggregate": "avg",
-          "source": "Running.duration@my_site_db",
-          "user_fk": "Running.user@my_site_db"
+          "source": "Running.duration@my_site_db"
         }
+      ],
+      "foreign_keys": [
+        ["Running", "Running.user", "Users.id"]
       ]
     }
   ]

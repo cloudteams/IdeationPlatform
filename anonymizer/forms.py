@@ -113,7 +113,11 @@ class ColumnForm(forms.Form):
 
         choices = []
         for p in all_properties:
-            choices.append((p[2], p[2].split('@')[0]))
+            if p[2]:
+                label = p[2].split('@')[0].split('.')[1] + ' (' + p[2].split('@')[0].split('.')[0] + ')'
+            else:
+                label = ''
+            choices.append((p[2], label))
 
         for plugin in PROVIDER_PLUGINS:
             choices.append((plugin['source'], plugin['label'],))

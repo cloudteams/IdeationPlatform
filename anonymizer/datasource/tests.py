@@ -31,27 +31,27 @@ class ConnectionTests(TestCase):
 
     def test_table_properties(self):
         # sqlite falsely reports the id, too
-        self.assertEqual(len(self.sqlite3.get_data_properties('Users')), 6)
-        self.assertEqual(len(self.mysql.get_data_properties('users')), 5)
+        self.assertEqual(len(self.sqlite3.get_data_properties('Users')[0]), 6)
+        self.assertEqual(len(self.mysql.get_data_properties('users')[0]), 5)
 
         # make sure first element is column name
-        self.assertTrue(type(self.sqlite3.get_data_properties('Users')[0][0]) == unicode)
-        self.assertTrue(type(self.mysql.get_data_properties('users')[0][0]) == unicode)
+        self.assertTrue(type(self.sqlite3.get_data_properties('Users')[0][0][0]) == unicode)
+        self.assertTrue(type(self.mysql.get_data_properties('users')[0][0][0]) == unicode)
 
         # also check the properties from other tables pointing to Users as well
-        self.assertEqual(len(self.sqlite3.get_data_properties('Users', from_related=True)), 9)
-        self.assertEqual(len(self.mysql.get_data_properties('users', from_related=True)), 6)
+        self.assertEqual(len(self.sqlite3.get_data_properties('Users', from_related=True)[0]), 9)
+        self.assertEqual(len(self.mysql.get_data_properties('users', from_related=True)[0]), 6)
 
         # also check other tables pointing to Users as well
-        self.assertEqual(len(self.sqlite3.get_data_properties('Running', from_related=True)), 9)
-        self.assertEqual(len(self.mysql.get_data_properties('running', from_related=True)), 6)
+        self.assertEqual(len(self.sqlite3.get_data_properties('Running', from_related=True)[0]), 9)
+        self.assertEqual(len(self.mysql.get_data_properties('running', from_related=True)[0]), 6)
 
     def test_related_tables(self):
-        self.assertIn('Running', self.sqlite3.get_related_tables('users'))
-        self.assertNotIn('Running_wrong', self.sqlite3.get_related_tables('users'))
-
-        self.assertIn('running', self.mysql.get_related_tables('users'))
-        self.assertNotIn('running_wrong', self.mysql.get_related_tables('users'))
+        self.assertIn('Running', self.sqlite3.get_related_tables('Users')[0])
+        self.assertEqual([[u'Running', u'Users.id@my_site_db', u'Running.user@my_site_db']],
+                         self.sqlite3.get_related_tables('Users')[1])
+        self.assertEqual([[u'running', u'running.user@my_other_db', u'users.id@my_other_db']],
+                         self.mysql.get_related_tables('users')[1])
 
 
 class ConnectionManagerTests(TestCase):

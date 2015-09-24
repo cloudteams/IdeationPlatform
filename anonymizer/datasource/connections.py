@@ -78,14 +78,17 @@ class Connection:
     def get_data_properties(self, table_name, from_related=False):
         """
         If from_related is set to true, columns from other tables pointing to [table_name] will also be included
-        :return: all non-auto increment columns of table
+        :return: (all non-auto increment columns of table, all foreign key pairs)
         """
         result = []
 
         # check on which
         tables = [table_name]
+        relationships = []
         if from_related:
-            tables += self.get_related_tables(table_name)
+            res = self.get_related_tables(table_name, already_accessed=[table_name])
+            tables += res[0]
+            relationships += res[1]
 
         tables = list(set(tables))
         # look for columns in the table(s)
@@ -94,13 +97,15 @@ class Connection:
                 query = "PRAGMA table_info('%s')" % table
                 for row in self.execute(query).fetchall():
                     result.append((row[1], row[2], '%s.%s@%s' % (table, row[1], self.id)))
+
             elif self.is_mysql():
                 query = "SHOW COLUMNS FROM %s;" % table
                 for row in self.execute(query).fetchall():
                     if ('auto' not in row[5]) and ('MUL' not in row[3]):
                         result.append((row[0], row[1], '%s.%s@%s' % (table, row[0], self.id)))
 
-        return result
+        # save detected foreign keys
+        return result, relationships
 
     def get_foreign_key_between(self, from_table, to_table):
         if self.is_sqlite3():
@@ -123,16 +128,32 @@ class Connection:
             return '%s.%s@%s' % (from_table, self.execute(query).fetchone()[0], self.id)
 
     def get_related_tables(self, table_name, already_accessed=None):
+        """
+        :param table_name: The name of the table that is examined
+        :param already_accessed: The list of table names that have already been examined
+        :return: A list of tuples (table_name, through_property) that can reach/be reached on this table
+        """
         if not already_accessed:
             already_accessed = [table_name]
+
+        table_pk = self.primary_key_of(table_name).split('@')[0]
+        conn = self.primary_key_of(table_name).split('@')[1]
+        relationships = []
+        tables = []
 
         if self.is_sqlite3():
             # foreign keys FROM table_name
             query = "PRAGMA foreign_key_list('%s')" % table_name
-            result = [row[2] for row in self.execute(query).fetchall()]
+            for row in self.execute(query).fetchall():
+                tables.append(row[2])
+                from_key = '%s.%s' % (table_name, row[3])
+                to_key = '%s.%s' % (row[2], row[4])
+
+                relationships.append((row[2], from_key, to_key))
 
             # foreign keys TO table_name
             # no automated way - we have to go through every table
+            result = []
             for joined_table in self.tables():
                 if joined_table not in result:
                     query = "PRAGMA foreign_key_list('%s')" % joined_table[0]
@@ -144,35 +165,72 @@ class Connection:
                             break
 
                     if is_joined:
-                        result.append(joined_table[0])
+                        tables.append(joined_table[0])
+                        relationships.append((joined_table[0], table_pk, '%s.%s' % (joined_table[0], row[3])))
+
         elif self.is_mysql():
             query = """
-                SELECT DISTINCT TABLE_NAME
+                SELECT DISTINCT TABLE_NAME, COLUMN_NAME, REFERENCED_COLUMN_NAME
                 FROM
                   information_schema.KEY_COLUMN_USAGE
                 WHERE
                   REFERENCED_TABLE_NAME = '%s'
             """ % table_name
-            result = [row[0] for row in self.execute(query).fetchall() if row[0]]
+            for row in self.execute(query).fetchall():
+                if row[0]:
+                    tables.append(row[0])
+                    from_key = '%s.%s' % (row[0], row[1])
+                    to_key = '%s.%s' % (table_name, row[2])
+                    relationships.append((row[0], from_key, to_key))
 
             query = """
-                SELECT DISTINCT REFERENCED_TABLE_NAME
+                SELECT DISTINCT REFERENCED_TABLE_NAME, COLUMN_NAME, REFERENCED_COLUMN_NAME
                 FROM
                   information_schema.KEY_COLUMN_USAGE
                 WHERE
                   TABLE_NAME = '%s'
             """ % table_name
-            result += [row[0] for row in self.execute(query).fetchall() if row[0]]
+            for row in self.execute(query).fetchall():
+                if row[0]:
+                    tables.append(row[0])
+                    from_key = '%s.%s' % (row[1], table_name)
+                    to_key = '%s.%s' % (row[0], row[2])
+                    relationships.append((row[0], from_key, to_key))
 
+        # recursively search all referenced tables
         final_result = []
-        for table in result:
-            if table not in already_accessed + final_result:
-                already_accessed.append(table)
+        for table in tables:
+            if table not in already_accessed:
                 final_result.append(table)
-                final_result += self.get_related_tables(table, already_accessed)
+                old_already_accessed = already_accessed[:]
+                already_accessed.append(table)
+                res = self.get_related_tables(table, already_accessed)
+
+                # filter out relations
+                final_result += res[0]
+                for rel in res[1]:
+                    if rel[0] not in old_already_accessed:
+                        relationships.append(rel)
+
+        # add connection string
+        final_relationships = []
+        for relationship in relationships:
+            rel_1 = relationship[1]
+            if '@' not in rel_1:
+                rel_1 += '@' + conn
+
+            rel_2 = relationship[2]
+            if '@' not in rel_1:
+                rel_2 += '@' + conn
+
+            final_relationships.append([
+                relationship[0],
+                rel_1,
+                rel_2,
+            ])
 
         # return all connected tables
-        return final_result
+        return final_result, final_relationships
 
 
 class ConnectionManager:

@@ -43,10 +43,12 @@
                 {
                     "aggregate": "avg",
                     "source": "running.duration@test_connection",
-                    "user_fk": "running.user@test_connection",
                     "type": "FLOAT",
                     "name": "running_duration"
                 }
+            ],
+            "foreign_keys": [
+                ["running", "running.user", "users.id"]
             ]
         }
     ]

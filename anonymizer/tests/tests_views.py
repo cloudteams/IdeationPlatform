@@ -204,8 +204,11 @@ class ConnectionViewTests(TestCase):
                                                         users_table='users',
                                                         user_pk='users.id@test_connection')
 
-        form_url = '/anonymizer/connection/1/select-columns/'
+        form_url = '/anonymizer/connection/1/suggest-user-table/'
+        response = self.client.post(form_url, data={'users_table': 'users'})
+        self.assertEqual(response.status_code, 302)
 
+        form_url = '/anonymizer/connection/1/select-columns/'
         # post column info
         data = self.get_test_column_data()
 
@@ -235,10 +238,6 @@ class ConnectionViewTests(TestCase):
         # test the console view responds
         response = self.client.get(console_url)
         self.assertEqual(response.status_code, 200)
-
-        # test that no posts are allowed
-        response = self.client.post(query_url)
-        self.assertEqual(response.status_code, 400)
 
         # test the query view returns correct results
         response = self.client.get(query_url + '?q=')

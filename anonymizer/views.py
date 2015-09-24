@@ -113,9 +113,12 @@ def suggest_users_table(request, pk):
             config.user_pk = connection.primary_key_of(config.users_table)
 
             # load default properties
-            columns = connection.get_data_properties(config.users_table, from_related=True)
+            data_properties = connection.get_data_properties(config.users_table, from_related=True)
+            few_properties = connection.get_data_properties(config.users_table)
+            columns = few_properties[0]
             columns.insert(0, ('', '', ''))
-            config.properties = config.get_default_properties(columns)
+            config.properties = config.get_default_properties(few_properties[0])
+            config.foreign_keys = json.dumps(data_properties[1])
 
             # save changes
             config.save()
@@ -138,7 +141,7 @@ def select_columns(request, pk):
     config = get_object_or_404(ConnectionConfiguration, pk=pk)
     connection = config.get_connection()
 
-    columns = connection.get_data_properties(config.users_table, from_related=True)
+    columns = connection.get_data_properties(config.users_table, from_related=True)[0]
     columns.insert(0, ('', '', ''))
 
     if not config.properties:
@@ -165,7 +168,7 @@ def select_columns(request, pk):
                         initial_form[plugin['source'] + '__param__' + plugin['args'][idx][0]] = option
 
         # create formset
-        ColumnFormset = formset_factory(wraps(ColumnForm)(partial(ColumnForm, all_properties=columns)), extra=0)
+        ColumnFormset = formset_factory(wraps(ColumnForm)(partial(ColumnForm, all_properties=columns)))
         formset = ColumnFormset(initial=initial)
 
         params['formset'] = formset
@@ -205,7 +208,13 @@ def select_columns(request, pk):
                                 break
 
                     if table_name.lower() != config.users_table.lower():
-                        p['user_fk'] = connection.get_foreign_key_between(table_name, config.users_table)
+                        if 'rel_to' in p:
+                            rel_table = form.cleaned_data['rel_table']
+                        else:
+                            rel_table = config.users_table
+
+                        p['rel_fk'] = connection.get_foreign_key_between(table_name, rel_table)
+                        p['rel_to'] = connection.primary_key_of(rel_table)
                 else:
                     # read plugin options
                     plugin_info = [plugin_info for plugin_info in PROVIDER_PLUGINS if

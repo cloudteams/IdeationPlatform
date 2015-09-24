@@ -16,10 +16,11 @@ class PersonaViewTests(TestCase):
                 "port": "3306"
         """
         properties = open('test-data/config/persona_builder_default_properties.json').read()
+        foreign_keys = open('test-data/config/persona_builder_default_foreign_keys.json').read()
 
         ConnectionConfiguration.objects.create(name='test_connection', connection_type='django.db.backends.mysql',
                                                info=info, user_pk='users.id@test_connection',
-                                               users_table='users', properties=properties)
+                                               users_table='users', properties=properties, foreign_keys=foreign_keys)
 
     def create_persona(self):
         data = {
@@ -38,7 +39,7 @@ class PersonaViewTests(TestCase):
         response = self.client.post(form_url, data=data, format='multipart')
         self.assertEqual(response.status_code, 302)
 
-    def test_create_persona(self):
+    def test_edit_persona(self):
         self.create_persona()
 
         form_url = '/persona-builder/personas/1/edit-properties/'
