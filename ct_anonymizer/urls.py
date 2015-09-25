@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import include, url, patterns
 from django.contrib import admin
-import anonymizer
+import views
 from ct_anonymizer import settings
 
 urlpatterns = [
@@ -26,6 +26,9 @@ urlpatterns = [
 
     # persona builder
     url(r'^persona-builder/', include('persona_builder.urls')),
+
+    # home page
+    url(r'^$', views.index),
 ]
 
 if settings.DEBUG:
