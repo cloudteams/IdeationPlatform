@@ -50,7 +50,7 @@ class ConnectionTests(TestCase):
         self.assertIn('Running', self.sqlite3.get_related_tables('Users')[0])
         self.assertEqual([[u'Running', u'Users.id@my_site_db', u'Running.user@my_site_db']],
                          self.sqlite3.get_related_tables('Users')[1])
-        self.assertEqual([[u'running', u'running.user@my_other_db', u'users.id@my_other_db']],
+        self.assertEqual([[u'running', u'users.id@my_other_db', u'running.user@my_other_db']],
                          self.mysql.get_related_tables('users')[1])
 
 

@@ -418,6 +418,19 @@ class PropertyManager:
 
         return results
 
+    @staticmethod
+    def insert_key(keys, new_key):
+        """
+        Inserts a foreign key at the correct position in the list, according to how they rely on each other
+        """
+        pos = len(keys)
+        for idx, key in enumerate(keys):
+            if new_key[0].lower() == key[1].split('.')[0].lower():
+                pos = idx
+                break
+
+        keys.insert(pos, new_key)
+
     def join_clause(self):
         """
         Returns the join clause of the query
@@ -437,7 +450,7 @@ class PropertyManager:
             for key in self.foreign_keys:  # foreach possible join
                 if key[0].lower() == t.lower():
                     current_tables.append(t)
-                    current_keys.insert(0, key)
+                    self.insert_key(current_keys, key)
                     t2 = key[1].split('.')[0]
                     if t2 not in current_tables:
                         target_tables.append(t2)

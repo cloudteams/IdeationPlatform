@@ -168,7 +168,7 @@ def select_columns(request, pk):
                         initial_form[plugin['source'] + '__param__' + plugin['args'][idx][0]] = option
 
         # create formset
-        ColumnFormset = formset_factory(wraps(ColumnForm)(partial(ColumnForm, all_properties=columns)))
+        ColumnFormset = formset_factory(wraps(ColumnForm)(partial(ColumnForm, all_properties=columns)), extra=0)
         formset = ColumnFormset(initial=initial)
 
         params['formset'] = formset

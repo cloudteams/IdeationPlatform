@@ -179,8 +179,8 @@ class Connection:
             for row in self.execute(query).fetchall():
                 if row[0]:
                     tables.append(row[0])
-                    from_key = '%s.%s' % (row[0], row[1])
-                    to_key = '%s.%s' % (table_name, row[2])
+                    from_key = '%s.%s' % (table_name, row[2])
+                    to_key = '%s.%s' % (row[0], row[1])
                     relationships.append((row[0], from_key, to_key))
 
             query = """
