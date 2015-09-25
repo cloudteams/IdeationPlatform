@@ -25,6 +25,8 @@ def pretty_print(value):
         result = ''
         for var in value:
             result += str(var) + '\n'
+
+        return result
     else:
         return value
 
