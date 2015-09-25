@@ -1,0 +1,306 @@
+{
+    "sites": [
+        {
+            "connections": [
+                {
+                    "engine": "django.db.backends.sqlite3",
+                    "name": "test-data/ctc.sqlite3",
+                    "id": "Activity tracker data"
+                }
+            ],
+            "user_pk": "activitytracker_user.id@Activity tracker data",
+            "foreign_keys": [
+                [
+                    "activitytracker_user_groups",
+                    "activitytracker_user.id@Activity tracker data",
+                    "activitytracker_user_groups.user_id"
+                ],
+                [
+                    "activitytracker_user_user_permissions",
+                    "activitytracker_user.id@Activity tracker data",
+                    "activitytracker_user_user_permissions.user_id"
+                ],
+                [
+                    "activitytracker_friend",
+                    "activitytracker_user.id@Activity tracker data",
+                    "activitytracker_friend.friend_of_user_id"
+                ],
+                [
+                    "activitytracker_object",
+                    "activitytracker_user.id@Activity tracker data",
+                    "activitytracker_object.object_of_user_id"
+                ],
+                [
+                    "socialaccount_socialaccount",
+                    "activitytracker_user.id@Activity tracker data",
+                    "socialaccount_socialaccount.user_id"
+                ],
+                [
+                    "account_emailaddress",
+                    "activitytracker_user.id@Activity tracker data",
+                    "account_emailaddress.user_id"
+                ],
+                [
+                    "social_auth_usersocialauth",
+                    "activitytracker_user.id@Activity tracker data",
+                    "social_auth_usersocialauth.user_id"
+                ],
+                [
+                    "activitytracker_places",
+                    "activitytracker_user.id@Activity tracker data",
+                    "activitytracker_places.user_id"
+                ],
+                [
+                    "activitytracker_performs",
+                    "activitytracker_user.id@Activity tracker data",
+                    "activitytracker_performs.user_id"
+                ],
+                [
+                    "activitytracker_routine",
+                    "activitytracker_user.id@Activity tracker data",
+                    "activitytracker_routine.user_id"
+                ],
+                [
+                    "activitytracker_useruniquetokens",
+                    "activitytracker_user.id@Activity tracker data",
+                    "activitytracker_useruniquetokens.user_id"
+                ],
+                [
+                    "ct_projects_projectfollowing",
+                    "activitytracker_user.id@Activity tracker data",
+                    "ct_projects_projectfollowing.user_id"
+                ],
+                [
+                    "ct_projects_idea",
+                    "activitytracker_user.id@Activity tracker data",
+                    "ct_projects_idea.user_id"
+                ],
+                [
+                    "ct_projects_idearating",
+                    "activitytracker_user.id@Activity tracker data",
+                    "ct_projects_idearating.user_id"
+                ],
+                [
+                    "django_comment_flags",
+                    "activitytracker_user.id@Activity tracker data",
+                    "django_comment_flags.user_id"
+                ],
+                [
+                    "django_comments",
+                    "activitytracker_user.id@Activity tracker data",
+                    "django_comments.user_id"
+                ],
+                [
+                    "auth_group",
+                    "activitytracker_user_groups.group_id@Activity tracker data",
+                    "auth_group.id"
+                ],
+                [
+                    "auth_group_permissions",
+                    "auth_group.id@Activity tracker data",
+                    "auth_group_permissions.group_id"
+                ],
+                [
+                    "auth_user_groups",
+                    "auth_group.id@Activity tracker data",
+                    "auth_user_groups.group_id"
+                ],
+                [
+                    "auth_permission",
+                    "auth_group_permissions.permission_id@Activity tracker data",
+                    "auth_permission.id"
+                ],
+                [
+                    "django_content_type",
+                    "auth_permission.content_type_id@Activity tracker data",
+                    "django_content_type.id"
+                ],
+                [
+                    "auth_user_user_permissions",
+                    "auth_permission.id@Activity tracker data",
+                    "auth_user_user_permissions.permission_id"
+                ],
+                [
+                    "activitytracker_user_user_permissions",
+                    "auth_permission.id@Activity tracker data",
+                    "activitytracker_user_user_permissions.permission_id"
+                ],
+                [
+                    "django_admin_log",
+                    "django_content_type.id@Activity tracker data",
+                    "django_admin_log.content_type_id"
+                ],
+                [
+                    "django_comments",
+                    "django_content_type.id@Activity tracker data",
+                    "django_comments.content_type_id"
+                ],
+                [
+                    "auth_user",
+                    "django_admin_log.user_id@Activity tracker data",
+                    "auth_user.id"
+                ],
+                [
+                    "auth_user_groups",
+                    "auth_user.id@Activity tracker data",
+                    "auth_user_groups.user_id"
+                ],
+                [
+                    "auth_user_user_permissions",
+                    "auth_user.id@Activity tracker data",
+                    "auth_user_user_permissions.user_id"
+                ],
+                [
+                    "django_site",
+                    "django_comments.site_id@Activity tracker data",
+                    "django_site.id"
+                ],
+                [
+                    "django_comment_flags",
+                    "django_comments.id@Activity tracker data",
+                    "django_comment_flags.comment_id"
+                ],
+                [
+                    "socialaccount_socialapp_sites",
+                    "django_site.id@Activity tracker data",
+                    "socialaccount_socialapp_sites.site_id"
+                ],
+                [
+                    "socialaccount_socialapp",
+                    "socialaccount_socialapp_sites.socialapp_id@Activity tracker data",
+                    "socialaccount_socialapp.id"
+                ],
+                [
+                    "socialaccount_socialtoken",
+                    "socialaccount_socialapp.id@Activity tracker data",
+                    "socialaccount_socialtoken.app_id"
+                ],
+                [
+                    "socialaccount_socialaccount",
+                    "socialaccount_socialtoken.account_id@Activity tracker data",
+                    "socialaccount_socialaccount.id"
+                ],
+                [
+                    "activitytracker_performs_using",
+                    "activitytracker_object.object_id@Activity tracker data",
+                    "activitytracker_performs_using.object_id"
+                ],
+                [
+                    "activitytracker_performs",
+                    "activitytracker_performs_using.performs_id@Activity tracker data",
+                    "activitytracker_performs.id"
+                ],
+                [
+                    "activitytracker_activity",
+                    "activitytracker_performs.activity_key@Activity tracker data",
+                    "activitytracker_activity.activity_id"
+                ],
+                [
+                    "activitytracker_performsproviderinfo",
+                    "activitytracker_performs.id@Activity tracker data",
+                    "activitytracker_performsproviderinfo.instance_id"
+                ],
+                [
+                    "activitytracker_hassuperactivity",
+                    "activitytracker_activity.activity_id@Activity tracker data",
+                    "activitytracker_hassuperactivity.superactivity_id"
+                ],
+                [
+                    "activitytracker_routine",
+                    "activitytracker_activity.activity_id@Activity tracker data",
+                    "activitytracker_routine.activity_id"
+                ],
+                [
+                    "account_emailconfirmation",
+                    "account_emailaddress.id@Activity tracker data",
+                    "account_emailconfirmation.email_address_id"
+                ],
+                [
+                    "activitytracker_userextraproviderinfo",
+                    "social_auth_usersocialauth.id@Activity tracker data",
+                    "activitytracker_userextraproviderinfo.social_instance_id"
+                ],
+                [
+                    "ct_projects_idearating",
+                    "ct_projects_idea.id@Activity tracker data",
+                    "ct_projects_idearating.idea_id"
+                ]
+            ],
+            "name": "Activity tracker data",
+            "properties": [
+                {
+                    "source": "^Person.first_name(@gender,M,F)",
+                    "expose": true,
+                    "type": "VARCHAR(255)",
+                    "name": "first_name"
+                },
+                {
+                    "source": "^Person.last_name_initial()",
+                    "expose": true,
+                    "type": "VARCHAR(2)",
+                    "name": "last_name"
+                },
+                {
+                    "source": "activitytracker_user.gender@Activity tracker data",
+                    "expose": true,
+                    "type": "varchar(2)",
+                    "name": "gender"
+                },
+                {
+                    "source": "activitytracker_user.date_of_birth@Activity tracker data",
+                    "expose": false,
+                    "type": "date",
+                    "name": "date_of_birth"
+                },
+                {
+                    "source": "^Dates.age_from_birthday(@date_of_birth)",
+                    "expose": false,
+                    "type": "INT(11)",
+                    "name": "age_exact"
+                },
+                {
+                    "source": "activitytracker_user.location@Activity tracker data",
+                    "expose": false,
+                    "type": "varchar(200)",
+                    "name": "location_exact"
+                },
+                {
+                    "source": "^Location.address_to_city_country(@location_exact)",
+                    "expose": true,
+                    "type": "VARCHAR(255)",
+                    "name": "location"
+                },
+                {
+                    "source": "^Ranges.from_int_value(..17|18..24|25..34|35..54|55..,@age_exact)",
+                    "expose": true,
+                    "type": "###",
+                    "name": "age"
+                },
+                {
+                    "name": "activity",
+                    "expose": true,
+                    "source": "activitytracker_activity.activity_name@Activity tracker data",
+                    "rel_to": "activitytracker_user.id@Activity tracker data",
+                    "type": "varchar(100)",
+                    "rel_fk": null
+                },
+                {
+                    "name": "activity_start",
+                    "expose": true,
+                    "source": "activitytracker_performs.start_date@Activity tracker data",
+                    "rel_to": "activitytracker_user.id@Activity tracker data",
+                    "type": "datetime",
+                    "rel_fk": "activitytracker_performs.user_id@Activity tracker data"
+                },
+                {
+                    "name": "activity_end",
+                    "expose": true,
+                    "source": "activitytracker_performs.end_date@Activity tracker data",
+                    "rel_to": "activitytracker_user.id@Activity tracker data",
+                    "type": "datetime",
+                    "rel_fk": "activitytracker_performs.user_id@Activity tracker data"
+                }
+            ]
+        }
+    ]
+}

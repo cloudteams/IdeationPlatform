@@ -2,7 +2,7 @@ import simplejson as json
 import uuid
 from django.db import models
 from anonymizer.datasource.connections import ConnectionManager
-from anonymizer.datasource.managers import UserManager
+from anonymizer.datasource.managers.users import UserManager
 from lists import DATABASE_CONNECTION_TYPES
 
 
