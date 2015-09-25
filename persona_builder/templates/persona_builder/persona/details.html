@@ -34,7 +34,9 @@
                     {% for property in properties %}
                         {% if not property.is_pk %}
                             {% with p_key=property.name %}
-                                <td>{{user|get_property:p_key}}</td>
+                                {% with value=user|get_property:p_key %}
+                                    <td>{{value|pretty_print}}</td>
+                                {% endwith %}
                             {% endwith %}
                         {% endif %}
                     {% endfor %}

@@ -15,3 +15,12 @@ def get_property(dict, key):
     else:
         return None
 
+
+# printing lists nicely
+@register.filter
+def pretty_print(value):
+    if type(value) == list:
+        return ','.join(value)
+    else:
+        return value
+

@@ -59,6 +59,9 @@ $(function() {
             $('.property-row:last-of-type').find('select.filter-select').val(infos[i]['name']);
             $('.property-row:last-of-type').find('select.filter-select').trigger('change');
             $('.property-row:last-of-type').find('select.comparison-select').val(infos[i]['comp']);
+            if (infos[i]['val'].indexOf('"') == 0) {
+                infos[i]['val'] = infos[i]['val'].substr(1, infos[i]['val'].length - 2);
+            }
             $('.property-row:last-of-type').find('.val-input').val(infos[i]['val']);
 
             //add new row
@@ -79,8 +82,16 @@ $(function() {
                 query += ' AND ';
             }
 
-            if (row.find('select.filter-select').val() != '') {
-                query += row.find('select.filter-select').val() + row.find('select.comparison-select').val() + row.find('.val-input').val();
+            if (row.find('select.filter-select').val() != '') { //foreach fikter
+                var is_str = row.find('select.filter-select option:selected').data('type').indexOf("VARCHAR");
+                var v = row.find('.val-input').val()
+
+                query += row.find('select.filter-select').val() + row.find('select.comparison-select').val();
+                if (is_str) {
+                    query += '"' + v + '"';
+                } else {
+                    query += v;
+                }
             }
         }
 

@@ -122,4 +122,4 @@ MEDIA_ROOT = 'media/'
 MEDIA_URL = '/media/'
 
 # minimum number of users a persona must contain
-MIN_USERS_IN_PERSONA = 5
+MIN_USERS_IN_PERSONA = 3
