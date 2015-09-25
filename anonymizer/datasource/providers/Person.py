@@ -4,8 +4,9 @@ import random
 import string
 
 # lists of names
-male_names = ['Jack', 'John', 'Nick']
-female_names = ['Stella', 'Rose', 'Eve', 'Kate']
+name_folder = 'anonymizer/datasource/providers/data/'
+male_names = open(name_folder + 'male_names.txt').read().split('\n')
+female_names = open(name_folder + 'female_names.txt').read().split('\n')
 all_names = male_names + female_names
 
 

@@ -25,6 +25,9 @@ class UserManager:
         self.cm = ConnectionManager(self.config.get_connection_info())
         self.pm = PropertyManager(self.cm, self.config, token=token)
 
+    def reset_token(self, new_token):
+        self.pm.token = new_token
+
     def get(self, pk):
         # Ensures the user exists
         query = "SELECT {0} AS pk FROM {1} WHERE pk={2}".format(self.pm.user_pk.full(), self.pm.user_pk.table, pk)

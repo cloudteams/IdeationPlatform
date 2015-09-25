@@ -537,6 +537,7 @@ class PropertyManager:
             having_clause = ' HAVING ' + ' AND '.join(filters_aggregate)
             query += having_clause
 
+        print query
         # execute query & get results
         result = [self.info(row) for row in self.reduce(self.user_pk.connection.execute(query).fetchall())]
 

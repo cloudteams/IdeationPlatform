@@ -9,9 +9,9 @@ register = template.Library()
 
 # logic
 @register.filter
-def get_property(dict, key):
-    if key in dict:
-        return dict[key]
+def get_property(dictionary, key):
+    if key in dictionary:
+        return dictionary[key]
     else:
         return None
 
@@ -19,8 +19,12 @@ def get_property(dict, key):
 # printing lists nicely
 @register.filter
 def pretty_print(value):
-    if type(value) == list:
-        return ','.join(value)
+    if value is None:
+        return ''
+    elif type(value) == list:
+        result = ''
+        for var in value:
+            result += str(var) + '\n'
     else:
         return value
 
