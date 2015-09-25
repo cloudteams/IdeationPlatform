@@ -220,7 +220,7 @@ class Connection:
                 rel_1 += '@' + conn
 
             rel_2 = relationship[2]
-            if '@' not in rel_1:
+            if '@' not in rel_2:
                 rel_2 += '@' + conn
 
             final_relationships.append([

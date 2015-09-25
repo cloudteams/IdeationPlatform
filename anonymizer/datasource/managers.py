@@ -257,6 +257,8 @@ class PropertyManager:
 
         # save foreign keys
         self.foreign_keys = self.configuration.data['sites'][0]['foreign_keys']
+        # query cache
+        self._query = None
 
     def get_primary_key(self):
         for prop in self.properties:
@@ -416,53 +418,87 @@ class PropertyManager:
 
         return results
 
+    def join_clause(self):
+        """
+        Returns the join clause of the query
+        """
+        # initially only the users table is ok because it's contained in the FROM clause
+        current_tables = [self.user_pk.table]
+        all_target_tables = [(prop.table, prop.aggregate) for prop in self.properties if not prop.is_generated()]
+        current_keys = []
+
+        # only keep unique tables
+        target_tables = []
+        table_names = [tt[0] for tt in all_target_tables]
+        added_tables = []
+        for table_name in table_names:
+            if table_name in added_tables:
+                continue
+
+            # if at least one aggregate in this table, it's an outer join
+            aggr = False
+            for tt in all_target_tables:
+                if tt[0] == table_name and tt[1]:
+                    aggr = True
+                    break
+
+            added_tables.append(table_name)
+            target_tables.append((table_name, aggr))
+
+        while target_tables:  # while there are tables that are not covered by any join
+            t = target_tables[0][0]
+            outer = target_tables[0][1]
+
+            if t in current_tables:
+                target_tables = target_tables[1:]
+                continue
+
+            for key in self.foreign_keys:  # foreach possible join
+                if key[0].lower() == t.lower():
+                    current_tables.append(t)
+                    current_keys.append((key, outer))
+                    t2 = key[1].split('.')[0]
+                    if t2 not in current_tables:
+                        target_tables.append((t2, outer))
+                    break
+
+            if t in current_tables:
+                target_tables = target_tables[1:]
+                continue
+
+            raise Exception('Could not autodetect joins')
+
+        # return the actual part of SQL
+        join_clause = ''
+        for key in current_keys:
+            fk = key[0]
+            outer = key[1]
+            if outer:
+                join_clause += 'LEFT OUTER '
+
+            join_clause += 'JOIN {0} ON {1}={2} '.format(fk[0], fk[1].split('@')[0], fk[2].split('@')[0])
+
+        return join_clause
+
     def query(self):
+        if self._query:
+            return self._query
+
         select_clause = 'SELECT ' + ','.join([prop.full() + ' AS ' + prop.name
                                              for prop in self.properties if not prop.is_generated()]) + ' '
 
         from_clause = 'FROM {0} '.format(self.user_pk.table)
 
-        # find all joins
-        current_keys = []
-        current_tables = []
-        for foreign_key in self.foreign_keys:
-            if foreign_key[0] not in current_tables:
-                in_original = False
-                for p in self.properties:
-                    if p.table == foreign_key[0]:
-                        in_original = True
-                        break
-
-                if in_original:
-                    current_keys.append(foreign_key)
-                    current_tables.append(foreign_key[0])
-
-        # add foreign keys that may be required even though they provide no properties themselves
-        while True:
-            new_current_keys = [self.user_pk.table, None, None] + current_keys[:]
-
-            for key in current_keys:
-                for key_2 in self.foreign_keys:
-                    if key_2[0] not in current_tables:
-                        if key_2[2].split('.')[0] == key[0]:
-                            import pdb;pdb.set_trace()
-                            new_current_keys.append(key_2)
-                            current_tables.append(key[0])
-
-            # TODO: FIX
-            # if current_keys == new_current_keys:
-            current_keys = new_current_keys
-            break
-
         # create the join clause
-        join_clause = ''
-        for foreign_key in current_keys[1:]:
-            join_clause += 'LEFT OUTER JOIN {0} ON {1}={2} '.format(foreign_key[0], foreign_key[1].split('@')[0],
-                                                                    foreign_key[2].split('@')[0])
+        join_clause = self.join_clause()
 
-        print select_clause + from_clause + join_clause
+        query = select_clause + from_clause + join_clause
+
+        # cache the query
+        self._query = query
+
         # return the `all` query
-        return select_clause + from_clause + join_clause
+        return query
 
     def group_by(self):
         result = ' GROUP BY '
@@ -493,9 +529,14 @@ class PropertyManager:
         filters_concrete = []
         filters_aggregate = []
         for f in filters:
-            prop = self.get_property_by_name(re.split('[=<>]', f)[0])
+            # check if the filtered property actually exists & was exposed for filtering
+            p_name = re.split('[=<>]', f)[0]
+            prop = self.get_property_by_name(p_name)
+            if not prop:
+                raise PropertyNotFoundException('Property "%s" was not found.' % p_name)
             if not prop.filter_by:
                 raise PropertyNotFoundException('Property "%s" was not found.' % prop.name)
+
             if prop.is_generated():
                 filters_generated.append(f)
             elif prop.aggregate is None:
@@ -517,7 +558,6 @@ class PropertyManager:
             query += having_clause
 
         print query
-
         # execute query & get results
         result = [self.info(row) for row in self.reduce(self.user_pk.connection.execute(query).fetchall())]
 
