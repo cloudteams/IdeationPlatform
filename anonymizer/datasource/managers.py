@@ -424,30 +424,11 @@ class PropertyManager:
         """
         # initially only the users table is ok because it's contained in the FROM clause
         current_tables = [self.user_pk.table]
-        all_target_tables = [(prop.table, prop.aggregate) for prop in self.properties if not prop.is_generated()]
+        target_tables = list(set([prop.table for prop in self.properties if not prop.is_generated()]))
         current_keys = []
 
-        # only keep unique tables
-        target_tables = []
-        table_names = [tt[0] for tt in all_target_tables]
-        added_tables = []
-        for table_name in table_names:
-            if table_name in added_tables:
-                continue
-
-            # if at least one aggregate in this table, it's an outer join
-            aggr = False
-            for tt in all_target_tables:
-                if tt[0] == table_name and tt[1]:
-                    aggr = True
-                    break
-
-            added_tables.append(table_name)
-            target_tables.append((table_name, aggr))
-
         while target_tables:  # while there are tables that are not covered by any join
-            t = target_tables[0][0]
-            outer = target_tables[0][1]
+            t = target_tables[0]
 
             if t in current_tables:
                 target_tables = target_tables[1:]
@@ -456,10 +437,10 @@ class PropertyManager:
             for key in self.foreign_keys:  # foreach possible join
                 if key[0].lower() == t.lower():
                     current_tables.append(t)
-                    current_keys.append((key, outer))
+                    current_keys.insert(0, key)
                     t2 = key[1].split('.')[0]
                     if t2 not in current_tables:
-                        target_tables.append((t2, outer))
+                        target_tables.append(t2)
                     break
 
             if t in current_tables:
@@ -471,12 +452,10 @@ class PropertyManager:
         # return the actual part of SQL
         join_clause = ''
         for key in current_keys:
-            fk = key[0]
-            outer = key[1]
-            if outer:
-                join_clause += 'LEFT OUTER '
+            join_left = key[1].split('@')[0]
+            join_right = key[2].split('@')[0]
 
-            join_clause += 'JOIN {0} ON {1}={2} '.format(fk[0], fk[1].split('@')[0], fk[2].split('@')[0])
+            join_clause += 'LEFT OUTER JOIN {0} ON {1}={2} '.format(key[0], join_left, join_right)
 
         return join_clause
 
@@ -492,13 +471,10 @@ class PropertyManager:
         # create the join clause
         join_clause = self.join_clause()
 
-        query = select_clause + from_clause + join_clause
-
-        # cache the query
-        self._query = query
+        self._query = select_clause + from_clause + join_clause
 
         # return the `all` query
-        return query
+        return self._query
 
     def group_by(self):
         result = ' GROUP BY '
@@ -509,16 +485,12 @@ class PropertyManager:
         # construct query
         query = self.query() + self.group_by()
 
-        print query
-
         # execute query & return results
         return [self.info(row) for row in self.reduce(self.user_pk.connection.execute(query).fetchall())]
 
     def filter(self, filters):
         if not filters:
             return self.all()
-
-        query = self.query()
 
         # create where clause
         if not type(filters) == list:
@@ -528,6 +500,7 @@ class PropertyManager:
         filters_generated = []
         filters_concrete = []
         filters_aggregate = []
+        filter_properties = []
         for f in filters:
             # check if the filtered property actually exists & was exposed for filtering
             p_name = re.split('[=<>]', f)[0]
@@ -541,8 +514,13 @@ class PropertyManager:
                 filters_generated.append(f)
             elif prop.aggregate is None:
                 filters_concrete.append(f)
+                filter_properties.append(prop.name)
             else:
                 filters_aggregate.append(f)
+                filter_properties.append(prop)
+                filter_properties.append(prop.name)
+
+        query = self.query()
 
         # construct where clause
         if filters_concrete:
