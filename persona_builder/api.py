@@ -3,6 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse, QueryDict
 from django.shortcuts import get_object_or_404
 from django.template.context_processors import media
+from django.utils.datastructures import MultiValueDict
 from django.views.decorators.csrf import csrf_exempt
 import simplejson as json
 from ct_anonymizer.settings import MEDIA_URL
@@ -116,27 +117,27 @@ def persona(request, pk):
 
     if request.method == 'GET':
         return JsonResponse(get_persona_data(request, p), safe=False)
-    elif request.method == 'PUT':
-        put = QueryDict(request.body).copy()
+    elif request.method == 'POST':
+        data = request.POST.copy()
         # (partial) update
-        if 'name' not in put:
-            put['name'] = p.name
-        if 'description' not in put:
-            put['description'] = p.description
-        if 'avatar' not in put:
-            put['avatar'] = p.avatar
-        if 'is_public' not in put:
-            put['is_public'] = p.avatar
+        if 'name' not in data:
+            data['name'] = p.name
+        if 'description' not in data:
+            data['description'] = p.description
+        if 'avatar' not in data:
+            data['avatar'] = p.avatar
+        if 'is_public' not in data:
+            data['is_public'] = p.is_public
 
         # validate form
-        form = PersonaAPIForm(put, instance=p)
+        form = PersonaAPIForm(data, instance=p)
 
         if not form.is_valid():
             return JsonResponse({'error': form.errors}, status=400)
 
         # special case for query -- additional actions required
-        if 'query' in put: #and p.query != put.get('query'):
-            err = update_query(p, put)
+        if 'query' in data and p.query != data.get('query'):
+            err = update_query(p, data)
             if err:  # some error occurred
                 return err
 
@@ -145,4 +146,4 @@ def persona(request, pk):
         p.delete()
         return HttpResponse(status=204)
     else:
-        return JsonResponse({'error': 'Only GET, PUT, DELETE methods allowed'}, status=400)
+        return JsonResponse({'error': 'Only GET, POST, DELETE methods allowed'}, status=400)
