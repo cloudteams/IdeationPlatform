@@ -19,6 +19,9 @@ urlpatterns = [
     url(r'^connection/(?P<pk>\d+)/suggest-user-table/$', views.suggest_users_table),
     url(r'^connection/(?P<pk>\d+)/select-columns/$', views.select_columns),
 
+    # change active configuration
+    url(r'^connection/(?P<pk>\d+)/set-active/$', views.set_active),
+
     # query & console to run them
     url(r'^connection/(?P<pk>\d+)/query/$', views.query_connection),
     url(r'^connection/(?P<pk>\d+)/console/$', views.console),

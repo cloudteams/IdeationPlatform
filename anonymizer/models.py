@@ -17,6 +17,9 @@ class ConnectionConfiguration(models.Model):
     properties = models.TextField(default='')
     foreign_keys = models.TextField(default='', editable=False)
 
+    # only one configuration should be active at each time
+    is_active = models.BooleanField(default=False, editable=False)
+
     def update_info_url(self):
         base_url = '/anonymizer/connection/update-info'
 
@@ -82,3 +85,9 @@ class ConnectionConfiguration(models.Model):
             token = uuid.uuid4()
 
         return UserManager(from_str=self.to_json(), token=token)
+
+    def save(self, *args, **kwargs):
+        if ConnectionConfiguration.objects.all().count() == 0:
+            self.is_active = True
+
+        super(ConnectionConfiguration, self).save(*args, **kwargs)

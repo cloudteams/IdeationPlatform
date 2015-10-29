@@ -1,6 +1,16 @@
 <div class="configuration-teaser">
     {{configuration.name}}
+
     <a href="/anonymizer/connection/{{configuration.pk}}/console/">Query</a> |
     <a href="/anonymizer/connection/{{configuration.pk}}/select-columns/">Edit</a> |
     <a href="/anonymizer/connection/{{configuration.pk}}/delete/">Delete</a>
+
+    {% if not configuration.is_active %}
+        <form method="POST" action = '/anonymizer/connection/{{configuration.pk}}/set-active/'>
+            {% csrf_token %}
+            <input type="submit" class="btn" value="Activate" />
+        </form>
+    {% else %}
+        Active <i class="fa fa-check"></i>
+    {% endif %}
 </div>

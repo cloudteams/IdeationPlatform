@@ -252,6 +252,26 @@ def select_columns(request, pk):
     return render(request, 'anonymizer/connection/select_columns.html', params, status=status)
 
 
+def set_active(request, pk):
+    """
+    Changes the active configuration
+    """
+    if request.method == 'POST':
+        get_object_or_404(ConnectionConfiguration, pk=pk)
+
+        for cc in ConnectionConfiguration.objects.all():
+            if cc.pk == pk:
+                cc.is_active = True
+            else:
+                cc.is_active = False
+
+            cc.save()
+
+        return redirect('/anonymizer/')
+    else:
+        return HttpResponse('Only POST method allowed', status=400)
+
+
 def query_connection(request, pk):
     """
     Execute a query against a connection
