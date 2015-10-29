@@ -1,16 +1,12 @@
 import uuid
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse, JsonResponse, QueryDict
-from django.shortcuts import get_object_or_404
-from django.template.context_processors import media
-from django.utils.datastructures import MultiValueDict
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import simplejson as json
 from ct_anonymizer.settings import MEDIA_URL
 from persona_builder.forms import PersonaAPIForm, PersonaPropertiesForm
 from persona_builder.models import Persona
 from persona_builder.views import get_active_configuration
-from django.middleware.csrf import rotate_token
 
 __author__ = 'dipap'
 
