@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from persona_builder import views
+from persona_builder import views, api
 
 __author__ = 'dipap'
 
@@ -14,4 +14,9 @@ urlpatterns = [
 
     # list all personas
     url(r'^personas/$', views.list_personas),
+
+    # api
+    url(r'^api/info/$', api.info),
+    url(r'^api/personas/$', api.personas),
+    url(r'^api/persona/(?P<pk>[\w-]+)/$', api.persona),
 ]

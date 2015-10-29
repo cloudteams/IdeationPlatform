@@ -2,7 +2,7 @@ from functools import partial, wraps
 import json
 import uuid
 from django.forms import formset_factory
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import CreateView, DeleteView
 import simplejson
@@ -301,12 +301,15 @@ def query_connection(request, pk):
                 filters = q[pos:-1]
 
                 result = user_manager.count(filters)
+            elif q == 'properties':
+                return JsonResponse(user_manager.list_filters(), safe=False)
             elif q == 'help':
                 result = """
     Commands:
-        - all()
-        - filter(some_filter)
-        - count(some_filters)
+        - all(): Fetch all records
+        - filter(some_filter): Fetch records based on `some_filter`
+        - count(some_filters): Count records based on `some_filter`
+        - properties: Show all acceptable attributes
 
     Examples of filter usage:
         - filter(age>30)

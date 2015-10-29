@@ -6,10 +6,10 @@ from django.db import models
 
 class Persona(models.Model):
     uuid = models.UUIDField(unique=True, primary_key=False, default=uuid.uuid4, editable=False)
-    owner = models.ForeignKey(User, blank=True, null=True)
+    owner = models.CharField(max_length=255, null=True, blank=True, default='')
     name = models.CharField(max_length=256, null=False, blank=False, unique=True)
     description = models.CharField(max_length=4096, null=False, blank=False)
-    avatar = models.ImageField(upload_to='persona-avatars')
+    avatar = models.ImageField(upload_to='persona-avatars', null=True, blank=True)
     query = models.TextField(editable=False)
     users = models.TextField(editable=False, default='[]')
     is_ready = models.BooleanField(default=False, editable=False)

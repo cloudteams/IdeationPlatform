@@ -11,8 +11,14 @@ class PersonaForm(forms.ModelForm):
         exclude = ['owner', ]
 
 
+class PersonaAPIForm(forms.ModelForm):
+    class Meta:
+        model = Persona
+        exclude = []
+
+
 class PersonaPropertiesForm(forms.Form):
-    query = forms.CharField()
+    query = forms.CharField(required=False)
 
     def __init__(self, user_manager, *args, **kwargs):
         super(PersonaPropertiesForm, self).__init__(*args, **kwargs)
@@ -22,8 +28,15 @@ class PersonaPropertiesForm(forms.Form):
         # default validation
         super(PersonaPropertiesForm, self).clean()
 
-        # check number of users in persona
-        if self.user_manager.count(self.cleaned_data['query']) < MIN_USERS_IN_PERSONA:
-            self.add_error(None, 'Use less strict filters')
+        try:
+            # check number of users in persona
+            if 'query' in self.cleaned_data:
+                q = self.cleaned_data['query']
+            else:
+                q = ''
+            if self.user_manager.count(q) < MIN_USERS_IN_PERSONA:
+                self.add_error('query', 'Use less strict filters')
+        except Exception as e:
+            self.add_error('query', str(e))
 
         return self.cleaned_data

@@ -9,7 +9,7 @@ import simplejson as json
 
 
 def get_active_configuration():
-    return ConnectionConfiguration.objects.all()[0]
+    return ConnectionConfiguration.objects.get(is_active=True)
 
 
 class PersonaCreateView(CreateView):
@@ -35,7 +35,7 @@ def edit_persona_properties(request, pk):
     status = 200
 
     if request.method == 'GET':
-        # not necessary for getting the form, just when validating
+        # user_manager is not necessary for getting the form, just when validating
         form = PersonaPropertiesForm(None, initial={'query': persona.query})
 
     elif request.method == 'POST':
@@ -48,7 +48,6 @@ def edit_persona_properties(request, pk):
                 persona.query = form.cleaned_data['query']
 
             # generate users according to query
-
             persona.update_users(user_manager)
 
             # save changes & show full persona view

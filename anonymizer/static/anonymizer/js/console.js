@@ -25,9 +25,9 @@ $(function() {
             $.ajax({
                 type: "GET",
                 url: ConfigurationConsole.client_url + q,
-                success: function(data) {
-                    var new_val = $(that).val() + '\n' + data;
-                    if (data) {
+                success: function(data, textStatus, jqXHR) {
+                    var new_val = $(that).val() + '\n' + jqXHR.responseText;
+                    if (jqXHR.responseText) {
                         new_val += '\n$';
                     } else {
                         new_val += '$';
