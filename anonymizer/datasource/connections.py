@@ -2,6 +2,7 @@ __author__ = 'dipap'
 
 import sqlite3
 from mysql.connector import connect as mysql_connect
+import psycopg2
 
 
 class UnsupportedEngine(Exception):
@@ -22,7 +23,7 @@ class Connection:
         self.engine = engine
         self.conn = conn
 
-        if self.is_sqlite3() or self.is_mysql():
+        if self.is_sqlite3() or self.is_mysql() or self.is_postgres():
             pass
         else:
             raise UnsupportedEngine('Unsupported engine: ' + self.engine)
@@ -32,6 +33,9 @@ class Connection:
 
     def is_mysql(self):
         return self.engine == 'django.db.backends.mysql'
+
+    def is_postgres(self):
+        return self.engine == 'django.db.backends.psycopg2'
 
     def execute(self, query):
         """
@@ -56,6 +60,8 @@ class Connection:
             query = 'SELECT name FROM sqlite_master WHERE type=\'table\';'
         elif self.is_mysql():
             query = 'SHOW TABLES;'
+        elif self.is_postgres():
+            query = 'SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = \'public\';'
 
         return self.execute(query).fetchall()
 
@@ -74,6 +80,18 @@ class Connection:
             query = "SHOW INDEX FROM %s where Key_name='PRIMARY'" % table_name
             row = self.execute(query).fetchone()
             return '%s.%s@%s' % (table_name, row[4], self.id)
+        elif self.is_postgres():
+            query = """
+                SELECT
+                c.column_name
+                FROM
+                information_schema.table_constraints tc
+                JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_name)
+                JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name
+                WHERE constraint_type = 'PRIMARY KEY' and tc.table_name = '%s';
+            """ % table_name
+            row = self.execute(query).fetchone()
+            return '%s.%s@%s' % (table_name, row[0], self.id)
 
     def get_data_properties(self, table_name, from_related=False):
         """
@@ -251,6 +269,10 @@ class ConnectionManager:
                 conn = mysql_connect(host=conn_info['host'], port=conn_info['port'],
                                      user=conn_info['user'], password=conn_info['password'],
                                      database=conn_info['name'])
+            elif connection.is_postgres():
+                conn = psycopg2.connect("host='%s' port='%s' user='%s' password='%s' dbname='%s'" %
+                                        (conn_info['host'], conn_info['port'], conn_info['user'],
+                                         conn_info['password'], conn_info['name']))
             else:
                 raise UnsupportedEngine('Unsupported engine: ' + conn_info['engine'])
 
