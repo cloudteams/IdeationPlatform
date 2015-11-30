@@ -8,7 +8,7 @@ from django.views.generic import CreateView, DeleteView
 import simplejson
 from anonymizer.lists import PROVIDER_PLUGINS
 from forms import ConnectionConfigurationForm, Sqlite3ConnectionForm, MySQLConnectionForm, UserTableSelectionForm, \
-    ColumnForm, validate_unique_across
+    ColumnForm, validate_unique_across, PostgresConnectionForm
 from models import ConnectionConfiguration
 
 
@@ -72,6 +72,37 @@ def mysql_info(request, pk):
         params['form'] = MySQLConnectionForm()
     elif request.method == 'POST':
         form = MySQLConnectionForm(request.POST)
+        if form.is_valid():
+            config = get_object_or_404(ConnectionConfiguration, pk=pk)
+            data = form.cleaned_data
+            config.info = '''
+                "name": "''' + data['database'] + '''",
+                "user": "''' + data['user'] + '''",
+                "password": "''' + data['password'] + '''",
+                "host": "''' + data['host'] + '''",
+                "port": "''' + data['port'] + '''"
+            '''
+            config.save()
+
+            return redirect('/anonymizer/connection/%d/suggest-user-table/' % config.pk)
+        else:
+            status = 400
+            params['form'] = form
+
+    return render(request, 'anonymizer/connection/update_info.html', params, status=status)
+
+
+def postgres_info(request, pk):
+    """
+    Update the info of a connection to a postgres database
+    """
+    params = {}
+    status = 200
+
+    if request.method == 'GET':
+        params['form'] = PostgresConnectionForm()
+    elif request.method == 'POST':
+        form = PostgresConnectionForm(request.POST)
         if form.is_valid():
             config = get_object_or_404(ConnectionConfiguration, pk=pk)
             data = form.cleaned_data
@@ -257,10 +288,10 @@ def set_active(request, pk):
     Changes the active configuration
     """
     if request.method == 'POST':
-        get_object_or_404(ConnectionConfiguration, pk=pk)
+        target = get_object_or_404(ConnectionConfiguration, pk=pk)
 
         for cc in ConnectionConfiguration.objects.all():
-            if cc.pk == pk:
+            if cc == target:
                 cc.is_active = True
             else:
                 cc.is_active = False

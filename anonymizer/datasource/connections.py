@@ -39,7 +39,7 @@ class Connection:
 
     def execute(self, query):
         """
-        Create new cursor & execute the giver query
+        Create new cursor & execute the given query
         """
         cursor = self.conn.cursor()
         cursor.execute(query)
@@ -122,6 +122,25 @@ class Connection:
                     if ('auto' not in row[5]) and ('MUL' not in row[3]):
                         result.append((row[0], row[1], '%s.%s@%s' % (table, row[0], self.id)))
 
+            elif self.is_postgres():
+                query = """
+                    SELECT information_schema.columns.column_name, information_schema.columns.data_type
+                    FROM information_schema.columns
+                    WHERE information_schema.columns.table_name = '%s'
+                    EXCEPT
+                    SELECT information_schema.columns.column_name, information_schema.columns.data_type
+                    FROM information_schema.columns
+                    JOIN information_schema.table_constraints AS tc
+                        ON tc.table_name = information_schema.columns.table_name
+                    JOIN information_schema.key_column_usage AS kcu
+                        ON tc.constraint_name = kcu.constraint_name AND kcu.column_name = information_schema.columns.column_name
+                    JOIN information_schema.constraint_column_usage AS ccu
+                        ON ccu.constraint_name = tc.constraint_name
+                    WHERE information_schema.columns.table_name = '%s' AND (constraint_type = 'FOREIGN KEY' OR (COALESCE(information_schema.columns.column_default, '') LIKE 'nextval%%'));
+                """ % (table, table)
+                for row in self.execute(query).fetchall():
+                    result.append((row[0], row[1], '%s.%s@%s' % (table, row[0], self.id)))
+
         # save detected foreign keys
         return result, relationships
 
@@ -133,6 +152,7 @@ class Connection:
                     return '%s.%s@%s' % (from_table, row[3], self.id)
 
             return None
+
         elif self.is_mysql():
             query = """
                 SELECT COLUMN_NAME
@@ -144,6 +164,27 @@ class Connection:
             """ % (from_table, to_table)
 
             return '%s.%s@%s' % (from_table, self.execute(query).fetchone()[0], self.id)
+
+        elif self.is_postgres():
+            query = """
+                SELECT
+                    tc.constraint_name, tc.table_name, kcu.column_name,
+                    ccu.table_name AS foreign_table_name,
+                    ccu.column_name AS foreign_column_name
+                FROM
+                    information_schema.table_constraints AS tc
+                    JOIN information_schema.key_column_usage AS kcu
+                      ON tc.constraint_name = kcu.constraint_name
+                    JOIN information_schema.constraint_column_usage AS ccu
+                      ON ccu.constraint_name = tc.constraint_name
+                WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name='%s' AND ccu.table_name='%s';
+            """ % (from_table, to_table)
+
+            row = self.execute(query).fetchone()
+            if not row:
+                return None
+
+            return '%s.%s@%s' % (from_table, row[2], self.id)
 
     def get_related_tables(self, table_name, already_accessed=None):
         """
@@ -214,6 +255,43 @@ class Connection:
                     from_key = '%s.%s' % (row[1], table_name)
                     to_key = '%s.%s' % (row[0], row[2])
                     relationships.append((row[0], from_key, to_key))
+
+        elif self.is_postgres():
+            # foreign keys referencing table_name
+            query = """
+                SELECT DISTINCT information_schema.columns.table_name, information_schema.columns.column_name, ccu.column_name
+                FROM information_schema.columns
+                JOIN information_schema.table_constraints AS tc
+                    ON tc.table_name = information_schema.columns.table_name
+                JOIN information_schema.key_column_usage AS kcu
+                    ON tc.constraint_name = kcu.constraint_name AND kcu.column_name = information_schema.columns.column_name
+                JOIN information_schema.constraint_column_usage AS ccu
+                    ON ccu.constraint_name = tc.constraint_name
+                WHERE constraint_type = 'FOREIGN KEY' AND (ccu.table_name = '%s')
+            """ % table_name
+            for row in self.execute(query).fetchall():
+                tables.append(row[0])
+                from_key = '%s.%s' % (row[0], row[1])
+                to_key = '%s.%s' % (table_name, row[2])
+                relationships.append((row[0], from_key, to_key))
+
+            # foreign keys referenced by table_name
+            query = """
+                SELECT DISTINCT ccu.table_name, information_schema.columns.column_name, ccu.column_name
+                FROM information_schema.columns
+                JOIN information_schema.table_constraints AS tc
+                    ON tc.table_name = information_schema.columns.table_name
+                JOIN information_schema.key_column_usage AS kcu
+                    ON tc.constraint_name = kcu.constraint_name AND kcu.column_name = information_schema.columns.column_name
+                JOIN information_schema.constraint_column_usage AS ccu
+                    ON ccu.constraint_name = tc.constraint_name
+                WHERE constraint_type = 'FOREIGN KEY' AND (information_schema.columns.table_name = '%s')
+            """ % table_name
+            for row in self.execute(query).fetchall():
+                tables.append(row[0])
+                from_key = '%s.%s' % (table_name, row[1])
+                to_key = '%s.%s' % (row[0], row[2])
+                relationships.append((row[0], from_key, to_key))
 
         # recursively search all referenced tables
         final_result = []

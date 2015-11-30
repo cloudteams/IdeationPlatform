@@ -486,7 +486,7 @@ class PropertyManager:
     def all(self):
         # construct query
         query = self.query() + self.group_by()
-
+        print query
         # execute query & return results
         return [self.info(row) for row in self.reduce(self.user_pk.connection.execute(query).fetchall())]
 

@@ -1,7 +1,8 @@
+import psycopg2
 from django import forms
 from django.core import validators
 from django.core.exceptions import ValidationError
-from mysql.connector import connect as mysql_connect, InterfaceError, ProgrammingError
+from mysql.connector import connect as mysql_connect, InterfaceError, ProgrammingError, DatabaseError, OperationalError
 from anonymizer.lists import AGGREGATE_LIST, PROVIDER_PLUGINS
 from models import ConnectionConfiguration
 
@@ -75,6 +76,35 @@ class MySQLConnectionForm(forms.Form):
         return self.cleaned_data
 
 
+class PostgresConnectionForm(forms.Form):
+    DEFAULT_PORT = '5432'
+
+    host = forms.CharField(max_length=512)
+    port = forms.CharField(initial=DEFAULT_PORT)
+    user = forms.CharField()
+    password = forms.CharField(required=False)
+    database = forms.CharField()
+
+    def clean(self):
+        # default validation
+        super(PostgresConnectionForm, self).clean()
+
+        if self.errors:
+            return self.cleaned_data
+
+        # test connection
+        try:
+            conn_string = "host='%s' port='%s' dbname='%s' user='%s' password='%s'" % \
+                          (self.cleaned_data['host'], self.cleaned_data['port'], self.cleaned_data['database'],
+                           self.cleaned_data['user'], self.cleaned_data['password'])
+            psycopg2.connect(conn_string)
+
+        except psycopg2.DatabaseError, e:
+            raise ValidationError(str(e))
+
+        return self.cleaned_data
+
+
 class UserTableSelectionForm(forms.Form):
 
     def __init__(self, connection, *args, **kwargs):
@@ -91,6 +121,7 @@ class UserTableSelectionForm(forms.Form):
             else:
                 not_suggested.append(table_name)
 
+        choices.sort(key=lambda c: len(c[0]))
         for table in not_suggested:
             choices.append((table, table))
 

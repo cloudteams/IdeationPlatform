@@ -27,6 +27,8 @@ class ConnectionConfiguration(models.Model):
             return '{0}/{1}/sqlite3/'.format(base_url, self.pk)
         elif self.connection_type == 'django.db.backends.mysql':
             return '{0}/{1}/mysql/'.format(base_url, self.pk)
+        elif self.connection_type == 'django.db.backends.psycopg2':
+            return '{0}/{1}/postgres/'.format(base_url, self.pk)
 
     def get_default_properties(self, columns):
         properties = []
