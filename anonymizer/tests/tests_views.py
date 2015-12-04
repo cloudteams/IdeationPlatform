@@ -104,6 +104,32 @@ class ConnectionViewTests(TestCase):
         response = self.client.post(form_url, data=data)
         self.assertEqual(response.status_code, 400)
 
+    def test_update_postgres_info(self):
+        ConnectionConfiguration.objects.create(name='test_connection',
+                                               connection_type='django.db.backends.psycopg2', info='')
+
+        form_url = '/anonymizer/connection/update-info/1/postgres/'
+
+        # test that we can get the form
+        response = self.client.get(form_url)
+        self.assertEqual(response.status_code, 200)
+
+        # test that we can create a correct connection
+        data = {
+            'host': '127.0.0.1',
+            'port': '5432',
+            'user': 'postgres',
+            'password': '1234',
+            'database': 'test_database'
+        }
+        response = self.client.post(form_url, data=data)
+        self.assertNotEqual(response.status_code, 400)
+
+        # test that we can't create a connection with the wrong password
+        data['password'] = '12345'
+        response = self.client.post(form_url, data=data)
+        self.assertEqual(response.status_code, 400)
+
     def test_select_user_table(self):
         ConnectionConfiguration.objects.create(name='test_connection',
                                                connection_type='django.db.backends.sqlite3',

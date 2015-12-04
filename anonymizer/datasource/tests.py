@@ -18,33 +18,42 @@ class ConnectionTests(TestCase):
         config = Configuration('test-data/config/mysql_config.json')
         self.mysql = ConnectionManager(config.get_connection_info()).get('my_other_db')
 
+        config = Configuration('test-data/config/pg_config.json')
+        self.pg = ConnectionManager(config.get_connection_info()).get('my_pg_db')
+
         super(ConnectionTests, self).setUp()
 
     def test_tables(self):
         # sqlite also reports the system special table
         self.assertEqual(len(self.sqlite3.tables()), 3)
         self.assertEqual(len(self.mysql.tables()), 3)
+        self.assertEqual(len(self.pg.tables()), 3)
 
     def test_table_primary_key(self):
         self.assertEqual(self.sqlite3.primary_key_of('users'), 'users.id@my_site_db')
         self.assertEqual(self.mysql.primary_key_of('users'), 'users.id@my_other_db')
+        self.assertEqual(self.pg.primary_key_of('users'), 'users.id@my_pg_db')
 
     def test_table_properties(self):
         # sqlite falsely reports the id, too
         self.assertEqual(len(self.sqlite3.get_data_properties('Users')[0]), 6)
         self.assertEqual(len(self.mysql.get_data_properties('users')[0]), 5)
+        self.assertEqual(len(self.pg.get_data_properties('users')[0]), 5)
 
         # make sure first element is column name
-        self.assertTrue(type(self.sqlite3.get_data_properties('Users')[0][0][0]) == unicode)
-        self.assertTrue(type(self.mysql.get_data_properties('users')[0][0][0]) == unicode)
+        self.assertTrue(type(self.sqlite3.get_data_properties('Users')[0][0][0]) in [unicode, str])
+        self.assertTrue(type(self.mysql.get_data_properties('users')[0][0][0]) in [unicode, str])
+        self.assertTrue(type(self.pg.get_data_properties('users')[0][0][0]) in [unicode, str])
 
         # also check the properties from other tables pointing to Users as well
         self.assertEqual(len(self.sqlite3.get_data_properties('Users', from_related=True)[0]), 9)
         self.assertEqual(len(self.mysql.get_data_properties('users', from_related=True)[0]), 6)
+        self.assertEqual(len(self.pg.get_data_properties('users', from_related=True)[0]), 6)
 
         # also check other tables pointing to Users as well
         self.assertEqual(len(self.sqlite3.get_data_properties('Running', from_related=True)[0]), 9)
         self.assertEqual(len(self.mysql.get_data_properties('running', from_related=True)[0]), 6)
+        self.assertEqual(len(self.pg.get_data_properties('running', from_related=True)[0]), 6)
 
     def test_related_tables(self):
         self.assertIn('Running', self.sqlite3.get_related_tables('Users')[0])
@@ -52,6 +61,8 @@ class ConnectionTests(TestCase):
                          self.sqlite3.get_related_tables('Users')[1])
         self.assertEqual([[u'running', u'users.id@my_other_db', u'running.user@my_other_db']],
                          self.mysql.get_related_tables('users')[1])
+        self.assertEqual([['running', u'users.id@my_pg_db', u'running.user_id@my_pg_db']],
+                         self.pg.get_related_tables('users')[1])
 
 
 class ConnectionManagerTests(TestCase):

@@ -271,8 +271,8 @@ class Connection:
             """ % table_name
             for row in self.execute(query).fetchall():
                 tables.append(row[0])
-                from_key = '%s.%s' % (row[0], row[1])
-                to_key = '%s.%s' % (table_name, row[2])
+                from_key = '%s.%s' % (table_name, row[2])
+                to_key = '%s.%s' % (row[0], row[1])
                 relationships.append((row[0], from_key, to_key))
 
             # foreign keys referenced by table_name
@@ -289,8 +289,8 @@ class Connection:
             """ % table_name
             for row in self.execute(query).fetchall():
                 tables.append(row[0])
-                from_key = '%s.%s' % (table_name, row[1])
-                to_key = '%s.%s' % (row[0], row[2])
+                from_key = '%s.%s' % (row[0], row[2])
+                to_key = '%s.%s' % (table_name, row[1])
                 relationships.append((row[0], from_key, to_key))
 
         # recursively search all referenced tables
