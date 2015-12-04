@@ -1,0 +1,22 @@
+{
+  "sites": [
+    {
+      "name": "my_pg_site",
+
+      "connections": [
+        {
+          "id": "my_pg_db",
+          "engine": "django.db.backends.psycopg2",
+          "host": "127.0.0.1",
+          "port": "5432",
+          "user": "postgres",
+          "password": "1234",
+          "name": "test_database"
+        }
+      ],
+
+      "properties": [
+      ]
+    }
+  ]
+}

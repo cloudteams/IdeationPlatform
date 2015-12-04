@@ -6,6 +6,8 @@ env:
   - DJANGO="Django==1.8"
 before_install:
   - mysql -uroot < test-data/test_site.sql 
+  - psql -c 'create database test_database;' -U postgres; psql test_database < test-data/test_site_pg.sql 
+  - 
 install:
  - pip install -r requirements.txt
  - pip install coverage
