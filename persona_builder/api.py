@@ -17,7 +17,7 @@ def info(request):
     """
     if request.method == 'GET':
         config = get_active_configuration()
-        return JsonResponse(config.get_user_manager().list_filters(), safe=False)
+        return JsonResponse(config.get_user_manager().list_filters(ignore_options=True), safe=False)
     else:
         return JsonResponse({'error': 'Only GET method allowed'}, status=400)
 

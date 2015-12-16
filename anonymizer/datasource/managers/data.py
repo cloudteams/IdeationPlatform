@@ -307,18 +307,22 @@ class PropertyManager:
 
         return None
 
-    def list_filters(self):
+    def list_filters(self, ignore_options=False):
         filters = []
         for p in self.properties:
             if p.filter_by and not p.is_pk:
                 # ignore properties we're not allowed to filter by
-                filters.append({
+                filter = {
                     'name': p.name,
                     'label': p.label,
                     'type': p.tp,
-                    'has_options': p.has_options,
-                    'get_options': p.get_options,
-                })
+                }
+
+                if not ignore_options:
+                    filter['has_options'] =  p.has_options
+                    filter['get_options'] =  p.get_options
+
+                filters.append(filter)
 
         return filters
 

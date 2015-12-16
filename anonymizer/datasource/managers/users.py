@@ -55,8 +55,8 @@ class UserManager:
 
         return len(qs)
 
-    def list_filters(self):
-        return self.pm.list_filters()
+    def list_filters(self, ignore_options=False):
+        return self.pm.list_filters(ignore_options)
 
     def list_properties(self):
         return self.pm.list_properties()

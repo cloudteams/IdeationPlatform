@@ -223,6 +223,11 @@ def select_columns(request, pk):
                 else:
                     p['expose'] = False
 
+                if 'options_auto' in form.cleaned_data:
+                    p['options_auto'] = bool(form.cleaned_data['options_auto'])
+                else:
+                    p['options_auto'] = False
+
                 if form.cleaned_data['aggregate']:
                     p['aggregate'] = form.cleaned_data['aggregate']
 
@@ -350,8 +355,16 @@ def query_connection(request, pk):
 """
 
                 for f in user_manager.list_filters():
-                    result += "        %s\n" % f['name']
+                    result += "        %s" % f['name']
+                    if f['has_options']():
+                        result += ' / options: '
+                        options_info = []
+                        for o in f['get_options']():
+                            options_info.append('%s (%s)' % (o[0], o[1]))
 
+                        result += ','.join(options_info)
+
+                    result += '\n'
             else:
                 raise Exception('Unknown command: %s' % q)
 

@@ -138,6 +138,7 @@ class ColumnForm(forms.Form):
                                       'and @/./+/-/_ characters.', 'invalid'),
         ])
     aggregate = forms.ChoiceField(choices=AGGREGATE_LIST, required=False)
+    options_auto = forms.BooleanField(initial=False, required=False, label='Load options from database for this field')
 
     def __init__(self, all_properties, *args, **kwargs):
         super(ColumnForm, self).__init__(*args, **kwargs)
