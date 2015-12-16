@@ -42,7 +42,11 @@ class Connection:
         Create new cursor & execute the given query
         """
         cursor = self.conn.cursor()
-        cursor.execute(query)
+        try:
+            cursor.execute(query)
+        except Exception, e:
+            print(e)
+            self.conn.rollback()
 
         return cursor
 

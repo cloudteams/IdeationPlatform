@@ -135,7 +135,7 @@ class ConnectionViewTests(TestCase):
             response = self.client.post(form_url, data=data)
             self.assertEqual(response.status_code, 400)
         """
-        
+
     def test_select_user_table(self):
         ConnectionConfiguration.objects.create(name='test_connection',
                                                connection_type='django.db.backends.sqlite3',

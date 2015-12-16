@@ -35,6 +35,13 @@ class PropertyNotFoundException(Exception):
     pass
 
 
+class InvalidPropertyConfiguration(Exception):
+    """
+    Exception for when a property name described in the configuration is not found
+    """
+    pass
+
+
 class UnknownOperatorException(Exception):
     """
     Raised when a logical expression contains an invalid operator
@@ -48,7 +55,7 @@ class Property:
     """
 
     def __init__(self, connection_manager, source, name=None, tp=None, aggregate=None, label=None,
-                 filter_by=True, is_pk=False):
+                 filter_by=True, is_pk=False, options=None, options_auto=False):
         self.connection_manager = connection_manager
         self.source = source
         self.table = source.split('@')[0].split('.')[0]
@@ -56,6 +63,12 @@ class Property:
         self.aggregate = aggregate
         self.filter_by = filter_by
         self.is_pk = is_pk
+
+        if options and options_auto:
+            raise InvalidPropertyConfiguration('Both options and options_auto can\'t be enabled at the same time.')
+
+        self.options = options
+        self.options_auto = options_auto
 
         if not name:
             self.name = self.column
@@ -66,7 +79,7 @@ class Property:
 
         self.label = label
         if not label:
-            self.label = self.name
+            self.label = Property.humanize(self.name)
 
         if tp:
             self.tp = tp
@@ -106,6 +119,29 @@ class Property:
                                                  fn_name + '__type was not found')
 
                 self.tp = fn_type(self.fn_args[:])
+
+    @staticmethod
+    def humanize(string):
+        result = string.replace('_', ' ')
+        return result[0].upper() + result[1:]
+
+    def has_options(self):
+        return self.options or self.options_auto
+
+    def get_options(self):
+        if not self.options:
+            query = "SELECT DISTINCT {0} FROM {1}".format(self.column, self.table)
+            rows = self.connection.execute(query)
+            self.options = []
+            for row in rows.fetchall():
+                option = row[0]
+                if option is None:
+                    label = '<No value>'
+                else:
+                    label = option
+                self.options.append((option, label))
+
+        return self.options
 
     def is_generated(self):
         return self.source[0] in ['^']
@@ -215,18 +251,26 @@ class PropertyManager:
             else:
                 aggregate = None
 
-            if 'label' in property_info:
-                label = property_info['label']
-            else:
-                label = property_info['name']
+            label = property_info.get('label', None)
 
             if 'expose' in property_info:
                 expose = property_info['expose']
             else:
                 expose = True
 
+            if 'options' in property_info:
+                options = property_info['options']
+            else:
+                options = None
+
+            if 'options_auto' in property_info:
+                options_auto = property_info['options_auto']
+            else:
+                options_auto = False
+
             prop = Property(self.connection_manager, property_info['source'], name=property_info['name'],
-                            tp=property_info['type'], aggregate=aggregate, label=label, filter_by=expose)
+                            tp=property_info['type'], aggregate=aggregate, label=label, filter_by=expose,
+                            options=options, options_auto=options_auto)
 
             self.properties.append(prop)
 
@@ -272,6 +316,8 @@ class PropertyManager:
                     'name': p.name,
                     'label': p.label,
                     'type': p.tp,
+                    'has_options': p.has_options,
+                    'get_options': p.get_options,
                 })
 
         return filters
@@ -536,6 +582,9 @@ class PropertyManager:
         if filters_aggregate:
             having_clause = ' HAVING ' + ' AND '.join(filters_aggregate)
             query += having_clause
+
+        # postgres fix
+        query = query.replace('"', '\'')
 
         # execute query & get results
         result = [self.info(row) for row in self.reduce(self.user_pk.connection.execute(query).fetchall())]

@@ -4,7 +4,7 @@ import requests
 __author__ = 'dipap'
 
 
-GEOCODE_API = 'http://maps.googleapis.com/maps/api/geocode/'
+GEOCODE_API = 'https://maps.googleapis.com/maps/api/geocode/'
 
 
 address_info_cache = {}
@@ -15,10 +15,13 @@ def get_address_info(address):
     Returns GoogleMaps-style info about an address
     Caches the results without ever expiring them
     """
+    api_key = 'AIzaSyB5sKctUXR02OXbxJ5WQOXn_ehJLYWpzTI'
+
     if address in address_info_cache:
         return address_info_cache[address]
     else:
-        result = json.loads(requests.get(GEOCODE_API + 'json?address=%s&sensor=true' % address).content)
+        result = json.loads(requests.get(GEOCODE_API + 'json?address=%s&sensor=true&key=%s' %
+                                         (address, api_key)).content)
         address_info_cache[address] = result
         return result
 

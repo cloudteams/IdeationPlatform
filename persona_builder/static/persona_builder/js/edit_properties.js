@@ -101,19 +101,29 @@ $(function() {
     /* Change value input widget on different variables */
     $('body').on('change', '.filter-select', function() {
         var tp = $(this).find(':selected').data('type');
+        var opt = $(this).find(':selected').data('options');
         var row = $(this).closest('.property-row')
 
         //remove previous input
         $(row).find('.val-input').remove();
 
         var val_control = '';
-        if (tp.startsWith('Scalar')) {
+        /*if (!tp) {
+            return;
+        }*/
+        if (tp.startsWith('Scalar') || opt) {
             val_control = $('<select class="val-input"><option value=""></option></select>');
 
             var start = tp.indexOf('(') + 1;
             var end = tp.length - start - 1;
 
-            var options = tp.substr(start, end).split(',');
+            var options;
+            if (opt) {
+                options = opt.split(',')
+            } else {
+                options = tp.substr(start, end).split(',');
+            }
+
             for (var i=0; i<options.length; i++) {
                 //format option text
                 var text = options[i];
@@ -122,7 +132,7 @@ $(function() {
                 if (options[i].indexOf('=') >= 0) {
                     var arr = options[i].split('=')
                     opt_val = arr[1];
-                    text = arr[1] + ' (' + arr[0] + ')';
+                    text = arr[1];
                 }
 
                 $(val_control).append('<option value="' + opt_val  + '">' + text + '</option>');

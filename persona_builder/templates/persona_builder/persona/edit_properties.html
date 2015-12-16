@@ -18,7 +18,11 @@
                 <select class="filter-select">
                     <option value=""></option>
                     {% for filter in filters %}
-                        <option value="{{filter.name}}" data-type="{{filter.type}}">{{filter.label}}</option>
+                        <option value="{{filter.name}}" data-type="{{filter.type}}"
+                                {% if filter.has_options %}
+                                    data-options="{% for option in filter.get_options %}{{ option.0 }}={{ option.1 }}{% if not forloop.last %},{% endif %}{% endfor %}"
+                                {% endif %}
+                        >{{filter.label}}</option>
                     {% endfor %}
                 </select>
 
