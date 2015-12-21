@@ -37,7 +37,7 @@
                             {% if not property.is_pk %}
                                 {% with p_key=property.name %}
                                     {% with value=user|get_property:p_key %}
-                                        <td>{{value|pretty_print|linebreaks}}</td>
+                                        <td>{{value|distinct|pretty_print|linebreaks}}</td>
                                     {% endwith %}
                                 {% endwith %}
                             {% endif %}

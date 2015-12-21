@@ -30,3 +30,11 @@ def pretty_print(value):
     else:
         return value
 
+
+# make lists distinct
+@register.filter
+def distinct(value):
+    if type(value) == list:
+        return list(set(value))
+    else:
+        return value
