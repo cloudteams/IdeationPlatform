@@ -372,7 +372,6 @@ def query_connection(request, pk):
                 raise Exception('Unknown command: %s' % q)
 
             if q != 'help':
-                import pdb;pdb.set_trace()
                 result = simplejson.dumps(result, indent=4)
 
         except Exception as e:
