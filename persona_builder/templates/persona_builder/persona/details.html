@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+{% load endless %}
 {% load static from staticfiles %}
 {% load app_filters %}
 
@@ -20,28 +21,30 @@
         </form>
     </div>
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                {% for property in properties %}
-                    <th>{{property.label}}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
+    {% paginate users %}
+        <table class="table table-striped">
+            <thead>
                 <tr>
                     {% for property in properties %}
-                        {% if not property.is_pk %}
-                            {% with p_key=property.name %}
-                                {% with value=user|get_property:p_key %}
-                                    <td>{{value|pretty_print|linebreaks}}</td>
-                                {% endwith %}
-                            {% endwith %}
-                        {% endif %}
+                        <th>{{property.label}}</th>
                     {% endfor %}
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        {% for property in properties %}
+                            {% if not property.is_pk %}
+                                {% with p_key=property.name %}
+                                    {% with value=user|get_property:p_key %}
+                                        <td>{{value|pretty_print|linebreaks}}</td>
+                                    {% endwith %}
+                                {% endwith %}
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% show_pages %}
 {% endblock %}

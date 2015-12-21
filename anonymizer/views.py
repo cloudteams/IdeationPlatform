@@ -1,6 +1,6 @@
 from functools import partial, wraps
 import json
-import uuid
+import datetime
 from django.forms import formset_factory
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -10,6 +10,9 @@ from anonymizer.lists import PROVIDER_PLUGINS
 from forms import ConnectionConfigurationForm, Sqlite3ConnectionForm, MySQLConnectionForm, UserTableSelectionForm, \
     ColumnForm, validate_unique_across, PostgresConnectionForm
 from models import ConnectionConfiguration
+
+# patch simplejson library to serialize datetimes
+simplejson.JSONEncoder.default = lambda self, obj: (obj.isoformat() if isinstance(obj, datetime.datetime) else None)
 
 
 def home(request):
@@ -369,6 +372,7 @@ def query_connection(request, pk):
                 raise Exception('Unknown command: %s' % q)
 
             if q != 'help':
+                import pdb;pdb.set_trace()
                 result = simplejson.dumps(result, indent=4)
 
         except Exception as e:

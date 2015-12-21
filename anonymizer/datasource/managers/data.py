@@ -565,6 +565,7 @@ class PropertyManager:
             if prop.is_generated():
                 filters_generated.append(f)
             elif prop.aggregate is None:
+                f = f.replace(prop.name, prop.column)
                 filters_concrete.append(f)
                 filter_properties.append(prop.name)
             else:

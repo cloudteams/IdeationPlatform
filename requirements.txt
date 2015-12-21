@@ -5,3 +5,4 @@ simplejson
 pillow
 python-dateutil
 psycopg2
+django-endless-pagination
