@@ -94,6 +94,7 @@ class Connection:
                 JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name
                 WHERE constraint_type = 'PRIMARY KEY' and tc.table_name = '%s';
             """ % table_name
+
             row = self.execute(query).fetchone()
             return '%s.%s@%s' % (table_name, row[0], self.id)
 

@@ -468,7 +468,7 @@ class PropertyManager:
                 pos = idx
                 break
 
-        keys.insert(pos, new_key)
+        keys.insert(pos - 1, new_key)
 
     def join_clause(self):
         """
