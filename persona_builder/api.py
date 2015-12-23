@@ -143,3 +143,43 @@ def persona(request, pk):
         return HttpResponse(status=204)
     else:
         return JsonResponse({'error': 'Only GET, POST, DELETE methods allowed'}, status=400)
+
+
+def find_user(request):
+    """
+    :param request: Must contain actual user pk and the project pk in request GET
+    :return: The anonymized user info from the first persona where user was found
+    """
+    if request.method != 'GET':
+        return HttpResponse('Only GET method allowed', status=400)
+
+    # get user id
+    uid = request.GET.get('user')
+    if not uid:
+        return HttpResponse('`user` field is required', status=400)
+
+    try:
+        uid = int(uid)
+    except ValueError:
+        return HttpResponse('`user` must be the user ID ("%s" not an int)' % uid, status=400)
+
+    pid = request.GET.get('project')
+    if not pid:
+        return HttpResponse('`project` field is required', status=400)
+
+    try:
+        pid = int(uid)
+    except ValueError:
+        return HttpResponse('`project` must be the project ID ("%s" is not an int)' % pid, status=400)
+
+    for p in Persona.objects.all():
+        # TODO: limit search only in project personas
+        users = json.loads(p.users)
+        for user in users:
+            if user['id'] == uid:
+                result = user
+                result['persona'] = p.pk
+
+                return JsonResponse(result, safe=False)
+
+    return JsonResponse({})
