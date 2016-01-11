@@ -7,6 +7,8 @@ from persona_builder.forms import PersonaForm, PersonaPropertiesForm
 from persona_builder.models import Persona
 import simplejson as json
 
+from persona_builder.oauth_client import PersonaBuilderOAuthClient
+
 
 def get_active_configuration():
     return ConnectionConfiguration.objects.get(is_active=True)
@@ -53,6 +55,10 @@ def edit_persona_properties(request, pk):
             # save changes & show full persona view
             persona.is_ready = True
             persona.save()
+
+            # send info to customer platform
+            #pb_client = PersonaBuilderOAuthClient()
+            #return redirect(pb_client.get_authorization_url())
             return redirect(persona.get_absolute_url())
         else:
             status = 400

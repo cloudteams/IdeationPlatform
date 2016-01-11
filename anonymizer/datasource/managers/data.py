@@ -599,7 +599,7 @@ class PropertyManager:
         query = query.replace('"', '\'')
 
         # execute query & get results
-        result = [self.info(row) for row in self.reduce(self.user_pk.connection.execute(query).fetchall())]
+        result = [self.info(row, true_id) for row in self.reduce(self.user_pk.connection.execute(query).fetchall())]
 
         # filter by generated fields & return result
         return self.filter_by_generated(result, filters_generated)

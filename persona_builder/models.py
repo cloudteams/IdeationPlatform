@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db import transaction
 
+
 class Persona(models.Model):
     uuid = models.UUIDField(unique=True, primary_key=False, default=uuid.uuid4, editable=False)
     owner = models.CharField(max_length=255, null=True, blank=True, default='')

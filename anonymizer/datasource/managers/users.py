@@ -41,8 +41,8 @@ class UserManager:
 
         return self.pm.get(pk)
 
-    def filter(self, filters):
-        return self.pm.filter(filters)
+    def filter(self, filters, true_id=False):
+        return self.pm.filter(filters, true_id)
 
     def all(self):
         return self.pm.all()
