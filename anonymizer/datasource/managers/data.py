@@ -1,3 +1,5 @@
+from datetime import datetime
+
 __author__ = 'dipap'
 
 from pydoc import locate
@@ -398,7 +400,7 @@ class PropertyManager:
 
             return [fn(arg_list) for arg_list in arg_lists]
 
-    def info(self, row):
+    def info(self, row, true_id=False):
         idx = 0
         result = {}
 
@@ -408,6 +410,8 @@ class PropertyManager:
                 if prop.is_pk:
                     # primary key
                     result[prop.name] = hashlib.sha1(str(self.token) + '###' + str(row[idx])).hexdigest()
+                    if true_id:
+                        result['__id__'] = row[idx]
                 else:
                     # default property
                     result[prop.name] = row[idx]
@@ -436,9 +440,12 @@ class PropertyManager:
         # removed non-exposed properties
         final_result = {}
         for key in result:
-            prop = self.get_property_by_name(key)
-            if prop.filter_by:
-                final_result[key] = result[prop.name]
+            if key == '__id__':
+                final_result[key] = result[key]
+            else:
+                prop = self.get_property_by_name(key)
+                if prop.filter_by:
+                    final_result[key] = result[prop.name]
 
         return final_result
 
@@ -533,14 +540,14 @@ class PropertyManager:
         result += ','.join([self.user_pk.connection.primary_key_of(table).split('@')[0] for table in self.group_tables])
         return result
 
-    def all(self):
+    def all(self, true_id=False):
         # construct query
         query = self.query() + self.group_by()
 
         # execute query & return results
-        return [self.info(row) for row in self.reduce(self.user_pk.connection.execute(query).fetchall())]
+        return [self.info(row, true_id) for row in self.reduce(self.user_pk.connection.execute(query).fetchall())]
 
-    def filter(self, filters):
+    def filter(self, filters, true_id=False):
         if not filters:
             return self.all()
 

@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 import simplejson as json
 from ct_anonymizer.settings import MEDIA_URL
 from persona_builder.forms import PersonaAPIForm, PersonaPropertiesForm
-from persona_builder.models import Persona
+from persona_builder.models import Persona, PersonaUsers
 from persona_builder.views import get_active_configuration
 
 __author__ = 'dipap'
@@ -172,14 +172,18 @@ def find_user(request):
     except ValueError:
         return HttpResponse('`project` must be the project ID ("%s" is not an int)' % pid, status=400)
 
-    for p in Persona.objects.all():
-        # TODO: limit search only in project personas
-        users = json.loads(p.users)
-        for user in users:
-            if user['id'] == uid:
-                result = user
-                result['persona'] = p.pk
+    # TODO: limit search only in project personas
+    res = PersonaUsers.objects.filter(user_id=uid)
+    if not res:
+        return JsonResponse({})
 
-                return JsonResponse(result, safe=False)
+    p = res[0].persona
+    users = json.loads(p.users)
+    for user in users:
+        if user['__id__'] == uid:
+            result = user
+            result.pop('__id__')
+            result['persona'] = p.pk
 
-    return JsonResponse({})
+            return JsonResponse(result, safe=False)
+

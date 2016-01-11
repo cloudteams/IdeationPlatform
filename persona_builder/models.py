@@ -2,7 +2,7 @@ import simplejson as json
 import uuid
 from django.contrib.auth.models import User
 from django.db import models
-
+from django.db import transaction
 
 class Persona(models.Model):
     uuid = models.UUIDField(unique=True, primary_key=False, default=uuid.uuid4, editable=False)
@@ -26,8 +26,22 @@ class Persona(models.Model):
 
     def update_users(self, user_manager):
         old_users = json.loads(self.users)
-        new_users = user_manager.filter(self.query)
+        new_users = user_manager.filter(self.query, true_id=True)
 
         # combine the two sets
         users = user_manager.combine(old_users, new_users)
         self.users = json.dumps(users)
+
+        # update persona user entries
+        with transaction.atomic():
+            PersonaUsers.objects.filter(persona=self).delete()
+            for user in users:
+                PersonaUsers.objects.create(persona=self, user_id=user['__id__'])
+
+
+class PersonaUsers(models.Model):
+    """
+    Users represented by each persona
+    """
+    persona = models.ForeignKey(Persona)
+    user_id = models.TextField()
