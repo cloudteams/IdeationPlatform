@@ -18,8 +18,8 @@ def age_from_birthday(*args):
     if not birthday:
         return None
 
-    if birthday.isdigit():  # year
-        birthday = datetime(year=int(birthday), month=1, day=1).replace(tzinfo=None)
+    if type(birthday) == int:  # year
+        birthday = datetime(year=birthday, month=1, day=1).replace(tzinfo=None)
     elif type(birthday) in [str, unicode]:  # timestamp
         try:
             birthday = parser.parse(birthday)
