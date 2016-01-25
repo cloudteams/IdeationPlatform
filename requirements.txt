@@ -1,3 +1,4 @@
+dump
 django==1.8.4
 requests==2.7.0
 coverage
@@ -6,3 +7,4 @@ pillow
 python-dateutil
 psycopg2
 django-endless-pagination
+requests_oauthlib

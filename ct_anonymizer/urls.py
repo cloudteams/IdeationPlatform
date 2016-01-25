@@ -26,6 +26,7 @@ urlpatterns = [
 
     # persona builder
     url(r'^persona-builder/', include('persona_builder.urls')),
+    url(r'^persona-builder/', include('pb_oauth.urls')),
 
     # home page
     url(r'^$', views.index),

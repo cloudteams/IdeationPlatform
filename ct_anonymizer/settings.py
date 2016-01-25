@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'ct_anonymizer',
     'anonymizer',
     'persona_builder',
+    'pb_oauth',
 )
 
 MIDDLEWARE_CLASSES = (

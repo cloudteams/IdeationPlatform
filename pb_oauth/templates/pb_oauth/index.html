@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+    <div class="panel {% if error %}panel-danger{% else %}panel-primary{% endif %}">
+        <div class="panel-heading">
+            <div class="panel-title"><h5>Customer Platform Authorization</h5></div>
+        </div>
+        <div class="panel-body">
+            {% if not error %}
+                <p>CloudTeams Persona Builder needs to access your account information on the customer platform</p>
+            {% else %}
+                <p>HTTP Error {{ error.code }} - {{ error.msg }}</p>
+            {% endif %}
+
+            {% include "pb_oauth/form.html" %}
+      </div>
+    </div>
+{% endblock %}

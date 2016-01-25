@@ -1,0 +1,17 @@
+
+<form action="{{ bscw_api.script_uri }}" class="clearfix">
+    <button type="submit" class="btn btn-primary pull-right" name="action" value="authorize">
+        {% if not error %}authorize{% else %}Retry{% endif %}
+    </button>
+
+    <input type="hidden" name="host" value="{{ bscw_api.host }}" />
+    {% if bscw_api.verbose  %}
+        <input type="hidden" name="verbose" value="{{ bscw_api.verbose }}" />
+    {% endif %}
+    {% if bscw_api.portal  %}
+        <input type="hidden" name="portal" value="{{ bscw_api.portal }}" />
+    {% endif %}
+    {% if bscw_api.hmac_sha1  %}
+        <input type="hidden" name="hmac_sha1" value="{{ bscw_api.hmac_sha1 }}" />
+    {% endif %}
+</form>
