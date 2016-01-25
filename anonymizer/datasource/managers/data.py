@@ -387,26 +387,24 @@ class PropertyManager:
 
     @staticmethod
     def apply(fn, fn_args):
+        """
         compound = False
+        arg_lists = []
         for fn_arg in fn_args:
             if type(fn_arg) == list:
-                compound = True
-                break
+                n_of_recs = len(fn_args[0])
+                for fn_arg in fn_args[1:]:
+                    if type(fn_arg) == list:
+                        if len(fn_arg) != n_of_recs:
+                            raise ValueError('Can not apply function %s to variable length list %s' % (fn, fn_args))
 
-        if not compound:
-            return fn(fn_args)
-        else:
-            n_of_recs = len(fn_args[0])
-            for fn_arg in fn_args[1:]:
-                if type(fn_arg) == list:
-                    if len(fn_arg) != n_of_recs:
-                        raise ValueError('Can not apply function to variable length lists')
-
-            arg_lists = []
-            for i in range(0, n_of_recs):
-                arg_lists.append([fn_arg[i] for fn_arg in fn_args])
-
-            return [fn(arg_list) for arg_list in arg_lists]
+            
+                for i in range(0, n_of_recs):
+                    arg_lists.append([fn_arg[i] for fn_arg in fn_args])
+                print arg_lists
+                return [fn(arg_list) for arg_list in arg_lists]
+        """
+        return fn(fn_args)
 
     def info(self, row, true_id=False):
         idx = 0
