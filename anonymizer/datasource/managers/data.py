@@ -131,6 +131,14 @@ class Property:
         return self.options or self.options_auto
 
     def get_options(self):
+        if self.is_generated():
+            if 'Scalar(' in self.tp:
+                self.options = []
+                for r in self.tp.find('(')[:-1].split(','):
+                    self.options.append((r, r))
+            else:
+                return []
+            
         if not self.options:
             query = "SELECT DISTINCT {0} FROM {1}".format(self.column, self.table)
             rows = self.connection.execute(query)
