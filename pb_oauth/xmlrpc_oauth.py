@@ -10,10 +10,13 @@ from xmlrpc_srv import XMLRPC_Server
 bscw_oauth_args = {
     'op':'OAuth'
 }
+DEFAULT_HOST = 'cloudteams.epu.ntua.gr:8000'
+
 
 def log(*val):
     import dump
     dump.line(*val)
+
 
 def dump(val):
     import dump, os
@@ -22,21 +25,25 @@ def dump(val):
     dump.dump(val)
     os.environ['DUMP_FILE'] = dump_file
 
+
 def toUTF8(s):
     if isinstance(s, unicode):
         return s.encode('utf-8')
     else:
         return str(s)
 
+
 def quote(s):
     import urllib
     return urllib.quote(s, safe='~')
+
 
 def quote_args(args):
     key_values = [(quote(toUTF8(k)), quote(toUTF8(v))) \
         for k,v in args.items()]
     key_values.sort()
     return '&'.join(['%s=%s' % (k, v) for k, v in key_values])
+
 
 def signature_base_string(method, url, args):
     xargs = args.copy()
@@ -47,36 +54,38 @@ def signature_base_string(method, url, args):
     xargs = quote_args(xargs)
     return '&'.join((method.upper(), quote(url), quote(xargs)))
 
+
 def make_url(url, args={}):
     return args and '%s?%s' % (url, quote_args(args)) or url
 
+
 class OAuthClient:
     def __init__(self, server, consumer_key, consumer_secret, hmac_sha1=0, portal=0):
-        self.server          = server
-        self.consumer_key    = consumer_key
+        self.server = server
+        self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
-        self.token           = None
-        self.token_secret    = None
-        self.hmac_sha1       = hmac_sha1
-        self.portal          = portal
+        self.token = None
+        self.token_secret = None
+        self.hmac_sha1 = hmac_sha1
+        self.portal = portal
 
     def get(self, url_args={}):
         import urllib2
-        url   = make_url(self.server, url_args)
+        url = make_url(self.server, url_args)
         oauth = self.authorization_header(url_args, post=False)
         log('+++', url)
         log('Authorization:', repr(oauth['Authorization']))
 
-        request  = urllib2.Request(url, None, oauth)
+        request = urllib2.Request(url, None, oauth)
         response = urllib2.urlopen(request)
-        reply    = response.read()
+        reply = response.read()
 
         log('Reply:', repr(reply))
         return reply
 
     def get_hmac_sha1(self, sig, args, post):
         import hmac, hashlib, base64
-        base   = signature_base_string(post and 'POST' or 'GET', self.server, args)
+        base = signature_base_string(post and 'POST' or 'GET', self.server, args)
         hashed = hmac.new(sig, base, hashlib.sha1)
         return base64.b64encode(hashed.digest())
 
@@ -91,9 +100,9 @@ class OAuthClient:
 
         oauth_args = {}
         oauth_args['oauth_consumer_key'] = self.consumer_key
-        oauth_args['oauth_timestamp']    = int(time.time())
-        oauth_args['oauth_nonce']        = random.randint(0, 2**32)
-        oauth_args['oauth_version']      = '1.0'
+        oauth_args['oauth_timestamp'] = int(time.time())
+        oauth_args['oauth_nonce'] = random.randint(0, 2**32)
+        oauth_args['oauth_version'] = '1.0'
         if self.token:
             oauth_args['oauth_token'] = self.token
 
@@ -101,10 +110,10 @@ class OAuthClient:
             oauth_args['oauth_signature_method'] = 'HMAC-SHA1'
             args = url_args.copy()
             args.update(oauth_args)
-            oauth_args['oauth_signature']        = self.get_hmac_sha1(oauth_signature, args, post)
+            oauth_args['oauth_signature'] = self.get_hmac_sha1(oauth_signature, args, post)
         else:
             oauth_args['oauth_signature_method'] = 'PLAINTEXT'
-            oauth_args['oauth_signature']        = quote(oauth_signature)
+            oauth_args['oauth_signature'] = quote(oauth_signature)
 
         oauth_args = 'OAuth ' + self.pack(oauth_args)
         return {'Authorization': oauth_args}
@@ -141,6 +150,10 @@ class BscwApi:
             'bscw_api': self,
         })
 
+    @staticmethod
+    def authorization_url():
+        return '/persona-builder/authorize/?action=authorize&host=%s' % quote(DEFAULT_HOST)
+
     def authorize(self, reply):
         import base64
         args = bscw_oauth_args.copy()
@@ -172,6 +185,14 @@ class BscwApi:
     def store_token(self, request):
         oauth = self.oauth.authorization_header(post=True)
         request.session['bswc_token'] = oauth['Authorization']
+
+        # also store user information in session
+        srv = XMLRPC_Server(self.oauth.server, verbose=self.verbose, oauth=oauth['Authorization'])
+        user_home_id = srv.get_attributes()[0]['__id__']  # get user's home folder
+        user = srv.get_attributes(user_home_id, ['user', ])[0]['user']  # gets user's info
+        request.session['user_id'] = user['__id__']
+        request.session['username'] = user['name']
+
     """
     def doit(self):
 
@@ -208,7 +229,7 @@ class BscwApi:
         self.host = form.get('host')
 
         if self.host is None:
-            self.host = 'cloudteams.epu.ntua.gr:8000'
+            self.host = DEFAULT_HOST
         else:
             # fix issue with a1 parameter not recognised
             for h in form.getlist('host'):

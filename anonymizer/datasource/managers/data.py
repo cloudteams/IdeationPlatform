@@ -387,6 +387,7 @@ class PropertyManager:
 
     @staticmethod
     def apply(fn, fn_args):
+        # TODO investigate differences between plain & compound evaluation
         """
         compound = False
         arg_lists = []
