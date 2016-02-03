@@ -1,14 +1,17 @@
-body {
-    background: #333;
+a:not(.btn):not(.btn-confirm):not(.btn-decline):not(.btn-download) {
+    transition: color 0.3s ease-in-out;
 }
 
-body > .container {
-    background: #fff;
-    min-height: 100vh;
+a:not(.btn):not(.btn-confirm):not(.btn-decline):not(.btn-download):hover, a:not(.btn):not(.btn-confirm):not(.btn-decline):not(.btn-download):focus {
+    color: #38173f;
 }
 
-.main-wrapper {
-    padding: 20px 40px;
+.global-nav a:hover {
+    color: #fff !important;
+}
+
+.public-page.not-container {
+    padding-top: 0;
 }
 
 #test-console {
@@ -71,4 +74,29 @@ form p > * {
 
 select.val-input {
     width: 170px;
+}
+
+.background-image {
+    height: 150px;
+    background-position: center;
+}
+
+.btn-refresh {
+    border-radius: 5px 5px 0 0;
+}
+
+.public-project-overview-content > header.main-header {
+    background-position: center;
+}
+
+input[type="checkbox"] {
+    opacity: 1;
+    position: static;
+    left: auto;
+    width: auto;
+}
+
+.persona-filters-form .option-container {
+    display: inline-block;
+    margin-right: 20px;
 }

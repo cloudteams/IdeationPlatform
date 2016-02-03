@@ -4,7 +4,10 @@
 {% load app_filters %}
 
 {% block content %}
-    <h1>CloudTeams Persona Pool</h1>
+    <div class="clearfix">
+        <h1 class="pull-left">CloudTeams Persona Pool</h1>
+        <a href="/persona-builder/personas/create/" class="btn btn-transparent pull-right">+ Create new persona</a>
+    </div>
 
     {% for persona in personas %}
         {% with more_link=True %}
@@ -14,5 +17,5 @@
         <p>No personas found.</p>
     {% endfor %}
 
-    <a href="/persona-builder/personas/create/" class="btn btn-primary">+ Create new persona</a>
+
 {% endblock %}

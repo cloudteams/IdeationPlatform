@@ -3,48 +3,56 @@
 {% load endless %}
 {% load static from staticfiles %}
 {% load app_filters %}
+{% block section_class %}not-container{% endblock %}
 
 {% block content %}
-    <div class="btn-group pull-right">
-        <a href="/persona-builder/personas/" class="btn btn-default">Back to Persona Pool</a>
-        <a href="{{persona.get_edit_properties_url}}" class="btn btn-default">Edit persona</a>
-        <a href="{{persona.get_absolute_url}}delete/" class="btn btn-danger">Delete</a>
-    </div>
+        {% with page="view" %}
+            {% include "persona_builder/persona/intro.html" %}
+        {% endwith %}
 
-    {% include "persona_builder/persona/teaser.html" %}
+            <p></p>
+            <h3 class="header-extra-small">Description</h3>
+            <p>
+                {% if persona.description %}
+                    {{ persona.description }}
+                {% else %}
+                    No persona description
+                {% endif %}
+            </p>
 
-    <div class="clearfix">
-        <em>Users matching this profile:</em>
-        <form action="{{persona.get_absolute_url}}update-users/" method="POST" class="pull-right">
-            {% csrf_token %}
-            <input type="submit" class="btn btn-primary" value="Refresh users" />
-        </form>
-    </div>
-
-    {% paginate users %}
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    {% for property in properties %}
-                        <th>{{property.label}}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                    <tr>
-                        {% for property in properties %}
-                            {% if not property.is_pk %}
-                                {% with p_key=property.name %}
-                                    {% with value=user|get_property:p_key %}
-                                        <td>{{value|distinct|pretty_print|linebreaks}}</td>
-                                    {% endwith %}
-                                {% endwith %}
-                            {% endif %}
+            <div class="clearfix">
+                <em>Users matching this profile:</em>
+                <form action="{{ persona.get_absolute_url }}update-users/" method="POST" class="pull-right">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-refresh" value="Refresh users" />
+                </form>
+            </div>
+            {% paginate users %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            {% for property in properties %}
+                                <th>{{property.label}}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr>
+                                {% for property in properties %}
+                                    {% if not property.is_pk %}
+                                        {% with p_key=property.name %}
+                                            {% with value=user|get_property:p_key %}
+                                                <td>{{value|distinct|pretty_print|linebreaks}}</td>
+                                            {% endwith %}
+                                        {% endwith %}
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
                         {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% show_pages %}
+                    </tbody>
+                </table>
+            {% show_pages %}
+        </div>
+    </section>
 {% endblock %}

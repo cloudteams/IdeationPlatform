@@ -2,38 +2,41 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}CloudTeams Persona Builder{% endblock %}</title>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta http-equiv="cleartype" content="on">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0">
+		<title>{% block title %}Persona Builder{% endblock %} | CloudTeams</title>
+		<link rel="apple-touch-icon" href="apple-touch-icon.png">
+		<link rel="stylesheet" href="{% static "css/global-dev.css" %}">
+		<link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
+        <link rel="stylesheet" href="{% static "css/style.css" %}">
+		{% block css %}
+        {% endblock %}
+	</head>
 
-    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Inconsolata">
-    <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
-    <link rel="stylesheet" href="{% static "css/style.css" %}">
-    {% block css %}
-    {% endblock %}
-</head>
-<body>
+	<body>
+		{% include "util/menu.html" %}
 
-</body>
+		<section class="page public-page {% block section_class %}{% endblock %}">
+			<div class="content">
+				<main>
+					<div class="{% if not_container %}{% else %}container{% endif %}">
+						{% block content %}
+						{% endblock %}
+					</div>
+				</main>
+			</div>
+		</section>
 
-<div class="container">
-    <div class="row">
-        <div class="main-wrapper">
-            {% if request.session.username %}
-                <div class="clearfix">
-                    <div class="pull-right">
-                        Welcome {{ request.session.username }}
-                    </div>
-                </div>
-            {% endif %}
+		{% include "util/footer.html" %}
 
-            {% block content %}
-            {% endblock %}
-        </div>
-    </div>
-</div>
+		<script type="text/javascript" src="{% static "js/global-dev.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/common-dev.js" %}"></script>
 
-<script src="{% static "js/jquery.min.js" %}"></script>
-{% block js %}
-{% endblock %}
+		{% block js %}
+		{% endblock %}
+	</body>
 </html>

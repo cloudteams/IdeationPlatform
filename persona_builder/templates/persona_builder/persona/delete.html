@@ -1,13 +1,16 @@
 {% extends "base.html" %}
 
+{% block section_class %}not-container{% endblock %}
 {% block content %}
-    <h1>Delete persona</h1>
+        {% with page="delete" %}
+            {% include "persona_builder/persona/intro.html" %}
+        {% endwith %}
 
-    <form method="POST" action=".">{% csrf_token %}
-        <p>Are you sure you want to delete {{persona.name}}? This action can not be undone.</p>
+        <form method="POST" action=".">{% csrf_token %}
+            <p>Are you sure you want to delete {{persona.name}}? This action can not be undone.</p>
 
-        <a class="btn btn-default" href="/persona-builder/personas/">Cancel</a>
-        <input type="submit" class="btn btn-danger" value="Delete" />
-    </form>
-
+            <a class="btn btn-default" href="/persona-builder/personas/">Cancel</a>
+            <input type="submit" class="btn btn-danger" value="Delete" />
+        </form>
+    </section>
 {% endblock %}

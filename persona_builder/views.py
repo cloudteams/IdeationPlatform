@@ -63,6 +63,7 @@ def edit_persona_properties(request, pk):
         'persona': persona,
         'form': form,
         'filters': user_manager.list_filters(),
+        'not_container': True,
     }
 
     return render(request, 'persona_builder/persona/edit_properties.html', params, status=status)
@@ -93,6 +94,7 @@ class PersonaDetailView(DetailView):
 
         context['properties'] = user_manager.list_filters()
         context['users'] = json.loads(kwargs['object'].users)
+        context['not_container'] = True
 
         return context
 
@@ -116,5 +118,9 @@ class PersonaDeleteView(DeleteView):
     context_object_name = 'persona'
     success_url = '/persona-builder/personas/'
 
+    def get_context_data(self, **kwargs):
+        context = super(PersonaDeleteView, self).get_context_data(**kwargs)
+        context['not_container'] = True
+        return context
 
 delete_persona = PersonaDeleteView.as_view()

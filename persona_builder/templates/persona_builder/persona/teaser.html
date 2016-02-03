@@ -1,9 +1,38 @@
-<div class="persona-teaser">
-    <img src="{{persona.get_avatar_url}}" width="36" />
-    <h4>{{persona.name}}</h4>
-    <p>{{persona.description}}</p>
+{% load staticfiles %}
 
-    {% if more_link %}
-        <a href="{{persona.get_absolute_url}}">More</a>
-    {% endif %}
-</div>
+<article class="campaign campaign-poll public-campaign block-line-half col-lg-4 col-md-6 clear-3">
+	<div class="background">
+        <div class="background-image" style="background-image: url({{ persona.get_avatar_url }});">
+        </div>
+		<header class="article-header">
+			<h3 class="header-medium secondary">{{ persona.name }}</h3>
+			<p class="highlight bold">{% if persona.is_public %}Public{% else %}Private{% endif %} persona</p>
+
+			<div class="tooltip-container">
+				<a href="#nowhere" class="open-tooltip-button"><img class="more-options svg" src="{% static "img/icons/icon-more-options.svg" %}"></a>
+				<div class="custom-tooltip">
+					<ul>
+						<li>
+							<a href="{{ persona.get_absolute_url }}">Open</a>
+                        </li>
+                        <li>
+                            <a href="#nowhere">Clone & edit</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</header>
+
+		<div class="content data">
+			{% if persona.description %}
+                {{ persona.description }}
+            {% else %}
+                No persona description
+            {% endif %}
+		</div>
+
+		<footer>
+            <a href="{{ persona.get_absolute_url }}" class="btn">Open persona<</a>
+		</footer>
+	</div>
+</article>

@@ -2,53 +2,68 @@
 
 {% load static from staticfiles %}
 
+{% block section_class %}not-container{% endblock %}
 {% block content %}
-    <h1>Persona Builder</h1>
+        {% with page="edit" %}
+            {% include "persona_builder/persona/intro.html" %}
+        {% endwith %}
 
-    <form class="persona-filters-form" method="POST" action=".">{% csrf_token %}
-        {% include "persona_builder/persona/teaser.html" %}
 
-        {{form.non_field_errors}}
-        <div class="query-box">
-            {{form.as_p}}
-        </div>
+        <form class="persona-filters-form" method="POST" action=".">{% csrf_token %}
 
-        <div class="property-row-container">
-            <div class="property-row">
-                <select class="filter-select">
-                    <option value=""></option>
-                    {% for filter in filters %}
-                        <option value="{{filter.name}}" data-type="{{filter.type}}"
-                                {% if filter.has_options %}
-                                    data-options="{% for option in filter.get_options %}{{ option.0 }}={{ option.1 }}{% if not forloop.last %},{% endif %}{% endfor %}"
-                                {% endif %}
-                        >{{filter.label}}</option>
-                    {% endfor %}
-                </select>
-
-                <select class="comparison-select">
-                    <option value=""></option>
-                    <option value="=">=</option>
-                    <option value=">">&gt;</option>
-                    <option value=">=">&gt;=</option>
-                    <option value="<">&lt;</option>
-                    <option value="<=">&lt;=</option>
-                    <option value="!=">!=</option>
-                </select>
-
-                <input type="text" class="val-input" value=""/>
-
-                <span class="remove-row">x</span>
+            {{form.non_field_errors}}
+            <div class="query-box">
+                {{form.as_p}}
             </div>
-        </div>
 
-        <div class="clearfix">
-            <div class="btn btn-default add-property-row">+ Add property</div>
+            {% for filter in filters %}
+                {% if filter.has_options %}
+                <h3 class="header-extra-small">{{ filter.label }}</h3>
+                    {% for option in filter.get_options %}
+                        <div class="option-container">
+                            <input id="{{ filter.name }}--{{ option.0 }}" type="checkbox" name="{{ filter.name }}" value="{{ option.0 }}" />
+                            <label for="{{ filter.name }}--{{ option.0 }}">{{ option.1 }}</label>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
 
-            <input class="btn btn-primary pull-right" type="submit" value="Save persona" />
-        </div>
-    </form>
+            <div class="property-row-container" style="display: none;">
+                <div class="property-row">
+                    <select class="filter-select">
+                        <option value=""></option>
+                        {% for filter in filters %}
+                            <option value="{{filter.name}}" data-type="{{filter.type}}"
+                                    {% if filter.has_options %}
+                                        data-options="{% for option in filter.get_options %}{{ option.0 }}={{ option.1 }}{% if not forloop.last %},{% endif %}{% endfor %}"
+                                    {% endif %}
+                            >{{filter.label}}</option>
+                        {% endfor %}
+                    </select>
 
+                    <select class="comparison-select">
+                        <option value=""></option>
+                        <option value="=">=</option>
+                        <option value=">">&gt;</option>
+                        <option value=">=">&gt;=</option>
+                        <option value="<">&lt;</option>
+                        <option value="<=">&lt;=</option>
+                        <option value="!=">!=</option>
+                    </select>
+
+                    <input type="text" class="val-input" value=""/>
+
+                    <span class="remove-row">x</span>
+                </div>
+            </div>
+
+            <div class="clearfix">
+                <div class="btn btn-default add-property-row" style="display: none;">+ Add property</div>
+
+                <input class="btn btn-primary pull-right" type="submit" value="Save persona" />
+            </div>
+        </form>
+    </section>
 {% endblock %}
 
 {% block js %}

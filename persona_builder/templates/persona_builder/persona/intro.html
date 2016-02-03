@@ -1,0 +1,18 @@
+    <section class="public-project-overview-content">
+        <header class="main-header" style="background-image: url({{ persona.get_avatar_url }});">
+            <div class="vertical-align">
+                <div class="middle">
+                    <h1 class="header-extra-large">{{ persona.name }}</h1>
+                    <p><span>{% if persona.is_public %}Public{% else %}Private{% endif %}</span> persona</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="submenu">
+                <ul class="menu-subpage public">
+                    <li {% if page == "view" %}class="active"{% endif %}><a href="{{persona.get_absolute_url}}">About {{ persona.name }}</a></li>
+                    <li {% if page == "edit" %}class="active"{% endif %}><a href="{{persona.get_edit_properties_url}}">Edit</a></li>
+                    <li {% if page == "delete" %}class="active"{% endif %}><a href="{{persona.get_absolute_url}}delete/">Delete</a></li>
+                </ul>
+            </div>
