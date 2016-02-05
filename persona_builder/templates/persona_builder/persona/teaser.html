@@ -2,7 +2,9 @@
 
 <article class="campaign campaign-poll public-campaign block-line-half col-lg-4 col-md-6 clear-3">
 	<div class="background">
-        <div class="background-image" style="background-image: url({{ persona.get_avatar_url }});">
+		{% if persona.avatar %}
+        	<div class="background-image" style="background-image: url({{ persona.get_avatar_url }});">
+		{% endif %}
         </div>
 		<header class="article-header">
 			<h3 class="header-medium secondary">{{ persona.name }}</h3>
