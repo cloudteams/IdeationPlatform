@@ -38,3 +38,16 @@ def distinct(value):
         return list(set(value))
     else:
         return value
+
+
+# get possible options for a filter ordered according to its type
+@register.filter
+def process_options(f):
+    if not f['has_options']():
+        return None
+
+    result = sorted(f['get_options'](), key=lambda t: t[1])
+    if not result or result[0][0]:
+        result = [('', '')] + result
+
+    return result
