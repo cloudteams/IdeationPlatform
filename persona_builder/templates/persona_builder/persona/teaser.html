@@ -4,8 +4,8 @@
 	<div class="background">
 		{% if persona.avatar %}
         	<div class="background-image" style="background-image: url({{ persona.get_avatar_url }});">
+        	</div>
 		{% endif %}
-        </div>
 		<header class="article-header">
 			<h3 class="header-medium secondary">{{ persona.name }}</h3>
 			<p class="highlight bold">{% if persona.is_public %}Public{% else %}Private{% endif %} persona</p>
