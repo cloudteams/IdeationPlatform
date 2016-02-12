@@ -12,6 +12,31 @@ def get_active_configuration():
     return ConnectionConfiguration.objects.get(is_active=True)
 
 
+def request_context(request):
+    """
+    Retrieve information from request about the current context
+    (username, project, campaign)
+    """
+    # Username
+    username = request.session['username']
+
+    # Project ID
+    pid = request.session.get('project_id', '')
+    if pid:
+        pid = int(pid)
+    else:
+        pid = None
+
+    # Campaign ID
+    cid = request.session.get('campaign_id', '')
+    if cid:
+        cid = int(cid)
+    else:
+        cid = None
+
+    return username, pid, cid
+
+
 class PersonaCreateView(CreateView):
     """
     Create a new persona
@@ -21,8 +46,16 @@ class PersonaCreateView(CreateView):
     form_class = PersonaForm
     template_name = 'persona_builder/persona/create.html'
 
-    def get_success_url(self):
-        return self.object.get_edit_properties_url()
+    def form_valid(self, form):
+        instance = form.save()
+
+        # set user & project
+        instance.owner, instance.project_id, instance.campaign_id = request_context(self.request)
+
+        # update persona & redirect
+        instance.save()
+
+        return redirect(instance.get_edit_properties_url())
 
 create_persona = PersonaCreateView.as_view()
 

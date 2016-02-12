@@ -128,15 +128,19 @@ class Property:
         return result[0].upper() + result[1:]
 
     def has_options(self):
-        return self.options or self.options_auto
+        return self.options or self.options_auto or 'Scalar(' in self.tp
 
     def get_options(self):
         if not self.options:
             if self.is_generated():
                 if 'Scalar(' in self.tp:
                     self.options = []
-                    for r in self.tp.find('(')[:-1].split(','):
-                        self.options.append((r, r))
+                    for r in self.tp[self.tp.find('(') + 1:-1].split(','):
+                        if '=' in r:
+                            o = (r.split('=')[0], r.split('=')[1])
+                        else:
+                            o = (r, r)
+                        self.options.append(o)
                 else:
                     self.options = []
             else:
@@ -329,8 +333,8 @@ class PropertyManager:
                 }
 
                 if not ignore_options:
-                    filter['has_options'] =  p.has_options
-                    filter['get_options'] =  p.get_options
+                    filter['has_options'] = p.has_options()
+                    filter['get_options'] = p.get_options()
 
                 filters.append(filter)
 

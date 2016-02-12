@@ -359,10 +359,10 @@ def query_connection(request, pk):
 
                 for f in user_manager.list_filters():
                     result += "        %s" % f['name']
-                    if f['has_options']():
+                    if f['has_options']:
                         result += ' / options: '
                         options_info = []
-                        for o in f['get_options']():
+                        for o in f['get_options']:
                             options_info.append('%s (%s)' % (o[0], o[1]))
 
                         result += ','.join(options_info)

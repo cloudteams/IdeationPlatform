@@ -190,8 +190,14 @@ class BscwApi:
         srv = XMLRPC_Server(self.oauth.server, verbose=self.verbose, oauth=oauth['Authorization'])
         user_home_id = srv.get_attributes()[0]['__id__']  # get user's home folder
         user = srv.get_attributes(user_home_id, ['user', ])[0]['user']  # gets user's info
+
+        # store common items in session
         request.session['user_id'] = user['__id__']
         request.session['username'] = user['name']
+        request.session['projects'] = [{
+            'pid': p['oid'],
+            'title': p['title'],
+        } for p in srv.lst_entries(user_home_id)[1]]
 
     """
     def doit(self):

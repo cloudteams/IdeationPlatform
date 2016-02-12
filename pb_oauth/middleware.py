@@ -11,6 +11,12 @@ class AuthorizationMiddleware(object):
         if request.path == '/persona-builder/authorize/':
             return None
 
+        # save information about current project & campaign
+        if 'pid' in request.GET:
+            request.session['project_id'] = request.GET.get('pid')
+        if 'cid' in request.GET:
+            request.session['campaign_id'] = request.GET.get('cid')
+
         # make sure user has already authorized the app through customer platform
         if 'bswc_token' not in request.session:
             return redirect(BscwApi.authorization_url())

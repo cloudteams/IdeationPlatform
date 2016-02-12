@@ -18,6 +18,9 @@ def age_from_birthday(*args):
     if not birthday:
         return None
 
+    if type(birthday) == list:
+        birthday = birthday[0]
+
     if type(birthday) == int:  # year
         birthday = datetime(year=birthday, month=1, day=1).replace(tzinfo=None)
     elif type(birthday) in [str, unicode]:  # timestamp

@@ -4,7 +4,8 @@
     <h1>Create new Persona</h1>
 
     <form method="POST" action="." enctype="multipart/form-data">{% csrf_token %}
-        {{form.as_p}}
+        {{ form.non_field_errors }}
+        {{ form.as_p }}
         <input type="submit" value="Continue" />
     </form>
 

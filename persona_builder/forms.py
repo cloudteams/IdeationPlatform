@@ -8,7 +8,7 @@ __author__ = 'dipap'
 class PersonaForm(forms.ModelForm):
     class Meta:
         model = Persona
-        exclude = ['owner', ]
+        exclude = ['owner', 'project_id', 'campaign_id', ]
 
 
 class PersonaAPIForm(forms.ModelForm):

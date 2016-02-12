@@ -43,6 +43,20 @@
 									<i class="fa fa-angle-down"></i>
 								</div>
 							</div>
+							<ul class="submenu">
+								<li class="projects-title">Projects</li>
+								{% for project in request.session.projects %}
+									<li {% if request.session.project_id == project.pid %}class="active"{% endif %}>
+										<a href="#project-{{ project.pid }}">
+										{% if request.session.project_id == project.pid %} <i class="fa fa-check"></i>{% endif %}
+										{{ project.title }}</a>
+									</li>
+								{% empty %}
+									<li>No projects</li>
+								{% endfor %}
+								<li class="seperator"></li>
+								<li><a href="#nowhere">Log out</a></li>
+							</ul>
 						</li>
 					</ul>
 				</div>
