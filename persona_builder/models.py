@@ -10,7 +10,7 @@ class Persona(models.Model):
     owner = models.CharField(max_length=255, null=True, blank=True, default='')
     project_id = models.IntegerField(blank=True, null=True, default=None)
     campaign_id = models.IntegerField(blank=True, null=True, default=None)
-    name = models.CharField(max_length=256, null=False, blank=False, unique=True)
+    name = models.CharField(max_length=256, null=False, blank=False)
     description = models.CharField(max_length=4096, null=False, blank=False)
     avatar = models.ImageField(upload_to='persona-avatars', null=True, blank=True)
     query = models.TextField(editable=False)
@@ -26,6 +26,9 @@ class Persona(models.Model):
 
     def get_edit_properties_url(self):
         return self.get_absolute_url() + 'edit-properties/'
+
+    def get_edit_info_url(self):
+        return self.get_absolute_url() + 'edit-info/'
 
     def update_users(self, user_manager):
         old_users = json.loads(self.users)

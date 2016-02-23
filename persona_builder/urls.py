@@ -8,6 +8,7 @@ urlpatterns = [
     # persona
     url(r'^personas/create/$', views.create_persona),
     url(r'^personas/(?P<pk>[\w-]+)/edit-properties/$', views.edit_persona_properties),
+    url(r'^personas/(?P<pk>[\w-]+)/edit-info/$', views.edit_persona_info),
     url(r'^personas/(?P<pk>[\w-]+)/$', views.view_persona),
     url(r'^personas/(?P<pk>[\w-]+)/delete/$$', views.delete_persona),
     url(r'^personas/(?P<pk>[\w-]+)/update-users/$', views.update_users),

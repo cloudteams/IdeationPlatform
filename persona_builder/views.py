@@ -1,7 +1,7 @@
 import uuid
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import CreateView, DetailView, ListView, DeleteView
+from django.views.generic import CreateView, DetailView, ListView, DeleteView, UpdateView
 from anonymizer.models import ConnectionConfiguration
 from persona_builder.forms import PersonaForm, PersonaPropertiesForm
 from persona_builder.models import Persona
@@ -9,6 +9,9 @@ import simplejson as json
 
 
 def get_active_configuration():
+    """
+    :return: The anonymization configuration that is currently activated
+    """
     return ConnectionConfiguration.objects.get(is_active=True)
 
 
@@ -55,12 +58,37 @@ class PersonaCreateView(CreateView):
         # update persona & redirect
         instance.save()
 
-        return redirect(instance.get_edit_properties_url())
+        return redirect(instance.get_edit_properties_url() + '?initial=true')
 
 create_persona = PersonaCreateView.as_view()
 
 
+class PersonaUpdateInfoView(UpdateView):
+    """
+    Update the basic info of a persona
+    For updating the `query` of the persona see the `edit_persona_properties(request, pk)` method below
+    """
+    model = Persona
+    form_class = PersonaForm
+    template_name = 'persona_builder/persona/edit_info.html'
+
+    def form_valid(self, form):
+        instance = form.save()
+
+        # update persona & redirect
+        instance.save()
+
+        return redirect(instance.get_edit_properties_url())
+
+edit_persona_info = PersonaUpdateInfoView.as_view()
+
+
 def edit_persona_properties(request, pk):
+    """
+    :param request: The request object
+    :param pk: The primary key of the persona
+    :return: Updates the query of the edited persona
+    """
     persona = get_object_or_404(Persona, pk=pk)
     config = get_active_configuration()
     user_manager = config.get_user_manager(token=persona.uuid)
@@ -97,12 +125,19 @@ def edit_persona_properties(request, pk):
         'form': form,
         'filters': user_manager.list_filters(),
         'not_container': True,
+        'show_basic_info': not request.GET.get('initial'),
     }
 
     return render(request, 'persona_builder/persona/edit_properties.html', params, status=status)
 
 
 def update_users(request, pk):
+    """
+    :param request: The request object
+    :param pk: The primary key of the persona
+    :return: Refreshes which of the CloudTeams users belong to this persona.
+    Maintains anonymized info for users that don't change
+    """
     persona = get_object_or_404(Persona, pk=pk)
     config = get_active_configuration()
     user_manager = config.get_user_manager(token=persona.uuid)
@@ -116,6 +151,9 @@ def update_users(request, pk):
 
 
 class PersonaDetailView(DetailView):
+    """
+    The details page of each persona
+    """
     model = Persona
     template_name = 'persona_builder/persona/details.html'
     context_object_name = 'persona'
@@ -135,17 +173,24 @@ view_persona = PersonaDetailView.as_view()
 
 
 class PersonaListView(ListView):
+    """
+    A list of personas in the Persona Builder for this user, team and project
+    """
     model = Persona
     template_name = 'persona_builder/persona/list.html'
     context_object_name = 'personas'
 
     def get_queryset(self):
+        # TODO: Update logic - remove private personas of other teams
         return super(PersonaListView, self).get_queryset().filter(is_ready=True)
 
 list_personas = PersonaListView.as_view()
 
 
 class PersonaDeleteView(DeleteView):
+    """
+    A page that allows deleting a persona
+    """
     model = Persona
     template_name = 'persona_builder/persona/delete.html'
     context_object_name = 'persona'

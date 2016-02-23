@@ -9,6 +9,17 @@
         {% endwith %}
 
 
+        {% if show_basic_info %}
+            <h3 class="header-extra-small">Name</h3>
+            <p>{{ persona.name }}</p>
+            <h3 class="header-extra-small">Description</h3>
+            <p>{{ persona.description }}</p>
+            <p class="clearfix">
+                <a href="{{ persona.get_edit_info_url }}" class="pull-right"><i class="fa fa-pencil"></i> Edit basic information</a>
+            </p>
+        {% endif %}
+
+        <p>Define some or all of the properties below to describe this persona:</p>
         <form class="persona-filters-form" method="POST" action=".">{% csrf_token %}
 
             {{ form.non_field_errors}}
