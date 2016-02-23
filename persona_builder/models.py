@@ -1,10 +1,12 @@
 import simplejson as json
 import uuid
-from ct_anonymizer.settings import PRODUCTION
+from ct_anonymizer.settings import PRODUCTION, SERVER_URL, USER_PASSWD
 from django.db import models
 from django.db import transaction
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
+
+from pb_oauth.xmlrpc_srv import XMLRPC_Server
 
 
 class Persona(models.Model):
@@ -47,6 +49,9 @@ class Persona(models.Model):
                 PersonaUsers.objects.create(persona=self, user_id=user['__id__'])
 
 
+srv = XMLRPC_Server(SERVER_URL, USER_PASSWD)
+
+
 @receiver(post_save, sender=Persona)
 def on_create_persona(sender, instance, created, **kwargs):
     # Only on production
@@ -54,8 +59,8 @@ def on_create_persona(sender, instance, created, **kwargs):
         return
 
     # Only when instance was created
-    if created:
-        pass
+    if created and instance.campaign_id:
+        srv.setpersona(instance.campaign_id, str(instance.pk))
 
 
 @receiver(pre_delete, sender=Persona)
@@ -63,7 +68,8 @@ def on_delete_persona(sender, instance, using, **kwargs):
     # Only on production
     if not PRODUCTION:
         return
-    
+
+    # TODO: call teams platform persona delete method here
     pass
 
 

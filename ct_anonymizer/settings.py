@@ -129,3 +129,7 @@ MEDIA_URL = '/media/'
 
 # minimum number of users a persona must contain
 MIN_USERS_IN_PERSONA = 3
+
+# Team Platform API credentials
+USER_PASSWD = 'username:password'
+SERVER_URL = 'https://cloudteams.fit.fraunhofer.de/bscw/bscw.cgi'
