@@ -27,9 +27,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Check if we're on development or production
+# Not the same as DEBUG since right now we're on DEBUG=True on production as well
+PRODUCTION = os.path.isfile(os.path.join(BASE_DIR, 'production.txt'))
 
 # Application definition
-
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',

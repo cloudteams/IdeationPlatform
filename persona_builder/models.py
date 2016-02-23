@@ -1,8 +1,10 @@
 import simplejson as json
 import uuid
-from django.contrib.auth.models import User
+from ct_anonymizer.settings import PRODUCTION
 from django.db import models
 from django.db import transaction
+from django.db.models.signals import post_save, pre_delete
+from django.dispatch import receiver
 
 
 class Persona(models.Model):
@@ -43,6 +45,26 @@ class Persona(models.Model):
             PersonaUsers.objects.filter(persona=self).delete()
             for user in users:
                 PersonaUsers.objects.create(persona=self, user_id=user['__id__'])
+
+
+@receiver(post_save, sender=Persona)
+def on_create_persona(sender, instance, created, **kwargs):
+    # Only on production
+    if not PRODUCTION:
+        return
+
+    # Only when instance was created
+    if created:
+        pass
+
+
+@receiver(pre_delete, sender=Persona)
+def on_delete_persona(sender, instance, using, **kwargs):
+    # Only on production
+    if not PRODUCTION:
+        return
+    
+    pass
 
 
 class PersonaUsers(models.Model):
