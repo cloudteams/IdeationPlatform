@@ -206,9 +206,9 @@ def find_user(request):
     except ValueError:
         return HttpResponse('`project` must be the project ID ("%s" is not an int)' % pid, status=400)
 
-    res = PersonaUsers.objects.filter(user_id=uid, persona__project_id=pid).exclude(owner='SYSTEM')
+    res = PersonaUsers.objects.filter(user_id=uid, persona__project_id=pid).exclude(persona__owner='SYSTEM')
     if not res:
-        res = PersonaUsers.objects.filter(user_id=uid, persona__project_id=pid, owner='SYSTEM')
+        res = PersonaUsers.objects.filter(user_id=uid, persona__project_id=pid, persona__owner='SYSTEM')
 
     p = res[0].persona
     users = json.loads(p.users)
