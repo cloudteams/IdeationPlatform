@@ -11,6 +11,10 @@ class AuthorizationMiddleware(object):
         if request.path == '/persona-builder/authorize/':
             return None
 
+        # exclude api views
+        if '/api/' in request.path:
+            return None
+
         # save information about current project & campaign
         if 'pid' in request.GET:
             request.session['project_id'] = request.GET.get('pid')
