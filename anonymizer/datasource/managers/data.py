@@ -593,7 +593,7 @@ class PropertyManager:
 
     def filter(self, filters, true_id=False, start=None, end=None):
         if not filters:
-            return self.all()
+            return self.all(true_id=true_id, start=start, end=end)
 
         if type(filters) in [str, unicode]:
             if filters[0] == '[':

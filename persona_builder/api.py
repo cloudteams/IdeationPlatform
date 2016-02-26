@@ -171,7 +171,7 @@ def create_default_persona(request):
         return HttpResponse('', status=204)
 
     # create the system persona
-    p = Persona.objects.create(project_id=pid, owner='SYSTEM', query='all()',
+    p = Persona.objects.create(project_id=pid, owner='SYSTEM', query='',
                                description='Generic project persona', is_ready=True, is_public=False)
 
     # find the users
