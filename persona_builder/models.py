@@ -83,5 +83,5 @@ class PersonaUsers(models.Model):
     """
     Users represented by each persona
     """
-    persona = models.ForeignKey(Persona)
-    user_id = models.TextField()
+    persona = models.ForeignKey(Persona, db_index=True)
+    user_id = models.IntegerField(db_index=True)

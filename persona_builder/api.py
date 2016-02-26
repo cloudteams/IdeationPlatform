@@ -176,6 +176,8 @@ def create_default_persona(request):
 
     # find the users
     p.update_users(ConnectionConfiguration.objects.get(is_active=True).get_user_manager())
+    p.save()
+
     return HttpResponse('', status=201)
 
 
@@ -211,12 +213,39 @@ def find_user(request):
         res = PersonaUsers.objects.filter(user_id=uid, persona__project_id=pid, persona__owner='SYSTEM')
 
     p = res[0].persona
+
+    """
+    # removed due to bad performance
     users = json.loads(p.users)
     for user in users:
         if user['__id__'] == uid:
             result = user
             result.pop('__id__')
             result['persona'] = p.pk
+    """
 
-            return JsonResponse(result, safe=False)
+    id_str = '"__id__": %d,' % uid
+    uid_pos = p.users.find(id_str)
+    # find where user record starts/ends
+    start = None
+    end = None
 
+    c = uid_pos - 1
+    while True:
+        if p.users[c] == '{':
+            start = c
+            break
+        else:
+            c -= 1
+
+    c = uid_pos + len(id_str)
+    while True:
+        if p.users[c] == '}':
+            end = c
+            break
+        else:
+            c += 1
+
+    if start and end:
+        result = p.users[start:end] + ', "persona": %d}' % p.pk
+        return HttpResponse(result, content_type='application/json')
