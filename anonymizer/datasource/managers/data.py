@@ -51,6 +51,13 @@ class UnknownOperatorException(Exception):
     pass
 
 
+class InvalidSegmentOperation(Exception):
+    """
+    Raised when an offset/limit pair is invalid
+    """
+    pass
+
+
 class Property:
     """
     A single property
@@ -488,6 +495,32 @@ class PropertyManager:
 
         keys.insert(pos - 1, new_key)
 
+    @staticmethod
+    def paginate(start=None, end=None):
+        # TODO only works for postres & mysql
+        result = ''
+        if start or end:
+            if start:
+                if start < 0:
+                    raise InvalidSegmentOperation('Negative indexes not supported')
+                result += ' OFFSET %d' % start
+            if end:
+                if end < 0:
+                    raise InvalidSegmentOperation('Negative indexes not supported')
+
+                if start:
+                    limit = end - start
+
+                    if limit < 0:
+                        raise InvalidSegmentOperation('Invalid segment [%d:%d]' % (start, end))
+                else:
+                    start = 0
+                    limit = end
+
+                result += ' OFFSET %d LIMIT %d' % (start, limit)
+
+        return result
+
     def join_clause(self):
         """
         Returns the join clause of the query
@@ -551,14 +584,14 @@ class PropertyManager:
         result += ','.join([self.user_pk.connection.primary_key_of(table).split('@')[0] for table in self.group_tables])
         return result
 
-    def all(self, true_id=False):
+    def all(self, true_id=False, start=None, end=None):
         # construct query
-        query = self.query() + self.group_by()
+        query = self.query() + self.group_by() + self.paginate(start, end)
 
         # execute query & return results
         return [self.info(row, true_id) for row in self.reduce(self.user_pk.connection.execute(query).fetchall())]
 
-    def filter(self, filters, true_id=False):
+    def filter(self, filters, true_id=False, start=None, end=None):
         if not filters:
             return self.all()
 
@@ -609,6 +642,9 @@ class PropertyManager:
         if filters_aggregate:
             having_clause = ' HAVING ' + ' AND '.join(filters_aggregate)
             query += having_clause
+
+        # add offset & limit
+        query += self.paginate(start, end)
 
         # postgres fix
         query = query.replace('"', '\'')

@@ -1,12 +1,13 @@
 <div class="configuration-teaser">
     {{configuration.name}}
 
-    <div style="padding-left: 40px">
+    <div class="content">
         {% if not configuration.is_active %}
-            <form method="POST" action = '/anonymizer/connection/{{configuration.pk}}/set-active/' style="display: inline-block">
+            <form method="POST" action = '/anonymizer/connection/{{configuration.pk}}/set-active/' class="activation-form">
                 {% csrf_token %}
-                <input type="submit" class="btn btn-sm" value="Activate" /> |
+                <input type="submit" value="Activate" />
             </form>
+            |
         {% else %}
             ✓ Active |
         {% endif %}

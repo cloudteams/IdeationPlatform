@@ -311,6 +311,29 @@ def set_active(request, pk):
         return HttpResponse('Only POST method allowed', status=400)
 
 
+def parse_filters(q):
+    try:
+        f_end = q.index('[')
+    except ValueError:
+        f_end = -1
+
+    if f_end > 0:
+        spl = q[f_end+1:-1].split(':')
+        if spl[0]:
+            start = int(spl[0])
+        else:
+            start = None
+        if len(spl) > 1:
+            end = int(spl[1])
+        else:
+            end = None
+    else:
+        start = None
+        end = None
+
+    return f_end, start, end
+
+
 def query_connection(request, pk):
     """
     Execute a query against a connection
@@ -328,13 +351,16 @@ def query_connection(request, pk):
 
     if q:
         try:
-            if q == 'all()':
-                result = user_manager.all()
+            if q.startswith('all()'):
+                _, start, end = parse_filters(q)
+
+                result = user_manager.all(start=start, end=end)
             elif q.startswith('filter'):
                 pos = len('filter(')
-                filters = q[pos:-1]
+                f_end, start, end = parse_filters(q)
 
-                result = user_manager.filter(filters)
+                filters = q[pos:f_end]
+                result = user_manager.filter(filters, start=start, end=end)
             elif q.startswith('count'):
                 pos = len('count(')
                 filters = q[pos:-1]

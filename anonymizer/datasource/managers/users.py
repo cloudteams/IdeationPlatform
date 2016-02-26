@@ -41,11 +41,11 @@ class UserManager:
 
         return self.pm.get(pk)
 
-    def filter(self, filters, true_id=False):
-        return self.pm.filter(filters, true_id)
+    def filter(self, filters, true_id=False, start=None, end=None):
+        return self.pm.filter(filters, true_id, start=start, end=end)
 
-    def all(self):
-        return self.pm.all()
+    def all(self, start=None, end=None):
+        return self.pm.all(start=start, end=end)
 
     def count(self, filters=None):
         if filters:

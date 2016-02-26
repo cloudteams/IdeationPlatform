@@ -69,8 +69,8 @@ def on_delete_persona(sender, instance, using, **kwargs):
     if not PRODUCTION:
         return
 
-    # TODO: call teams platform persona delete method here
-    pass
+    if instance.campaign_id:
+        srv.setpersona(instance.campaign_id, '')
 
 
 class PersonaUsers(models.Model):

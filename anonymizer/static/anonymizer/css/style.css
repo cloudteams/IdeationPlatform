@@ -1,0 +1,13 @@
+.configuration-teaser .content {
+    padding-left: 40px
+}
+
+.activation-form {
+    display: inline-block
+}
+
+.activation-form input[type="submit"] {
+    padding: 0;
+    border: 0;
+    color: #7d3c8c;
+}
