@@ -3,6 +3,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import simplejson as json
+
+from anonymizer.models import ConnectionConfiguration
 from ct_anonymizer.settings import MEDIA_URL
 from persona_builder.forms import PersonaAPIForm, PersonaPropertiesForm
 from persona_builder.models import Persona, PersonaUsers
@@ -145,6 +147,38 @@ def persona(request, pk):
         return JsonResponse({'error': 'Only GET, POST, DELETE methods allowed'}, status=400)
 
 
+@csrf_exempt
+def create_default_persona(request):
+    """
+    :param request: Must contain the new persona
+    :return: HTTP 201 if the system persona was created, HTTP 204 if it already existed
+    """
+    if request.method != 'POST':
+        return HttpResponse('Only POST method allowed', status=400)
+
+    # get the project id
+    pid = request.POST.get('project')
+    if not pid:
+        return HttpResponse('`project` field is required', status=400)
+
+    try:
+        pid = int(pid)
+    except ValueError:
+        return HttpResponse('`project` must be the project ID ("%s" is not an int)' % pid, status=400)
+
+    # check if the persona already exists
+    if Persona.objects.filter(project_id=pid, owner='SYSTEM').exists():
+        return HttpResponse('', status=204)
+
+    # create the system persona
+    p = Persona.objects.create(project_id=pid, owner='SYSTEM', query='all()',
+                               description='Generic project persona', is_ready=True, is_public=False)
+
+    # find the users
+    p.update_users(ConnectionConfiguration.objects.get(is_active=True).get_user_manager())
+    return HttpResponse('', status=201)
+
+
 def find_user(request):
     """
     :param request: Must contain actual user pk and the project pk in request GET
@@ -153,7 +187,7 @@ def find_user(request):
     if request.method != 'GET':
         return HttpResponse('Only GET method allowed', status=400)
 
-    # get user id
+    # get user & project id
     uid = request.GET.get('user')
     if not uid:
         return HttpResponse('`user` field is required', status=400)
@@ -168,14 +202,13 @@ def find_user(request):
         return HttpResponse('`project` field is required', status=400)
 
     try:
-        pid = int(uid)
+        pid = int(pid)
     except ValueError:
         return HttpResponse('`project` must be the project ID ("%s" is not an int)' % pid, status=400)
 
-    # TODO: limit search only in project personas
-    res = PersonaUsers.objects.filter(user_id=uid)
+    res = PersonaUsers.objects.filter(user_id=uid, persona__project_id=pid).exclude(owner='SYSTEM')
     if not res:
-        return JsonResponse({})
+        res = PersonaUsers.objects.filter(user_id=uid, persona__project_id=pid, owner='SYSTEM')
 
     p = res[0].persona
     users = json.loads(p.users)

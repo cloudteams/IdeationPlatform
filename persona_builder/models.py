@@ -58,6 +58,9 @@ def on_create_persona(sender, instance, created, **kwargs):
     if not PRODUCTION:
         return
 
+    if instance.owner == 'SYSTEM':
+        return
+
     # Only when instance was created
     if created and instance.campaign_id:
         srv.setpersona(instance.campaign_id, str(instance.pk))
@@ -67,6 +70,9 @@ def on_create_persona(sender, instance, created, **kwargs):
 def on_delete_persona(sender, instance, using, **kwargs):
     # Only on production
     if not PRODUCTION:
+        return
+
+    if instance.owner == 'SYSTEM':
         return
 
     if instance.campaign_id:
