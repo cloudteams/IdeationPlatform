@@ -1,4 +1,6 @@
 import uuid
+
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import CreateView, DetailView, ListView, DeleteView, UpdateView
@@ -181,8 +183,11 @@ class PersonaListView(ListView):
     context_object_name = 'personas'
 
     def get_queryset(self):
-        # TODO: Update logic - remove private personas of other teams
-        return super(PersonaListView, self).get_queryset().filter(is_ready=True)
+        # get all project PIDs
+        pids = [p['pid'] for p in self.request.session['projects']]
+        # filter projects
+        return super(PersonaListView, self).get_queryset().filter(is_ready=True).\
+            filter(Q(project_id__in=pids) | Q(is_public=True)).exclude(owner='SYSTEM')
 
 list_personas = PersonaListView.as_view()
 

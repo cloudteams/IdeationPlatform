@@ -21,5 +21,6 @@ urlpatterns = [
     url(r'^api/personas/$', api.personas),
     url(r'^api/persona/(?P<pk>[\w-]+)/$', api.persona),
     url(r'^api/init-project/$', api.create_default_persona),
+    url(r'^api/campaign-users/$', api.campaign_users),
     url(r'^api/find-user/$', api.find_user),
 ]

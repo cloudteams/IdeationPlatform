@@ -181,6 +181,21 @@ def create_default_persona(request):
     return HttpResponse('', status=201)
 
 
+def campaign_users(request):
+    """
+    :param request: Must contain the campaign pk in request GET
+    :return: The list of users in personas of this campaign
+    """
+    cid = request.GET.get('campaign')
+    try:
+        cid = int(cid)
+    except ValueError:
+        return HttpResponse('`campaign` must be the campaign ID ("%s" is not an int)' % cid, status=400)
+
+    res = PersonaUsers.objects.filter(persona__campaign_id=cid)
+    return JsonResponse([r.user_id for r in res], safe=False)
+
+
 def find_user(request):
     """
     :param request: Must contain actual user pk and the project pk in request GET
