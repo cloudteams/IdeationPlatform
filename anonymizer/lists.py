@@ -92,4 +92,12 @@ PROVIDER_PLUGINS = [
         ],
         'type': 'INT(11)',
     },
+    {
+        'source': '^Dates.part_of_day',
+        'label': 'Find the part of the day based on a timestamp',
+        'args': [
+            ('timestamp', 'Timestamp'),
+        ],
+        'type': 'VARCHAR(255)',
+    },
 ]
