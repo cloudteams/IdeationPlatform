@@ -186,7 +186,7 @@ class PersonaListView(ListView):
         qs = super(PersonaListView, self).get_queryset()
 
         if 'project_id' in self.request.session:
-            qs = qs.filter(is_ready=True).filter(Q(project_id__in=self.request.session['project_id']) | Q(is_public=True))
+            qs = qs.filter(is_ready=True).filter(Q(project_id=self.request.session['project_id']) | Q(is_public=True))
         else:
             qs = qs.filter(is_ready=True).filter(Q(owner=self.request.session['username']) | Q(is_public=True))
 
