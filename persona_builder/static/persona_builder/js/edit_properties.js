@@ -103,7 +103,8 @@ $(function() {
 
             // remove empty clauses & return result
             return result.replace(/AND \(\) /g, '').replace(/AND \(\)/g, '')
-                         .replace(/ \(\) AND /g, '').replace(/\(\) AND /g, '');
+                         .replace(/ \(\) AND /g, '').replace(/\(\) AND /g, '')
+                         .replace(/\[\(\) \]/g, '');
         }
     }
 

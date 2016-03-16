@@ -73,7 +73,7 @@ def part_of_day(*args):
         else:
             r = None
 
-        if type(t) != list:
+        if type(ts) != list:
             return r
         else:
             result.append(r)

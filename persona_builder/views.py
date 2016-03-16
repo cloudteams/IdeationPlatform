@@ -183,11 +183,14 @@ class PersonaListView(ListView):
     context_object_name = 'personas'
 
     def get_queryset(self):
-        # get all project PIDs
-        pids = [p['pid'] for p in self.request.session['projects']]
-        # filter projects
-        return super(PersonaListView, self).get_queryset().filter(is_ready=True).\
-            filter(Q(project_id__in=pids) | Q(is_public=True)).exclude(owner='SYSTEM')
+        qs = super(PersonaListView, self).get_queryset()
+
+        if 'project_id' in self.request.session:
+            qs = qs.filter(is_ready=True).filter(Q(project_id__in=self.request.session['project_id']) | Q(is_public=True))
+        else:
+            qs = qs.filter(is_ready=True).filter(Q(owner=self.request.session['username']) | Q(is_public=True))
+
+        return qs.exclude(owner='SYSTEM')
 
 list_personas = PersonaListView.as_view()
 
