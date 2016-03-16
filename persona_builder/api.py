@@ -193,7 +193,7 @@ def campaign_users(request):
         return HttpResponse('`campaign` must be the campaign ID ("%s" is not an int)' % cid, status=400)
 
     res = PersonaUsers.objects.filter(persona__campaign_id=cid)
-    return JsonResponse([r.user_id for r in res], safe=False)
+    return JsonResponse(list(set([r.user_id for r in res])), safe=False)
 
 
 def find_user(request):
