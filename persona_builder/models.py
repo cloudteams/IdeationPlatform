@@ -48,6 +48,9 @@ class Persona(models.Model):
             for user in users:
                 PersonaUsers.objects.create(persona=self, user_id=user['__id__'])
 
+        # weird bug fix
+        self.uuid = self.uuid.strip()
+
 
 srv = XMLRPC_Server(SERVER_URL, USER_PASSWD)
 
