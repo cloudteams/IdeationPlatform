@@ -77,9 +77,9 @@ class PersonaUpdateInfoView(UpdateView):
     def form_valid(self, form):
         instance = form.save()
 
-        # update persona & redirect
+        # update persona, send info & redirect
         instance.save()
-
+        instance.send_campaign_personas(oauth_credentials=self.request.session['bswc_token'])
         return redirect(instance.get_edit_properties_url())
 
 edit_persona_info = PersonaUpdateInfoView.as_view()
