@@ -44,7 +44,9 @@
 								</div>
 							</div>
 							<ul class="submenu">
-								<li class="projects-title">Projects</li>
+								{% if request.session.projects %}
+									<li class="projects-title">Projects</li>
+								{% endif %}
 								{% for project in request.session.projects %}
 									<li {% if request.session.project_id == project.pid %}class="active"{% endif %}>
 										<a href="#project-{{ project.pid }}">
@@ -54,6 +56,17 @@
 								{% empty %}
 									<li>No projects</li>
 								{% endfor %}
+
+								{% if request.session.campaigns %}
+									<li class="projects-title">Campaigns</li>
+									{% for campaign in request.session.campaigns %}
+										<li {% if request.session.campaign_id == campaign.pid %}class="active"{% endif %}>
+												<a href="#project-{{ project.pid }}">
+												{% if request.session.campaign_id == campaign.pid %} <i class="fa fa-check"></i>{% endif %}
+												{{ campaign.title }}</a>
+											</li>
+									{% endfor %}
+								{% endif %}
 								<li class="seperator"></li>
 								<li><a href="#nowhere">Log out</a></li>
 							</ul>

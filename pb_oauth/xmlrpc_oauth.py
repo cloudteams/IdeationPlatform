@@ -150,6 +150,32 @@ class BscwApi:
             'bscw_api': self,
         })
 
+    def store_user_content(self, request, srv):
+        # get id of authorized user/developer
+        home_id = srv.get_attributes()[0]['__id__']
+        attributes = ['__class__', '__id__', 'name']
+
+        # get all software projects in user's home folder, only top level once
+        result = srv.get_attributes(home_id, attributes, 2)
+
+        project_lst = []
+        campaign_lst = []
+        for obj in result:
+            classname = obj['__class__']
+            if classname == 'bscw.core.cloudteams.cl_softwareproject.Softwareproject':
+                project_lst.append(obj)
+            elif classname == 'bscw.core.cloudteams.cl_campaign.Campaign':
+                campaign_lst.append(obj)
+
+        request.session['projects'] = [{
+            'pid': p['__id__'],
+            'title': p['name'],
+        } for p in project_lst]
+        request.session['campaigns'] = [{
+            'pid': c['__id__'],
+            'title': c['name'],
+        } for c in campaign_lst]
+
     @staticmethod
     def authorization_url():
         return '/persona-builder/authorize/?action=authorize&host=%s' % quote(DEFAULT_HOST)
@@ -194,10 +220,7 @@ class BscwApi:
         # store common items in session
         request.session['user_id'] = user['__id__']
         request.session['username'] = user['name']
-        request.session['projects'] = [{
-            'pid': p['oid'],
-            'title': p['title'],
-        } for p in srv.lst_entries(user_home_id)[1]]
+        self.store_user_content(request, srv)
 
     """
     def doit(self):
