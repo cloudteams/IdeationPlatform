@@ -8,6 +8,10 @@ from django.dispatch import receiver
 
 from pb_oauth.xmlrpc_srv import XMLRPC_Server
 
+import ssl
+
+ssl._create_default_https_context = ssl._create_unverified_context
+
 
 class Persona(models.Model):
     uuid = models.UUIDField(unique=True, primary_key=False, default=uuid.uuid4, editable=False)
