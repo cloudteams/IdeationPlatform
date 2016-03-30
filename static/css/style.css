@@ -11,6 +11,18 @@ a:not(.btn):not(.btn-confirm):not(.btn-decline):not(.btn-download):hover, a:not(
     display: none;
 }
 
+/* Fix for danger input buttons */
+input.btn-danger {
+    background-color: #d9534f;
+    border-color: #d9534f;
+}
+
+input.btn-danger:focus, input.btn-danger.focus, input.btn-danger:active, input.btn-danger.active {
+    background-color: #c9302c;
+    border-color: #c12e2a;
+}
+
+
 /* Menu */
 .global-nav a:hover {
     color: #fff !important;
@@ -28,8 +40,13 @@ a:not(.btn):not(.btn-confirm):not(.btn-decline):not(.btn-download):hover, a:not(
     margin-bottom: 5px;
 }
 
+.global-nav li.profile .submenu .project-item a,
+.global-nav li.profile .submenu .campaign-item a {
+    font-size: 12px;
+}
+
 .global-nav li.profile .submenu li:not(.active) a {
-    padding-left: 20px;
+    padding-left: 14px;
 }
 
 /* Pages */
