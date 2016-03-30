@@ -72,7 +72,7 @@ class Persona(models.Model):
         } for persona in qs]
 
         # call method & return code
-        srv = XMLRPC_Server(self.oauth.server, verbose=self.verbose, oauth=oauth_credentials)
+        srv = XMLRPC_Server(SERVER_URL, oauth=oauth_credentials)
         return srv.setpersona(str(self.campaign_id), personas)
 
     # weird UUID bug fix
