@@ -57,9 +57,9 @@ class PersonaCreateView(CreateView):
         # set user & project
         instance.owner, instance.project_id, instance.campaign_id = request_context(self.request)
 
-        # update persona & redirect
+        # update persona, send info & redirect
         instance.save()
-
+        instance.send_campaign_personas(oauth_credentials=self.request.session['bswc_token'])
         return redirect(instance.get_edit_properties_url() + '?initial=true')
 
 create_persona = PersonaCreateView.as_view()
@@ -186,9 +186,9 @@ class PersonaListView(ListView):
         qs = super(PersonaListView, self).get_queryset()
 
         if 'campaign_id' in self.request.session:
-            qs = qs.filter(is_ready=True).filter(campaign_id=self.request.session['campaign_id'])
+            qs = qs.filter(campaign_id=self.request.session['campaign_id'])
         elif 'project_id' in self.request.session:
-            qs = qs.filter(is_ready=True).filter(project_id=self.request.session['project_id'])
+            qs = qs.filter(project_id=self.request.session['project_id'])
         else:
             qs = qs.filter(is_ready=True).filter(Q(owner=self.request.session['username']) | Q(is_public=True))
 
@@ -210,5 +210,13 @@ class PersonaDeleteView(DeleteView):
         context = super(PersonaDeleteView, self).get_context_data(**kwargs)
         context['not_container'] = True
         return context
+
+    def form_valid(self, form):
+        # notify Team Platform
+        instance = form.instance
+        instance.send_campaign_personas(oauth_credentials=self.request.session['bswc_token'], exclude_self=True)
+
+        # delete the instance
+        instance.delete()
 
 delete_persona = PersonaDeleteView.as_view()

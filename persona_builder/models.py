@@ -52,9 +52,10 @@ class Persona(models.Model):
             for user in users:
                 PersonaUsers.objects.create(persona=self, user_id=user['__id__'])
 
-    def send_campaign_personas(self, exclude_self=False):
+    def send_campaign_personas(self, oauth_credentials, exclude_self=False):
         """
         Sends the personas of this campaign to Customer Platform
+        :param oauth_credentials: The user's authentication credentials
         :param exclude_self: if True, remove this persona from the list (for use by on_delete)
         :return: the code returned by the XML-RPC API
         """
@@ -71,41 +72,13 @@ class Persona(models.Model):
         } for persona in qs]
 
         # call method & return code
+        srv = XMLRPC_Server(self.oauth.server, verbose=self.verbose, oauth=oauth_credentials)
         return srv.setpersona(str(self.campaign_id), personas)
 
     # weird UUID bug fix
     def save(self, *args, **kwargs):
         self.uuid = self.uuid.strip()
         super(Persona, self).save(*args, **kwargs)
-
-srv = XMLRPC_Server(SERVER_URL, USER_PASSWD)
-
-
-@receiver(post_save, sender=Persona)
-def on_create_persona(sender, instance, created, **kwargs):
-    # Only on production
-    if not PRODUCTION:
-        return
-
-    if instance.owner == 'SYSTEM':
-        return
-
-    # Only when instance was created
-    if created and instance.campaign_id:
-        return instance.send_campaign_personas()
-
-
-@receiver(pre_delete, sender=Persona)
-def on_delete_persona(sender, instance, using, **kwargs):
-    # Only on production
-    if not PRODUCTION:
-        return
-
-    if instance.owner == 'SYSTEM':
-        return
-
-    if instance.campaign_id:
-        return instance.send_campaign_personas(exclude_self=True)
 
 
 class PersonaUsers(models.Model):
