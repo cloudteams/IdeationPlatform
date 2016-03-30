@@ -295,7 +295,6 @@ class BscwApi:
 
         if action is None:
             return self.show_form(request)
-
         elif action == 'authorize':
             try:
                 reply = self.oauth.request_token()   # A Comsumer Request - Request Token
@@ -303,7 +302,6 @@ class BscwApi:
                 return self.show_error(request, e, 'Request token error')
 
             return self.authorize(reply)                    # C Consumer Directs User to Service Provider
-
         elif action == 'doit':
             self.oauth.token = base64.decodestring(form.get('a1'))
             self.oauth.token_secret = base64.decodestring(form.get('a2'))

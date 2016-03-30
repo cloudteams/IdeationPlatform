@@ -85,7 +85,9 @@ class Persona(models.Model):
 
     # weird UUID bug fix
     def save(self, *args, **kwargs):
-        self.uuid = self.uuid.strip()
+        if type(self.uuid) == str:
+            self.uuid = self.uuid.strip()
+            
         super(Persona, self).save(*args, **kwargs)
 
 
