@@ -52,13 +52,15 @@ class Persona(models.Model):
             for user in users:
                 PersonaUsers.objects.create(persona=self, user_id=user['__id__'])
 
-    def send_campaign_personas(self, server, oauth_credentials, exclude_self=False):
+    def send_campaign_personas(self, request, exclude_self=False):
         """
         Sends the personas of this campaign to Customer Platform
-        :param oauth_credentials: The user's authentication credentials
-        :param exclude_self: if True, remove this persona from the list (for use by on_delete)
+        :param request: The request object
         :return: the code returned by the XML-RPC API
         """
+        server = request.session['server']
+        oauth_credentials = request.session['bswc_token']
+
         # get list of personas
         qs = Persona.objects.filter(campaign_id=self.campaign_id).exclude(owner='SYSTEM')
         if exclude_self:
@@ -72,7 +74,7 @@ class Persona(models.Model):
         } for persona in qs]
 
         # call method & return code
-        srv = XMLRPC_Server(SERVER_URL, oauth=oauth_credentials)
+        srv = XMLRPC_Server(server, oauth=oauth_credentials)
         return srv.setpersona(str(self.campaign_id), personas)
 
     # weird UUID bug fix

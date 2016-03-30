@@ -57,12 +57,9 @@ class PersonaCreateView(CreateView):
         # set user & project
         instance.owner, instance.project_id, instance.campaign_id = request_context(self.request)
 
-        # update persona, send info & redirect
+        # create persona
         instance.save()
 
-        server = self.request.session['server']
-        oauth_credentials = self.request.session['bswc_token']
-        instance.send_campaign_personas(server=server, oauth_credentials=oauth_credentials)
         return redirect(instance.get_edit_properties_url() + '?initial=true')
 
 create_persona = PersonaCreateView.as_view()
@@ -78,14 +75,9 @@ class PersonaUpdateInfoView(UpdateView):
     template_name = 'persona_builder/persona/edit_info.html'
 
     def form_valid(self, form):
-        instance = form.save()
-
         # update persona, send info & redirect
-        instance.save()
-
-        server = self.request.session['server']
-        oauth_credentials = self.request.session['bswc_token']
-        instance.send_campaign_personas(server=server, oauth_credentials=oauth_credentials)
+        instance = form.save()
+        instance.send_campaign_personas(request=self.request)
 
         return redirect(instance.get_edit_properties_url())
 
@@ -125,6 +117,7 @@ def edit_persona_properties(request, pk):
             persona.save()
 
             # send info to customer platform
+            persona.send_campaign_personas(request=request)
             return redirect(persona.get_absolute_url())
         else:
             status = 400
@@ -221,10 +214,7 @@ class PersonaDeleteView(DeleteView):
     def form_valid(self, form):
         # notify Team Platform
         instance = form.instance
-
-        server = self.request.session['server']
-        oauth_credentials = self.request.session['bswc_token']
-        instance.send_campaign_personas(server=server, oauth_credentials=oauth_credentials, exclude_self=True)
+        instance.send_campaign_personas(request=self.request, exclude_self=True)
 
         # delete the instance
         instance.delete()
