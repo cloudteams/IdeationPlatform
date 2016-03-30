@@ -1,3 +1,5 @@
+from httplib import BadStatusLine
+
 import simplejson as json
 import uuid
 from ct_anonymizer.settings import PRODUCTION, SERVER_URL, USER_PASSWD
@@ -75,7 +77,11 @@ class Persona(models.Model):
 
         # call method & return code
         srv = XMLRPC_Server(server, oauth=oauth_credentials)
-        return srv.setpersona(str(self.campaign_id), personas)
+        try:
+            return srv.setpersona(str(self.campaign_id), personas)
+        except BadStatusLine:
+            print('Error on Team Platform notification')
+            return -1
 
     # weird UUID bug fix
     def save(self, *args, **kwargs):
