@@ -4,9 +4,12 @@
 {% load app_filters %}
 
 {% block content %}
-    <div class="clearfix">
-        <h1 class="pull-left">{{ request|list_page_title }}</h1>
-        <a href="/persona-builder/personas/create/" class="btn btn-transparent pull-right">+ Create new persona</a>
+    <h1>{{ request|list_page_title }}</h1>
+
+    <div class="row">
+        <div class="col-lg-4 col-md-6 clear-3">
+            <a href="/persona-builder/personas/create/" class="btn btn-transparent btn-create-persona">+ Create new persona</a>
+        </div>
     </div>
 
     {% for persona in personas %}
