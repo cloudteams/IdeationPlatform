@@ -176,7 +176,7 @@ view_persona = PersonaDetailView.as_view()
 
 class PersonaListView(ListView):
     """
-    A list of personas in the Persona Builder for this user, team and project
+    A list of personas in the Persona Builder for this user, project & campaign
     """
     model = Persona
     template_name = 'persona_builder/persona/list.html'
@@ -185,8 +185,10 @@ class PersonaListView(ListView):
     def get_queryset(self):
         qs = super(PersonaListView, self).get_queryset()
 
-        if 'project_id' in self.request.session:
-            qs = qs.filter(is_ready=True).filter(Q(project_id=self.request.session['project_id']) | Q(is_public=True))
+        if 'campaign_id' in self.request.session:
+            qs = qs.filter(is_ready=True).filter(campaign_id=self.request.session['campaign_id'])
+        elif 'project_id' in self.request.session:
+            qs = qs.filter(is_ready=True).filter(project_id=self.request.session['project_id'])
         else:
             qs = qs.filter(is_ready=True).filter(Q(owner=self.request.session['username']) | Q(is_public=True))
 

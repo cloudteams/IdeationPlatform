@@ -172,7 +172,7 @@ class BscwApi:
             'title': p['name'],
         } for p in project_lst]
         request.session['campaigns'] = [{
-            'pid': c['__id__'],
+            'cid': c['__id__'],
             'title': c['name'],
         } for c in campaign_lst]
 

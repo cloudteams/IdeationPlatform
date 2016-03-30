@@ -62,7 +62,7 @@
 									{% for campaign in request.session.campaigns %}
 										<li class="campaign-item{% if request.session.campaign_id == campaign.pid %} active{% endif %}">
 												<a href="#project-{{ project.pid }}">
-												{% if request.session.campaign_id == campaign.pid %} <i class="fa fa-check"></i>{% endif %}
+												{% if request.session.campaign_id == campaign.cid %} <i class="fa fa-check"></i>{% endif %}
 												{{ campaign.title }}</a>
 											</li>
 									{% endfor %}

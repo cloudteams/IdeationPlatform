@@ -51,3 +51,24 @@ def process_options(f):
         result = [('', '')] + result
 
     return result
+
+
+# get the appropriate persona list title
+@register.filter
+def list_page_title(request):
+    if 'campaign_id' in request.session:
+        cid = request.session['campaign_id']
+        for campaign in request.session['campaigns']:
+            if campaign['cid'] == cid:
+                return 'Personas in %s' % campaign['title']
+
+        return 'Personas in campaign with id #%s' % str(cid)
+    elif 'project_id' in request.session:
+        pid = request.session['project_id']
+        for project in request.session['projects']:
+            if project['pid'] == pid:
+                return 'Personas in %s' % project['title']
+
+        return 'Personas in project with id #%s' % str(pid)
+    else:
+        return 'Your own & public personas'
