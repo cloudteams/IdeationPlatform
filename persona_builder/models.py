@@ -52,7 +52,7 @@ class Persona(models.Model):
             for user in users:
                 PersonaUsers.objects.create(persona=self, user_id=user['__id__'])
 
-    def send_campaign_personas(self, oauth_credentials, exclude_self=False):
+    def send_campaign_personas(self, server, oauth_credentials, exclude_self=False):
         """
         Sends the personas of this campaign to Customer Platform
         :param oauth_credentials: The user's authentication credentials

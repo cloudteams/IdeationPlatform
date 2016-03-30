@@ -59,7 +59,10 @@ class PersonaCreateView(CreateView):
 
         # update persona, send info & redirect
         instance.save()
-        instance.send_campaign_personas(oauth_credentials=self.request.session['bswc_token'])
+
+        server = self.request.session['server']
+        oauth_credentials = self.request.session['bswc_token']
+        instance.send_campaign_personas(server=server, oauth_credentials=oauth_credentials)
         return redirect(instance.get_edit_properties_url() + '?initial=true')
 
 create_persona = PersonaCreateView.as_view()
@@ -79,7 +82,11 @@ class PersonaUpdateInfoView(UpdateView):
 
         # update persona, send info & redirect
         instance.save()
-        instance.send_campaign_personas(oauth_credentials=self.request.session['bswc_token'])
+
+        server = self.request.session['server']
+        oauth_credentials = self.request.session['bswc_token']
+        instance.send_campaign_personas(server=server, oauth_credentials=oauth_credentials)
+
         return redirect(instance.get_edit_properties_url())
 
 edit_persona_info = PersonaUpdateInfoView.as_view()
@@ -214,7 +221,10 @@ class PersonaDeleteView(DeleteView):
     def form_valid(self, form):
         # notify Team Platform
         instance = form.instance
-        instance.send_campaign_personas(oauth_credentials=self.request.session['bswc_token'], exclude_self=True)
+
+        server = self.request.session['server']
+        oauth_credentials = self.request.session['bswc_token']
+        instance.send_campaign_personas(server=server, oauth_credentials=oauth_credentials, exclude_self=True)
 
         # delete the instance
         instance.delete()

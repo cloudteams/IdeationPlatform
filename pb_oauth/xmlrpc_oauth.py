@@ -211,6 +211,7 @@ class BscwApi:
     def store_token(self, request):
         oauth = self.oauth.authorization_header(post=True)
         request.session['bswc_token'] = oauth['Authorization']
+        request.session['server'] = self.oauth.server
 
         # also store user information in session
         srv = XMLRPC_Server(self.oauth.server, verbose=self.verbose, oauth=oauth['Authorization'])
