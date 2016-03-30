@@ -1,4 +1,5 @@
 from django import forms
+
 from ct_anonymizer.settings import MIN_USERS_IN_PERSONA
 from persona_builder.models import Persona
 

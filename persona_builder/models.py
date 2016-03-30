@@ -15,7 +15,7 @@ class Persona(models.Model):
     project_id = models.IntegerField(blank=True, null=True, default=None)
     campaign_id = models.IntegerField(blank=True, null=True, default=None)
     name = models.CharField(max_length=256, null=False, blank=False)
-    description = models.CharField(max_length=4096, null=False, blank=False)
+    description = models.TextField(null=True, blank=True, default='')
     avatar = models.ImageField(upload_to='persona-avatars', null=True, blank=True)
     query = models.TextField(editable=False)
     users = models.TextField(editable=False, default='[]')
