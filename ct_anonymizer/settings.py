@@ -131,5 +131,5 @@ MEDIA_URL = '/media/'
 MIN_USERS_IN_PERSONA = 3
 
 # Team Platform API credentials
-USER_PASSWD = 'username:password'
+USER_PASSWD = 'cloudteams_api:cloudteams1!'
 SERVER_URL = 'https://cloudteams.fit.fraunhofer.de/bscw/bscw.cgi'
