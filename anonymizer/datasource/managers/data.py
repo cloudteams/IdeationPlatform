@@ -217,6 +217,9 @@ class Property:
                 if exp in r_arr:
                     exp = idx
 
+            if not val:
+                return False
+            
             if type(val) != int:
                 raise ValueError('Invalid option: ' + str(val))
 
