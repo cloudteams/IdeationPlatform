@@ -7,8 +7,9 @@ from django.shortcuts import render, redirect
 from oauth_credentials import consumer_keys, consumer_secrets, servers
 from xmlrpc_srv import XMLRPC_Server
 
+SRV_INSTANCE = None
 bscw_oauth_args = {
-    'op':'OAuth'
+    'op': 'OAuth'
 }
 DEFAULT_HOST = 'cloudteams.epu.ntua.gr:8000'
 
@@ -57,6 +58,10 @@ def signature_base_string(method, url, args):
 
 def make_url(url, args={}):
     return args and '%s?%s' % (url, quote_args(args)) or url
+
+
+def get_srv_instance():
+    return SRV_INSTANCE
 
 
 class OAuthClient:
@@ -215,6 +220,7 @@ class BscwApi:
 
         # also store user information in session
         srv = XMLRPC_Server(self.oauth.server, verbose=self.verbose, oauth=oauth['Authorization'])
+        SRV_INSTANCE = srv
         user_home_id = srv.get_attributes()[0]['__id__']  # get user's home folder
         user = srv.get_attributes(user_home_id, ['user', ])[0]['user']  # gets user's info
 

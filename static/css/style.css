@@ -49,6 +49,10 @@ input.btn-danger:focus, input.btn-danger.focus, input.btn-danger:active, input.b
     padding-left: 14px;
 }
 
+body > header .global-nav .container > ul li.profile:before {
+    background: none;
+}
+
 /* Pages */
 .public-page.not-container {
     padding-top: 0;

@@ -7,6 +7,7 @@ class AuthorizationMiddleware(object):
 
     # Check if client IP is allowed
     def process_request(self, request):
+
         # except authorization pages
         if request.path == '/persona-builder/authorize/':
             return None

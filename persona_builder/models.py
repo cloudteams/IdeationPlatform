@@ -8,6 +8,7 @@ from django.db import transaction
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
+from pb_oauth.xmlrpc_oauth import get_srv_instance
 from pb_oauth.xmlrpc_srv import XMLRPC_Server
 
 import ssl
@@ -76,18 +77,20 @@ class Persona(models.Model):
         } for persona in qs]
 
         # call method & return code
-        srv = XMLRPC_Server(server, oauth=oauth_credentials)
+        srv = get_srv_instance()
         try:
-            return srv.setpersona(str(self.campaign_id), personas)
+            result = srv.setpersona(str(self.campaign_id), personas)
+            print('Personas for campaign %d sent to Team Platform' % self.campaign_id)
+            return result
         except BadStatusLine:
             print('Error on Team Platform notification')
             return -1
 
     # weird UUID bug fix
     def save(self, *args, **kwargs):
-        if type(self.uuid) == str:
+        if type(self.uuid) in [str, unicode]:
             self.uuid = self.uuid.strip()
-            
+
         super(Persona, self).save(*args, **kwargs)
 
 
