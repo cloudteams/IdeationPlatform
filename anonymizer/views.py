@@ -327,6 +327,8 @@ def parse_filters(q):
             end = int(spl[1])
         else:
             end = None
+
+        f_end -= 1
     else:
         start = None
         end = None
