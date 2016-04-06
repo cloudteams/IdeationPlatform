@@ -79,6 +79,9 @@ class Persona(models.Model):
         # call method & return code
         if PRODUCTION:
             srv = get_srv_instance(request.user.username)
+            if not srv:
+                print('No credentials object')
+                return -1
             try:
                 result = srv.setpersona(str(self.campaign_id), personas)
                 print('Personas for campaign %d sent to Team Platform' % self.campaign_id)
