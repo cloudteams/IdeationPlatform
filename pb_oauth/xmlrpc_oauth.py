@@ -222,6 +222,7 @@ class BscwApi:
         request.session['server'] = self.oauth.server
 
         # also store user information in session
+        # change to verbose=True for debugging
         srv = XMLRPC_Server(self.oauth.server, verbose=self.verbose, oauth=oauth['Authorization'])
         user_home_id = srv.get_attributes()[0]['__id__']  # get user's home folder
         user = srv.get_attributes(user_home_id, ['user', ])[0]['user']  # gets user's info

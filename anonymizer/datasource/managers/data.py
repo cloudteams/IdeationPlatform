@@ -219,7 +219,7 @@ class Property:
 
             if not val:
                 return False
-            
+
             if type(val) != int:
                 raise ValueError('Invalid option: ' + str(val))
 

@@ -1,3 +1,4 @@
+from persona_builder.models import PersonaUsers
 
 __author__ = 'dimitris'
 
@@ -72,3 +73,8 @@ def list_page_title(request):
         return 'Personas in project with id #%s' % str(pid)
     else:
         return 'Your own & public personas'
+
+
+@register.filter
+def count_users(persona):
+    return PersonaUsers.objects.filter(persona_id=persona.pk).count()
