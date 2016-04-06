@@ -217,7 +217,7 @@ class Property:
                 if exp in r_arr:
                     exp = idx
 
-            if not val:
+            if val is None:
                 return False
 
             if type(val) != int:

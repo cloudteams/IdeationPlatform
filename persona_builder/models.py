@@ -77,14 +77,15 @@ class Persona(models.Model):
         } for persona in qs]
 
         # call method & return code
-        srv = get_srv_instance()
-        try:
-            result = srv.setpersona(str(self.campaign_id), personas)
-            print('Personas for campaign %d sent to Team Platform' % self.campaign_id)
-            return result
-        except BadStatusLine:
-            print('Error on Team Platform notification')
-            return -1
+        if PRODUCTION:
+            srv = get_srv_instance(request.user.username)
+            try:
+                result = srv.setpersona(str(self.campaign_id), personas)
+                print('Personas for campaign %d sent to Team Platform' % self.campaign_id)
+                return result
+            except BadStatusLine:
+                print('Error on Team Platform notification')
+                return -1
 
     # weird UUID bug fix
     def save(self, *args, **kwargs):
