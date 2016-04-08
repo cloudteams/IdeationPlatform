@@ -7,7 +7,6 @@ from django.shortcuts import render, redirect
 from oauth_credentials import consumer_keys, consumer_secrets, servers
 from xmlrpc_srv import XMLRPC_Server
 
-SRV_INSTANCES = {}
 bscw_oauth_args = {
     'op': 'OAuth'
 }
@@ -58,13 +57,6 @@ def signature_base_string(method, url, args):
 
 def make_url(url, args={}):
     return args and '%s?%s' % (url, quote_args(args)) or url
-
-
-def get_srv_instance(username):
-    if username in SRV_INSTANCES.keys():
-        return SRV_INSTANCES[username]
-    else:
-        return None
 
 
 class OAuthClient:
@@ -228,7 +220,6 @@ class BscwApi:
         user = srv.get_attributes(user_home_id, ['user', ])[0]['user']  # gets user's info
 
         # store common items in session
-        SRV_INSTANCES[user['name']] = srv
         request.session['user_id'] = user['__id__']
         request.session['username'] = user['name']
         self.store_user_content(request, srv)
