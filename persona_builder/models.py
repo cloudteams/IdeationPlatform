@@ -8,6 +8,7 @@ from django.db import transaction
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
+from pb_oauth.xmlrpc_oauth import get_srv_instance
 from pb_oauth.xmlrpc_srv import XMLRPC_Server
 
 import ssl
@@ -77,8 +78,10 @@ class Persona(models.Model):
 
         # call method & return code
         if PRODUCTION:
-            srv = XMLRPC_Server(server, verbose=False, oauth=oauth_credentials)
-
+            srv = get_srv_instance(request.user.username)
+            if not srv:
+                print('No credentials object')
+                return -1
             try:
                 result = srv.setpersona(str(self.campaign_id), personas)
                 print('Personas for campaign %d sent to Team Platform' % self.campaign_id)
