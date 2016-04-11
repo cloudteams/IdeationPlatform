@@ -8,6 +8,7 @@ from django.db import transaction
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
+from pb_oauth import xmlrpc_oauth
 from pb_oauth.xmlrpc_oauth import get_srv_instance
 from pb_oauth.xmlrpc_srv import XMLRPC_Server
 
@@ -61,8 +62,7 @@ class Persona(models.Model):
         :param request: The request object
         :return: the code returned by the XML-RPC API
         """
-        server = request.session['server']
-        oauth_credentials = request.session['bswc_token']
+        xmlrpc_oauth.BscwApi('http://cloudteams.epu.ntua.gr:8008/persona_builder/authorize/').handle(request)
 
         # get list of personas
         qs = Persona.objects.filter(campaign_id=self.campaign_id).exclude(owner='SYSTEM')
