@@ -194,8 +194,10 @@ class BscwApi:
 
         args['action'] = 'doit'
         args['host'] = self.host
-        args['a1'] = base64.encodestring(reply['oauth_token'])
-        args['a2'] = base64.encodestring(reply['oauth_token_secret'])
+        self.a1 = base64.encodestring(reply['oauth_token'])
+        args['a1'] = self.a1
+        self.a2 = base64.encodestring(reply['oauth_token_secret'])
+        args['a2'] = self.a2
         if self.verbose:
             args['verbose'] = self.verbose
         if self.portal:
@@ -232,6 +234,8 @@ class BscwApi:
         request.session['user_id'] = user['__id__']
         request.session['username'] = user['name']
         self.store_user_content(request, srv)
+
+        return srv
 
     """
     def doit(self):
@@ -321,6 +325,10 @@ class BscwApi:
                 return self.show_error(request, e, 'Access token error')
             self.oauth.token = urllib.unquote(reply['oauth_token'])
             self.oauth.token_secret = urllib.unquote(reply['oauth_token_secret'])
-            self.store_token(request)  # G Consumer Stores token in session (encrypted in db) for future use
+            srv = self.store_token(request)  # G Consumer Stores token in session (encrypted in db) for future use
+
+            # propagate persona info
+            if 'send_persona' in request.session:
+                return redirect('/persona-builder/perform-pending-action/')
 
             return redirect('/persona-builder/personas/')

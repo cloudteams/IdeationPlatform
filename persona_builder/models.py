@@ -2,15 +2,11 @@ from httplib import BadStatusLine
 
 import simplejson as json
 import uuid
-from ct_anonymizer.settings import PRODUCTION, SERVER_URL, USER_PASSWD
+from ct_anonymizer.settings import PRODUCTION
 from django.db import models
 from django.db import transaction
-from django.db.models.signals import post_save, pre_delete
-from django.dispatch import receiver
 
 from pb_oauth import xmlrpc_oauth
-from pb_oauth.xmlrpc_oauth import get_srv_instance
-from pb_oauth.xmlrpc_srv import XMLRPC_Server
 
 import ssl
 
@@ -56,14 +52,12 @@ class Persona(models.Model):
             for user in users:
                 PersonaUsers.objects.create(persona=self, user_id=user['__id__'])
 
-    def send_campaign_personas(self, request, exclude_self=False):
+    def send_campaign_personas(self, srv, exclude_self=False):
         """
         Sends the personas of this campaign to Customer Platform
-        :param request: The request object
+        :param srv: The api connection object
         :return: the code returned by the XML-RPC API
         """
-        xmlrpc_oauth.BscwApi('http://cloudteams.epu.ntua.gr:8008/persona_builder/authorize/').handle(request)
-
         # get list of personas
         qs = Persona.objects.filter(campaign_id=self.campaign_id).exclude(owner='SYSTEM')
         if exclude_self:
@@ -78,10 +72,6 @@ class Persona(models.Model):
 
         # call method & return code
         if PRODUCTION:
-            srv = get_srv_instance(request.user.username)
-            if not srv:
-                print('No credentials object')
-                return -1
             try:
                 result = srv.setpersona(str(self.campaign_id), personas)
                 print('Personas for campaign %d sent to Team Platform' % self.campaign_id)
@@ -89,6 +79,8 @@ class Persona(models.Model):
             except BadStatusLine:
                 print('Error on Team Platform notification')
                 return -1
+        else:
+            print srv.get_attributes()
 
     # weird UUID bug fix
     def save(self, *args, **kwargs):

@@ -12,6 +12,8 @@ urlpatterns = [
     url(r'^personas/(?P<pk>[\w-]+)/$', views.view_persona),
     url(r'^personas/(?P<pk>[\w-]+)/delete/$$', views.delete_persona),
     url(r'^personas/(?P<pk>[\w-]+)/update-users/$', views.update_users),
+    url(r'^propagate/$', views.propagate_persona_placeholder),
+    url(r'^perform-pending-action/$', views.perform_pending_action),
 
     # list all personas
     url(r'^personas/$', views.list_personas),

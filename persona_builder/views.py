@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import CreateView, DetailView, ListView, DeleteView, UpdateView
 from anonymizer.models import ConnectionConfiguration
+from pb_oauth.xmlrpc_oauth import get_srv_instance
 from persona_builder.forms import PersonaForm, PersonaPropertiesForm
 from persona_builder.models import Persona
 import simplejson as json
@@ -65,23 +66,27 @@ class PersonaCreateView(CreateView):
 create_persona = PersonaCreateView.as_view()
 
 
-class PersonaUpdateInfoView(UpdateView):
+def edit_persona_info(request, pk):
     """
     Update the basic info of a persona
     For updating the `query` of the persona see the `edit_persona_properties(request, pk)` method below
     """
-    model = Persona
-    form_class = PersonaForm
-    template_name = 'persona_builder/persona/edit_info.html'
-
-    def form_valid(self, form):
+    persona = get_object_or_404(Persona, pk=pk)
+    if request.method == 'POST':
         # update persona, send info & redirect
-        instance = form.save()
-        instance.send_campaign_personas(request=self.request)
+        form = PersonaForm(request.POST, instance=persona)
+        if form.is_valid():
+            persona = form.save()
+            return redirect('/persona-builder/propagate/?send_persona=%d&next=properties' % persona.pk)
+    else:
+        form = PersonaForm(instance=persona)
 
-        return redirect(instance.get_edit_properties_url())
+    ctx = {
+        'form': form,
+        'persona': persona,
+    }
 
-edit_persona_info = PersonaUpdateInfoView.as_view()
+    return render(request, 'persona_builder/persona/edit_info.html', ctx)
 
 
 def edit_persona_properties(request, pk):
@@ -117,8 +122,7 @@ def edit_persona_properties(request, pk):
             persona.save()
 
             # send info to customer platform
-            persona.send_campaign_personas(request=request)
-            return redirect(persona.get_absolute_url())
+            return redirect('/persona-builder/propagate/?send_persona=%d&next=absolute' % persona.pk)
         else:
             status = 400
 
@@ -150,6 +154,11 @@ def update_users(request, pk):
         return redirect(persona.get_absolute_url())
     else:
         return HttpResponse('%s method not allowed' % request.method, status=400)
+
+
+def propagate_persona_placeholder(request):
+    # should never reach due to middleware
+    return None
 
 
 class PersonaDetailView(DetailView):
@@ -197,26 +206,43 @@ class PersonaListView(ListView):
 list_personas = PersonaListView.as_view()
 
 
-class PersonaDeleteView(DeleteView):
+def delete_persona(request, pk):
     """
     A page that allows deleting a persona
     """
-    model = Persona
-    template_name = 'persona_builder/persona/delete.html'
-    context_object_name = 'persona'
-    success_url = '/persona-builder/personas/'
-
-    def get_context_data(self, **kwargs):
-        context = super(PersonaDeleteView, self).get_context_data(**kwargs)
-        context['not_container'] = True
-        return context
-
-    def form_valid(self, form):
+    persona = get_object_or_404(Persona, pk=pk)
+    if request.method == 'GET':
+        return render(request, 'persona_builder/persona/delete.html', {
+            'persona': persona,
+            'not_container': True,
+        })
+    elif request.method == 'POST':
         # notify Team Platform
-        instance = form.instance
-        instance.send_campaign_personas(request=self.request, exclude_self=True)
+        return redirect('/persona-builder/propagate/?send_persona=%d&delete=true' % persona.pk)
+    else:
+        return HttpResponse('Invalid method', status=400)
 
-        # delete the instance
-        instance.delete()
 
-delete_persona = PersonaDeleteView.as_view()
+def perform_pending_action(request):
+    persona_id = request.session['send_persona']
+    persona = Persona.objects.get(pk=persona_id)
+    srv = get_srv_instance(request.session['username'])
+    persona.send_campaign_personas(srv, 'delete_persona' in request.session)
+    del request.session['send_persona']
+
+    # should the persona be deleted?
+    if 'delete_persona' in request.session:
+        del request.session['delete_persona']
+        persona.delete()
+
+    # is the next page specified?
+    if 'next_page' in request.session:
+        nxt = request.session['next_page']
+        del request.session['next_page']
+        if nxt == 'absolute':
+            return redirect(persona.get_absolute_url())
+        elif nxt == 'properties':
+            return redirect(persona.get_edit_properties_url())
+
+    # default next page
+    return redirect('/persona-builder/personas/' + persona_id + '/')
