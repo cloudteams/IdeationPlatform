@@ -234,6 +234,7 @@ def perform_pending_action(request):
     if 'delete_persona' in request.session:
         del request.session['delete_persona']
         persona.delete()
+        return redirect('/persona-builder/personas/')
 
     # is the next page specified?
     if 'next_page' in request.session:

@@ -76,11 +76,9 @@ class Persona(models.Model):
                 result = srv.setpersona(str(self.campaign_id), personas)
                 print('Personas for campaign %d sent to Team Platform' % self.campaign_id)
                 return result
-            except BadStatusLine:
+            except:
                 print('Error on Team Platform notification')
                 return -1
-        else:
-            print srv.get_attributes()
 
     # weird UUID bug fix
     def save(self, *args, **kwargs):
