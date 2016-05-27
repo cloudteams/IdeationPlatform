@@ -367,7 +367,7 @@ class PropertyManager:
 
     def reduce(self, rows):
         """
-        Expects the first row to be the user id and the result to be sorted
+        Expects the first column to be the user id and the result to be sorted
         """
         result_rows = []
 
@@ -587,9 +587,12 @@ class PropertyManager:
         result += ','.join([self.user_pk.connection.primary_key_of(table).split('@')[0] for table in self.group_tables])
         return result
 
+    def order_by(self):
+        return ' ORDER BY ' + self.user_pk.column
+
     def all(self, true_id=False, start=None, end=None):
         # construct query
-        query = self.query() + self.group_by() + self.paginate(start, end)
+        query = self.query() + self.group_by() + self.order_by() + self.paginate(start, end)
 
         # execute query & return results
         return [self.info(row, true_id) for row in self.reduce(self.user_pk.connection.execute(query).fetchall())]
@@ -647,7 +650,7 @@ class PropertyManager:
             query += having_clause
 
         # add offset & limit
-        query += self.paginate(start, end)
+        query += self.order_by() + self.paginate(start, end)
 
         # postgres fix
         query = query.replace('"', '\'')
