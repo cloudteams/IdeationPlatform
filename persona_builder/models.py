@@ -13,6 +13,9 @@ import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
 
+OVERVIEW_PROPERTIES = ['gender', 'age', 'tech_level', 'platform', 'device', 'activity']
+
+
 class Persona(models.Model):
     uuid = models.UUIDField(unique=True, primary_key=False, default=uuid.uuid4, editable=False)
     owner = models.CharField(max_length=255, null=True, blank=True, default='')
@@ -23,6 +26,7 @@ class Persona(models.Model):
     avatar = models.ImageField(upload_to='persona-avatars', null=True, blank=True)
     query = models.TextField(editable=False)
     users = models.TextField(editable=False, default='[]')
+    overview_prop_values = models.TextField(editable=False, default='[]')
     is_ready = models.BooleanField(default=False, editable=False)
     is_public = models.BooleanField(default=False)
 
@@ -51,6 +55,39 @@ class Persona(models.Model):
             PersonaUsers.objects.filter(persona=self).delete()
             for user in users:
                 PersonaUsers.objects.create(persona=self, user_id=user['__id__'])
+
+        # update overview values
+        self.update_overview_values(self.users)
+
+    def update_overview_values(self, users=None, commit=False):
+        if not users:
+            users = json.loads(self.users)
+
+        overview_prop_values = {}
+        for u in users:
+            for prop in u.keys():
+                # don't include properties bound by the query itself
+                if prop in OVERVIEW_PROPERTIES and (prop + '=') not in self.query:
+                    if prop not in overview_prop_values:
+                        overview_prop_values[prop] = {}
+
+                    # each property can have multiple values
+                    vals = u[prop]
+                    if type(vals) == list:
+                        vals = list(set(vals))
+                    else:
+                        vals = [vals]
+
+                    # vote up the correct values
+                    for v in vals:
+                        if v not in overview_prop_values[prop].keys():
+                            overview_prop_values[prop][v] = 1
+                        else:
+                            overview_prop_values[prop][v] += 1
+
+        self.overview_prop_values = overview_prop_values
+        if commit:
+            self.save()
 
     def send_campaign_personas(self, srv, exclude_self=False):
         """
