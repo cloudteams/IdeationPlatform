@@ -183,6 +183,7 @@ class Property:
         Checks if the value `val` follows the filter expression
         E.g val = "5", filter_exp = ">10" returns false
         """
+        print filter_exp
         f_name = re.split('[=!<>]', filter_exp)[0]
         operator = ''
         exp = ''
@@ -201,8 +202,12 @@ class Property:
             if (val[0] == val[-1] == '"') or (val[0] == val[-1] == "'"):
                 val = val[1:-1]
 
-        if (exp[0] == exp[-1] == '"') or (exp[0] == exp[-1] == "'"):
-            exp = exp[1:-1]
+        exps = []
+        exps_ids = []
+        for e in exp.split('||'):
+            if (e[0] == e[-1] == '"') or (e[0] == e[-1] == "'"):
+                e = e[1:-1]
+            exps.append(e)
 
         if self.tp.lower().startswith('scalar'):
             ranges = self.tp.split('(')[1][:-1].split(',')
@@ -214,8 +219,12 @@ class Property:
 
                 if val in r_arr:
                     val = idx
-                if exp in r_arr:
-                    exp = idx
+                for e in exps:
+                    if e in r_arr:
+                        exps_ids.append(idx)
+
+            # replace text-based with scalar order codes
+            exps = exps_ids
 
             if val is None:
                 return False
@@ -223,35 +232,44 @@ class Property:
             if type(val) != int:
                 raise ValueError('Invalid option: ' + str(val))
 
-            if type(exp) != int:
-                raise ValueError('Invalid option: ' + str(exp))
+            for e in exps:
+                if type(e) != int:
+                    raise ValueError('Invalid option: ' + str(e))
         else:
-            # read as number if possible
-            try:
-                exp = int(exp)
-            except ValueError:
+            # read as numbers if possible
+            for i, e in enumerate(exps):
                 try:
-                    exp = float(exp)
+                    exps[i] = int(e)
                 except ValueError:
-                    pass
+                    try:
+                        exps[i] = float(e)
+                    except ValueError:
+                        pass
 
         # apply the operator
-        if operator == '=':
-            result = val == exp
-        elif operator == '!=':
-            result = val != exp
-        elif operator == '>':
-            result = val > exp
-        elif operator == '>=':
-            result = val >= exp
-        elif operator == '<':
-            result = val < exp
-        elif operator == '<=':
-            result = val <= exp
-        else:
-            raise UnknownOperatorException(operator)
+        results = []
+        for e in exps:
+            if operator == '=':
+                results.append(val == e)
+            elif operator == '!=':
+                results.append(val != e)
+            elif operator == '>':
+                results.append(val > e)
+            elif operator == '>=':
+                results.append(val >= e)
+            elif operator == '<':
+                results.append(val < e)
+            elif operator == '<=':
+                results.append(val <= e)
+            else:
+                raise UnknownOperatorException(operator)
 
-        return result
+        # OR - joint results, return True if any comparison was True
+        for r in results:
+            if r:
+                return True
+
+        return False
 
 
 class PropertyManager:

@@ -199,11 +199,28 @@ class PersonaListView(ListView):
         elif 'project_id' in self.request.session:
             qs = qs.filter(project_id=self.request.session['project_id'])
         else:
-            qs = qs.filter(is_ready=True).filter(Q(owner=self.request.session['username']) | Q(is_public=True))
+            qs = qs.filter(is_ready=True).filter(owner=self.request.session['username'])
 
         return qs.exclude(owner='SYSTEM')
 
 list_personas = PersonaListView.as_view()
+
+
+class PersonaPublicListView(ListView):
+    """
+    Public personas in the Persona Pool
+    """
+    model = Persona
+    template_name = 'persona_builder/persona/pool.html'
+    context_object_name = 'personas'
+
+    def get_queryset(self):
+        qs = super(PersonaPublicListView, self).get_queryset()
+        # only public, complete personas
+        qs = qs.filter(is_ready=True, is_public=True)
+        return qs.exclude(owner='SYSTEM')
+
+pool = PersonaPublicListView.as_view()
 
 
 def delete_persona(request, pk):

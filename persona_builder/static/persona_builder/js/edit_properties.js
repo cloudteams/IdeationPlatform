@@ -27,33 +27,31 @@ $(function() {
             // remember - no support for multiple levels & complex logic
             var parts = query.split('(');
             for (var i=1; i<parts.length; i++) {  //ignore first part - empty
-                var part = parts[i];
-                //each part refers to a field - only OR options
-                var fs = part.split(' OR ');
-                for (var j=0; j<fs.length; j++) {
-                    var f = fs[j];
-                    //detect different parts of the expression
-                    // e.g activity!="Running" must be split into activity / != / Running
-                    var exp = ["", "", ""], ptr = 0, special = false, symbols=['=', '<', '>', '!'];
-                    for (var c=0; c<f.length; c++) {
-                        if ((symbols.indexOf(f[c]) >= 0) != special) {
-                            special = !special;
-                            ptr++;
-                        }
-                        if (f[c] == ')') { // end of property
-                            break;
-                        }
-                        if (f[c] != '"') {
-                            exp[ptr] += f[c];
-                        }
+                var f = parts[i];
+                // detect different parts of the expression
+                // e.g activity!="Running" must be split into activity / != / Running
+                var exp = ["", "", ""], ptr = 0, special = false, symbols=['=', '<', '>', '!'];
+                for (var c=0; c<f.length; c++) {
+                    if ((symbols.indexOf(f[c]) >= 0) != special) {
+                        special = !special;
+                        ptr++;
                     }
-
-                    //mark the filter as selected in the UI
-                    var fr = $('.filter-row[data-name="' + exp[0] + '"]');
-                    fr.find('.comparison-select').val(exp[1]);
-                    fr.find('.filter-value').val(exp[2]);
-                    fr.find('select.filter-value').trigger('chosen:updated');
+                    if (f[c] == ')') { // end of property
+                        break;
+                    }
+                    if (f[c] != '"') {
+                        exp[ptr] += f[c];
+                    }
                 }
+
+                // find the values -- could be more than one
+                var vals = exp[2].split('||');
+
+                //mark the filter as selected in the UI
+                var fr = $('.filter-row[data-name="' + exp[0] + '"]');
+                fr.find('.comparison-select').val(exp[1]);
+                fr.find('.filter-value').val(vals);
+                fr.find('select.filter-value').trigger('chosen:updated');
             }
         },
 
@@ -79,7 +77,10 @@ $(function() {
                     }
 
                     n++;
-                    result += prop + comp;
+                    if (n == 1) {
+                        result += prop + comp;
+                    }
+
                     if (tp != 'integer') {
                         result += '"';
                     }
@@ -87,11 +88,11 @@ $(function() {
                     if (tp != 'integer') {
                         result += '"';
                     }
-                    result += ' OR ';
+                    result += '||';
                 }
                 if (n > 0) {
                     // remove trailing OR
-                    result = result.substring(0, result.lastIndexOf(' OR '));
+                    result = result.substring(0, result.lastIndexOf('||'));
                 }
 
                 result += ')';

@@ -5,7 +5,11 @@ __author__ = 'dipap'
 
 
 urlpatterns = [
-    # persona
+    # list personas in campaign & all public personas
+    url(r'^personas/$', views.list_personas),
+    url(r'^personas/pool/$', views.pool),
+
+    # persona operations
     url(r'^personas/create/$', views.create_persona),
     url(r'^personas/(?P<pk>[\w-]+)/edit-properties/$', views.edit_persona_properties),
     url(r'^personas/(?P<pk>[\w-]+)/edit-info/$', views.edit_persona_info),
@@ -14,9 +18,6 @@ urlpatterns = [
     url(r'^personas/(?P<pk>[\w-]+)/update-users/$', views.update_users),
     url(r'^propagate/$', views.propagate_persona_placeholder),
     url(r'^perform-pending-action/$', views.perform_pending_action),
-
-    # list all personas
-    url(r'^personas/$', views.list_personas),
 
     # api
     url(r'^api/info/$', api.info),

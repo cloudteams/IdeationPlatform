@@ -1,5 +1,6 @@
 from django.shortcuts import redirect
 
+from ct_anonymizer.settings import PRODUCTION
 from pb_oauth.xmlrpc_oauth import BscwApi
 
 

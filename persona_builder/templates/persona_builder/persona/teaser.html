@@ -18,7 +18,10 @@
 							<a href="{{ persona.get_absolute_url }}">Open</a>
                         </li>
                         <li>
-                            <a href="#nowhere">Clone & edit</a>
+                            <a href="{{ persona.get_clone_url }}">Clone</a>
+						</li>
+                        <li>
+                            <a href="{{ persona.get_clone_edit_url }}">Clone & edit</a>
 						</li>
 					</ul>
 				</div>
@@ -34,7 +37,19 @@
 		</div>
 
 		<footer>
-            <a href="{{ persona.get_absolute_url }}" class="btn">Open persona<</a>
+			{% if more_link %}
+            	<a href="{{ persona.get_absolute_url }}" class="btn">Open persona<</a>
+			{% endif %}
+			{% if add_link %}
+				<li>
+					<a href="{{ persona.get_clone_url }}">Clone</a>
+				</li>
+			{% endif %}
+			{% if add_edit_link %}
+				<li>
+					<a href="{{ persona.get_clone_edit_url }}">Clone & edit</a>
+				</li>
+			{% endif %}
 		</footer>
 	</div>
 </article>
