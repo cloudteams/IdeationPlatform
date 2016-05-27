@@ -57,7 +57,7 @@ class Persona(models.Model):
                 PersonaUsers.objects.create(persona=self, user_id=user['__id__'])
 
         # update overview values
-        self.update_overview_values(self.users)
+        self.update_overview_values(users)
 
     def get_overview_values(self):
         return json.loads(self.overview_prop_values)
