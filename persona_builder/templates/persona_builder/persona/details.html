@@ -20,6 +20,8 @@
                 {% endif %}
             </p>
 
+            {% include "persona_builder/persona/stats.html" %}
+
             <div class="clearfix">
                 <em>{{ persona|count_users }} users matching this profile:</em>
                 <form action="{{ persona.get_absolute_url }}update-users/" method="POST" class="pull-right">
@@ -55,4 +57,9 @@
             {% show_pages %}
         </div>
     </section>
+{% endblock %}
+
+{% block js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
+    <script src="{% static "persona_builder/js/render_stats.js" %}"></script>
 {% endblock %}

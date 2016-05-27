@@ -59,6 +59,9 @@ class Persona(models.Model):
         # update overview values
         self.update_overview_values(self.users)
 
+    def get_overview_values(self):
+        return json.loads(self.overview_prop_values)
+
     def update_overview_values(self, users=None, commit=False):
         if not users:
             users = json.loads(self.users)
@@ -85,7 +88,7 @@ class Persona(models.Model):
                         else:
                             overview_prop_values[prop][v] += 1
 
-        self.overview_prop_values = overview_prop_values
+        self.overview_prop_values = json.dumps(overview_prop_values)
         if commit:
             self.save()
 

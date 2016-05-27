@@ -1,0 +1,26 @@
+    <p><b>Persona Overview</b></p>
+
+    {% with overview_values=persona.get_overview_values %}
+        <div class="row property-stats-list">
+            {% for property,values in overview_values.items %}
+                <div class="col-md-4 property-stats" data-prop="{{ property }}">
+                    <p class="property-name"><b>{{ property|title  }}</b></p>
+                    <canvas id="cnv-{{ property }}" width="200" height="200"></canvas>
+                </div>
+            {% endfor %}
+
+        </div>
+
+        <script>
+            var PersonaStats = function() {
+                this.property_values = {};
+                {% for property,values in overview_values.items %}
+                    this.property_values['{{ property }}'] = {};
+                    {% for v,o in values.items %}
+                        this.property_values['{{ property }}']['{{ v }}'] = {{ o }};
+                    {% endfor %}
+                {% endfor %}
+            }
+        </script>
+    {% endwith %}
+
