@@ -183,7 +183,6 @@ class Property:
         Checks if the value `val` follows the filter expression
         E.g val = "5", filter_exp = ">10" returns false
         """
-        print filter_exp
         f_name = re.split('[=!<>]', filter_exp)[0]
         operator = ''
         exp = ''
