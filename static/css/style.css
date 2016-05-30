@@ -2,9 +2,8 @@
 a:not(.btn):not(.btn-confirm):not(.btn-decline):not(.btn-download) {
     transition: color 0.3s ease-in-out;
 }
-
-a:not(.btn):not(.btn-confirm):not(.btn-decline):not(.btn-download):hover, a:not(.btn):not(.btn-confirm):not(.btn-decline):not(.btn-download):focus {
-    color: #38173f;
+a:not(.btn):not(.btn-confirm):not(.btn-decline):not(.btn-download):hover {
+    text-decoration: underline;
 }
 
 .hidden {
@@ -22,6 +21,10 @@ input.btn-danger:focus, input.btn-danger.focus, input.btn-danger:active, input.b
     border-color: #c12e2a;
 }
 
+input[type="submit"]:hover {
+    background: #7d3c8c;
+    transition: background 150ms cubic-bezier(0.785, 0.135, 0.15, 0.86), color 150ms cubic-bezier(0.785, 0.135, 0.15, 0.86);
+}
 
 /* Menu */
 .global-nav a:hover {
@@ -53,9 +56,44 @@ body > header .global-nav .container > ul li.profile:before {
     background: none;
 }
 
+.menu-subpage li a {
+    color: #ccc;
+    text-decoration: none;
+}
+
+.menu-subpage li.active a {
+    color: white;
+}
+
+.menu-subpage li a:hover {
+    color: white !important;
+}
+
 /* Pages */
 .public-page.not-container {
     padding-top: 0;
+}
+
+h1 {
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.pagination {
+    text-align: center;
+    display: block;
+}
+
+.pagination a {
+    color: #ddd;
+}
+
+.pagination a:hover {
+    color: white !important;
+}
+
+.endless_page_link, .endless_page_current {
+    padding: 0 5px;
 }
 
 /* Anonymizer */

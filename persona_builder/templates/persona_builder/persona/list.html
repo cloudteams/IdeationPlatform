@@ -7,18 +7,14 @@
     <h1>{{ request|list_page_title }}</h1>
 
     <div class="row">
-        <div class="col-lg-4 col-md-6 clear-3">
-            <a href="/persona-builder/personas/create/" class="btn btn-transparent btn-create-persona">+ Create new persona</a>
-        </div>
+        {% include "persona_builder/persona/create-teaser.html" %}
+        {% include "persona_builder/persona/add-from-pool.html" %}
+
+        {% for persona in personas %}
+            {% with more_link=True %}
+                {% include "persona_builder/persona/teaser.html" %}
+            {% endwith %}
+        {% endfor %}
     </div>
-
-    {% for persona in personas %}
-        {% with more_link=True %}
-            {% include "persona_builder/persona/teaser.html" %}
-        {% endwith %}
-    {% empty %}
-        <p>No personas found.</p>
-    {% endfor %}
-
 
 {% endblock %}

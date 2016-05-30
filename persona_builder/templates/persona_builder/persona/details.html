@@ -54,12 +54,17 @@
                         {% endfor %}
                     </tbody>
                 </table>
-            {% show_pages %}
+            <div class="pagination">
+                {% show_pages %}
+            </div>
         </div>
     </section>
 {% endblock %}
 
 {% block js %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
+    <script src="{% static "persona_builder/js/amcharts/amcharts.js" %}"></script>
+    <script src="{% static "persona_builder/js/amcharts/pie.js" %}"></script>
+    <script src="{% static "persona_builder/js/amcharts/themes/light.js" %}"></script>
+
     <script src="{% static "persona_builder/js/render_stats.js" %}"></script>
 {% endblock %}

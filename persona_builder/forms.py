@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.safestring import mark_safe
 
 from ct_anonymizer.settings import MIN_USERS_IN_PERSONA
 from persona_builder.models import Persona
@@ -10,6 +11,12 @@ class PersonaForm(forms.ModelForm):
     class Meta:
         model = Persona
         exclude = ['owner', 'project_id', 'campaign_id', 'query', ]
+
+    def __init__(self, *args, **kwargs):
+        super(PersonaForm, self).__init__(*args, **kwargs)
+        self.fields['avatar'].label = mark_safe('<i class="fa fa-upload"></i> Choose an avatar')
+        self.fields['avatar'].widget.attrs['accept'] = 'image/*'
+        self.fields['avatar'].label_suffix = ''
 
 
 class PersonaAPIForm(forms.ModelForm):

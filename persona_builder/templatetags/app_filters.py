@@ -78,3 +78,8 @@ def list_page_title(request):
 @register.filter
 def count_users(persona):
     return PersonaUsers.objects.filter(persona_id=persona.pk).count()
+
+
+@register.filter
+def no_underscore(text):
+    return text.replace('_', ' ')
