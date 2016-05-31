@@ -48,11 +48,54 @@
     color: #777;
 }
 
+.entry .content,
+.entry .content p {
+    font-size: 12px;
+}
+
+.entry .content code {
+    color: #333;
+}
+
+.entry .content .text {
+    width: calc(100% - 35px)
+}
+
+.entry .actions {
+    visibility: hidden;
+    color: #777;
+}
+
+.entry .actions i {
+    cursor: pointer;
+}
+
+.entry .actions i.edit-entry {
+    margin-right: 10px;
+}
+
+.entry:hover .actions {
+    visibility: visible;
+}
+
+.entry.editing .actions {
+    display: none;
+}
+.entry.editing .content .text {
+    width: 100%;
+}
+
+
+.entry .update-entry,
+.entry .cancel-update-entry {
+    cursor: pointer;
+}
 
 /* New entry form */
 
 .block-section .new-entry {
     display: none;
+    padding-top: 20px;
 }
 
 .new-entry-template {
@@ -62,7 +105,11 @@
     display: block;
 }
 
-.block-section .new-entry .btn-save {
+.block-section.editing .new-entry {
+    display: none;
+}
+
+.block-section .new-entry .add-entry {
     color: #777;
     cursor: pointer;
 }

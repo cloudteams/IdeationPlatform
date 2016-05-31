@@ -6,6 +6,7 @@ from bm_canvas.models import BusinessModel, BusinessModelEntry
 
 
 def project_view(request, pk):
+    pk = int(pk)
     try:
         bmc = BusinessModel.objects.get(project_id=pk)
     except BusinessModel.DoesNotExist:
@@ -25,6 +26,7 @@ def project_view(request, pk):
 
 
 def add_entry(request, pk):
+    pk = int(pk)
     if request.method != 'POST':
         return HttpResponse('Only POST requests allowed', status=400)
 
@@ -44,3 +46,61 @@ def add_entry(request, pk):
 
     # return the rendered entry
     return render(request, 'bm_canvas/entry.html', {'entry': entry})
+
+
+def view_entry(request, pk):
+    pk = int(pk)
+    if request.method != 'GET':
+        return HttpResponse('Only GET requests allowed', status=400)
+
+    try:
+        entry = BusinessModelEntry.objects.get(pk=pk)
+    except BusinessModelEntry.DoesNotExits:
+        return HttpResponse('Entry #%d was not found' % pk, status=404)
+
+    if not entry.can_access(request):
+        return HttpResponse('Access to entry #%d is forbidden' % pk, status=403)
+
+    return render(request, 'bm_canvas/entry.html', {'entry': entry})
+
+
+def update_entry(request, pk):
+    pk = int(pk)
+    if request.method != 'POST':
+        return HttpResponse('Only POST requests allowed', status=400)
+
+    try:
+        entry = BusinessModelEntry.objects.get(pk=pk)
+    except BusinessModelEntry.DoesNotExits:
+        return HttpResponse('Entry #%d was not found' % pk, status=404)
+
+    if not entry.can_update(request):
+        return HttpResponse('Access to entry #%d is forbidden' % pk, status=403)
+
+    text = request.POST.get('text', '')
+    if not text:
+        return HttpResponse('`text` field is required', status=400)
+
+    # update & respond
+    entry.text = text
+    entry.save()
+    return render(request, 'bm_canvas/entry.html', {'entry': entry})
+
+
+def remove_entry(request, pk):
+    pk = int(pk)
+    if request.method != 'POST':
+        return HttpResponse('Only POST requests allowed', status=400)
+
+    try:
+        entry = BusinessModelEntry.objects.get(pk=pk)
+    except BusinessModelEntry.DoesNotExits:
+        return HttpResponse('Entry #%d was not found' % pk, status=404)
+
+    if not entry.can_update(request):
+        return HttpResponse('Access to entry #%d is forbidden' % pk, status=403)
+
+    # delete & respond
+    entry.delete()
+    return HttpResponse('Entry #%d deleted' % pk, status=204)
+

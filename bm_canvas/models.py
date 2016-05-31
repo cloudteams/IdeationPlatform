@@ -27,3 +27,13 @@ class BusinessModelEntry(models.Model):
 
     def __str__(self):
         return 'Entry #%d (%s) under <%d>' % (self.pk, self.section, self.business_model_id)
+
+    def can_access(self, request):
+        for p in request.session['projects']:
+            if int(p['pid']) == self.business_model_id:
+                return True
+
+        return False
+
+    def can_update(self, request):
+        return self.can_access(request)
