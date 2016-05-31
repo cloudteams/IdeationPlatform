@@ -1,0 +1,79 @@
+/* Basic Layout */
+
+#business-model-canvas {
+    color: #333;
+    z-index: 2;
+    left: 20px;
+    top: 120px;
+    position: absolute;
+    width: calc(100vw - 60px);
+    background: whitesmoke;
+}
+
+#bmc-clearfix {
+    padding-bottom: 750px;
+}
+
+.block-section {
+    padding: 5px 10px;
+    border: 1px dashed #333;
+    background: white;
+    height: 250px;
+    overflow-y: auto;
+}
+
+.block-section-double {
+    height: 500px;
+}
+
+.block-section h3 {
+    font-size: 14px;
+    color: #333;
+}
+
+/* Entries */
+.entry {
+    border-top: 1px solid #eee;
+    padding-top: 2px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+.entry:first-of-type {
+    border-top: none;
+}
+
+.entry .header {
+    font-size: 10px;
+    color: #777;
+}
+
+
+/* New entry form */
+
+.block-section .new-entry {
+    display: none;
+}
+
+.new-entry-template {
+    display: none;
+}
+.block-section:hover .new-entry {
+    display: block;
+}
+
+.block-section .new-entry .btn-save {
+    color: #777;
+    cursor: pointer;
+}
+
+#business-model-canvas .CodeMirror,
+#business-model-canvas .CodeMirror-scroll {
+    min-height: 50px;
+}
+
+#business-model-canvas .CodeMirror {
+    padding: 2px;
+    font-size: 12px;
+    margin-bottom: 5px;
+}

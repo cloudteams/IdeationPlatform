@@ -39,13 +39,14 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'django.contrib.humanize',
     'endless_pagination',
 
     # project apps
     'ct_anonymizer',
     'anonymizer',
     'persona_builder',
+    'bm_canvas',
     'pb_oauth',
 )
 

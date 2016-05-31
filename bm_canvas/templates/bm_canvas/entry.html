@@ -1,0 +1,11 @@
+{% load humanize %}
+
+<div class="entry">
+    <div class="header clearfix">
+        <span class="entry-author pull-left">{{ entry.author }}</span>
+        <span class="date-created pull-right">{{ entry.created|naturaltime }}</span>
+    </div>
+    <div class="content">
+       {{ entry.text }}
+    </div>
+</div>

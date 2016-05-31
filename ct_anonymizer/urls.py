@@ -24,9 +24,12 @@ urlpatterns = [
     # anonymizer
     url(r'^anonymizer/', include('anonymizer.urls')),
 
-    # persona builder
+    # persona builder & authentication
     url(r'^persona-builder/', include('persona_builder.urls')),
     url(r'^persona-builder/', include('pb_oauth.urls')),
+
+    # business model canvas
+    url(r'^business-model/', include('bm_canvas.urls')),
 
     # home page
     url(r'^$', views.index),
