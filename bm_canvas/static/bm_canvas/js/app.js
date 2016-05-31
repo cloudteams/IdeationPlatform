@@ -99,6 +99,7 @@ $(function() {
                 },
                 success: function(data) {
                     // update the UI
+                    that.editedEntry.$entry.closest('.block-section').removeClass('editing');
                     $entry.replaceWith($(data));
 
                     // clear edit info
@@ -121,8 +122,8 @@ $(function() {
                     method: 'GET',
                     success: function(data) {
                         // update the UI
+                        that.editedEntry.$entry.closest('.block-section').removeClass('editing');
                         that.editedEntry.$entry.replaceWith($(data));
-                        that.editedEntry.$entry.removeClass('editing').closest('.block-section').removeClass('editing');
 
                         // clear edit info
                         that.editedEntry = {};
