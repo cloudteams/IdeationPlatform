@@ -15,6 +15,11 @@ $(function() {
             var $ne = $('.new-entry-template').clone().removeClass('new-entry-template').addClass('new-entry');
             $('.block-section .entry-region').append($ne.clone());
 
+            // make entries sortable
+            $('.entry-region').sortable({
+                items: '> .entry',
+            });
+
             // inject markdown editors
             var that = this;
             $('#business-model-canvas textarea').each(function() {

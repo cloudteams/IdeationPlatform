@@ -9,6 +9,7 @@
 {% block section_class %}not-container{% endblock %}
 
 {% block css %}
+    <link rel="stylesheet" href="{% static "bm_canvas/css/sortable.min.css" %}">
     <link rel="stylesheet" href="{% static "bm_canvas/css/simplemde.min.css" %}">
     <link rel="stylesheet" href="{% static "bm_canvas/css/style.css" %}">
 {% endblock %}
@@ -118,6 +119,7 @@
 {% endblock %}
 
 {% block js %}
+    <script src="{% static "bm_canvas/js/sortable.min.js" %}"></script>
     <script src="{% static "bm_canvas/js/simplemde.min.js" %}"></script>
     <script src="{% static "bm_canvas/js/app.js" %}"></script>
 {% endblock %}

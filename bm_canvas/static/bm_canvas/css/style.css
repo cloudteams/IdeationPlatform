@@ -91,6 +91,10 @@
     cursor: pointer;
 }
 
+.entry.ui-sortable-helper {
+    background: whitesmoke;
+}
+
 /* New entry form */
 
 .block-section .new-entry {
