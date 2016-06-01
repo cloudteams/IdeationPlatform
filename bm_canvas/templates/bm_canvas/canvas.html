@@ -10,6 +10,7 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static "bm_canvas/css/sortable.min.css" %}">
+    <link rel="stylesheet" href="{% static "bm_canvas/css/colorPicker.css" %}">
     <link rel="stylesheet" href="{% static "bm_canvas/css/simplemde.min.css" %}">
     <link rel="stylesheet" href="{% static "bm_canvas/css/style.css" %}">
 {% endblock %}
@@ -116,12 +117,17 @@
             <div class="add-entry pull-right">
                 <i class="fa fa-save"></i> Save
             </div>
+            <div class="pull-right colorpicker">
+                <input type="text" name="new-entry-color" value="#ffffff" />
+                <label>Group</label>
+            </div>
         </div>
     </div>
 {% endblock %}
 
 {% block js %}
     <script src="{% static "bm_canvas/js/sortable.min.js" %}"></script>
+    <script src="{% static "bm_canvas/js/jquery.colorPicker.min.js" %}"></script>
     <script src="{% static "bm_canvas/js/simplemde.min.js" %}"></script>
     <script src="{% static "bm_canvas/js/app.js" %}"></script>
 {% endblock %}

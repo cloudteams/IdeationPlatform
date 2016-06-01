@@ -23,6 +23,7 @@ class BusinessModelEntry(models.Model):
     section = models.CharField(max_length=255, choices=BUSINESS_MODEL_SECTIONS)
     text = models.TextField(blank=False)
     order = models.IntegerField()
+    group_color = models.CharField(max_length=7, default='#FFFFFF')
     created = models.DateTimeField(auto_now_add=True, editable=False)
     updated = models.DateTimeField(auto_now=True, editable=False)
 

@@ -2,6 +2,9 @@ $(function() {
     var BusinessModelCanvas = {
         editors: {},
         editedEntry: {},
+        palette: ['FFFFFF', 'EF4836', '7D3C8C', '4183D7', 'E9D460', '67809F', '1BBC9B', 'F89406', '65C6BB', '6C7A89',
+                  'BDC3C7', '333333'],
+
         mdeConfig: function(element) {
             return {
                 element: element,
@@ -25,15 +28,22 @@ $(function() {
                 }
             });
 
-            // inject markdown editors
+            // inject markdown editors & color pickers
             var that = this;
-            $('#business-model-canvas textarea').each(function() {
+            $('#business-model-canvas .block-section').each(function() {
+                var $this = $(this);
+
                 // create & render the editor
-                var simplemde = new SimpleMDE(that.mdeConfig(this));
+                $textarea = $this.find('textarea');
+                var simplemde = new SimpleMDE(that.mdeConfig($textarea[0]));
                 simplemde.render();
 
                 // save the editor for future reference
-                that.editors[$(this).closest('.block-section').attr('id')] = simplemde;
+                that.editors[$this.attr('id')] = simplemde;
+
+                // add color picker
+                // init color pickers
+                $this.find('input[name="new-entry-color"]').colorPicker({colors: that.palette, $container: $this});
             });
         },
 
@@ -49,6 +59,7 @@ $(function() {
             var section_arr = $bs.attr('id').split('-');
             var order = Number($bs.find('.entry-region .entry:last').data('order')) + 1 || 0;
             var section = section_arr[section_arr.length - 1];
+            var color = $entry.find('input[name="new-entry-color"]').val();
 
             // post the entry
             $.ajax({
@@ -58,7 +69,8 @@ $(function() {
                     'csrfmiddlewaretoken': this.csrfmiddlewaretoken(),
                     'text': simplemde.value(),
                     'section': section,
-                    'order':order
+                    'order': order,
+                    'groupColor': color,
                 },
                 success: function(data) {
                     // add the new entry
@@ -75,6 +87,8 @@ $(function() {
             var entryId = $entry.data('id');
             var markdownContent = $entry.find('.markdown-content').text();
             var textareaId = 'entry-textarea-' + entryId;
+            var color = $entry.find('.clr-val').css('background-color');
+            console.log(color);
 
             // add class to mark as editing, save info
             $entry.addClass('editing').closest('.block-section').addClass('editing');
@@ -84,13 +98,17 @@ $(function() {
             var $form = $('<div class="update-entry-form" />')
                 .append('<textarea id="' + textareaId + '">' + markdownContent + '</textarea>')
                 .append('<span class="cancel-update-entry pull-left"><i class="fa fa-times" /> Cancel</span>')
-                .append('<span class="update-entry pull-right"><i class="fa fa-save" /> Save</span>');
+                .append('<span class="update-entry pull-right"><i class="fa fa-save" /> Save</span>')
+                .append('<div class="pull-right colorpicker"><input type="text" name="update-entry-color" value="' + color + '" /><label>Group</label></div>')
 
             $entry.find('.rendered-output').replaceWith($form);
 
-            // create & render the editor
+            // create & render the editor & colorpicker
             var simplemde = new SimpleMDE(this.mdeConfig($form.find('textarea')[0]));
             simplemde.render();
+
+            $entry.find('input[name="update-entry-color"]').colorPicker({colors: this.palette,
+                                                                         $container: $entry.closest('.block-section')});
 
             // save it in the editedEntry object
             this.editedEntry.simplemde = simplemde;
@@ -109,7 +127,8 @@ $(function() {
                 method: 'POST',
                 data: {
                     'csrfmiddlewaretoken': this.csrfmiddlewaretoken(),
-                    'text': that.editedEntry.simplemde.value()
+                    'text': that.editedEntry.simplemde.value(),
+                    'groupColor': that.editedEntry.$entry.find('input[name="update-entry-color"]').val(),
                 },
                 success: function(data) {
                     // update the UI
@@ -217,7 +236,11 @@ $(function() {
         e.stopPropagation();
     });
 
-    $('#business-model-canvas').on('click', function() {
+    $('#business-model-canvas').on('click', function(e) {
+        if ($(e.target).hasClass('colorPicker-swatch')) {
+            return
+        }
+
         if (BusinessModelCanvas.isEditing()) {
             BusinessModelCanvas.updateEntry();
         }

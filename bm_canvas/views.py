@@ -47,9 +47,11 @@ def add_entry(request, pk):
     if not order:
         return HttpResponse('`order` field is required', status=400)
 
+    group_color = request.POST.get('groupColor', '#FFFFFF')
+
     # create the entry
     entry = BusinessModelEntry.objects.create(business_model=bmc, author=request.session['username'],
-                                              section=section, text=text, order=order)
+                                              section=section, text=text, order=order, group_color=group_color)
 
     # return the rendered entry
     return render(request, 'bm_canvas/entry.html', {'entry': entry})
@@ -101,8 +103,11 @@ def update_entry(request, pk):
     if not text:
         return HttpResponse('`text` field is required', status=400)
 
+    group_color = request.POST.get('groupColor', entry.group_color)
+
     # update & respond
     entry.text = text
+    entry.group_color = group_color
     entry.save()
     return render(request, 'bm_canvas/entry.html', {'entry': entry})
 

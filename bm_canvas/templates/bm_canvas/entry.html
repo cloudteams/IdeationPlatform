@@ -2,8 +2,12 @@
 {% load bm_filters %}
 
 <div class="entry" data-id="{{ entry.pk }}" data-order="{{ entry.order }}">
+
     <div class="header clearfix">
         <span class="entry-author pull-left">{{ entry.author }}</span>
+
+        <div class="clr-container pull-right">
+            <span class="clr-val" style="background-color: {{ entry.group_color }};"></span></div>
         <span class="date-created pull-right">{{ entry.created|naturaltime }}</span>
     </div>
     <div class="content clearfix">
@@ -17,4 +21,5 @@
             </div>
 
     </div>
+
 </div>
