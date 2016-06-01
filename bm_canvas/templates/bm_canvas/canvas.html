@@ -18,7 +18,7 @@
     <h1>{{bmc.project_name}} - Business Model Canvas</h1>
 
     <div id="bmc-clearfix"></div>
-    <div id="business-model-canvas" data-project_id="{{ bmc.project_id }}">
+    <div id="business-model-canvas" data-project_id="{{ bmc.project_id }}" data-csrfmiddlewaretoken="{{ csrf_token }}">
         <div class="row">
             <div class="col-sm-2">
                 <div id="block-section-KP" class="block-section block-section-double">
@@ -113,7 +113,9 @@
     <div class="new-entry-template">
         <textarea></textarea>
         <div class="clearfix">
-            <i class="fa fa-save add-entry pull-right" data-csrfmiddlewaretoken="{{ csrf_token }}"></i>
+            <div class="add-entry pull-right">
+                <i class="fa fa-save"></i> Save
+            </div>
         </div>
     </div>
 {% endblock %}

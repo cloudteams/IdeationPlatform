@@ -1,7 +1,7 @@
 {% load humanize %}
 {% load bm_filters %}
 
-<div class="entry" data-id="{{ entry.pk }}" data-csrfmiddlewaretoken="{{ csrf_token }}">
+<div class="entry" data-id="{{ entry.pk }}" data-order="{{ entry.order }}">
     <div class="header clearfix">
         <span class="entry-author pull-left">{{ entry.author }}</span>
         <span class="date-created pull-right">{{ entry.created|naturaltime }}</span>

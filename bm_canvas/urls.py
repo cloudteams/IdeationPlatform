@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^projects/(?P<pk>[\w-]+)/add-entry/$', views.add_entry, name='add-entry'),
 
     # entries
+    url(r'^entries/update-orders/$', views.update_entry_orders, name='view-entry'),
     url(r'^entries/(?P<pk>[\w-]+)/$', views.view_entry, name='view-entry'),
     url(r'^entries/(?P<pk>[\w-]+)/update/$', views.update_entry, name='update-entry'),
     url(r'^entries/(?P<pk>[\w-]+)/remove/$', views.remove_entry, name='remove-entry'),

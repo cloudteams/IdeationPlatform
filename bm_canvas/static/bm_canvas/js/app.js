@@ -16,8 +16,13 @@ $(function() {
             $('.block-section .entry-region').append($ne.clone());
 
             // make entries sortable
+            var that = this;
             $('.entry-region').sortable({
                 items: '> .entry',
+                update: function(event, ui) {
+                    $entries = $(this).find('.entry');
+                    that.updateEntryListOrder($entries)
+                }
             });
 
             // inject markdown editors
@@ -32,12 +37,17 @@ $(function() {
             });
         },
 
+        csrfmiddlewaretoken: function() {
+            return $('#business-model-canvas').data('csrfmiddlewaretoken');
+        },
+
         addEntry: function($entry) {
             var blockId = $entry.closest('.block-section').attr('id');
             var projectId = $('#business-model-canvas').data('project_id');
             var simplemde = this.editors[blockId];
-            var csrfmiddlewaretoken = $entry.find('.add-entry').data('csrfmiddlewaretoken');
-            var section_arr = $entry.closest('.block-section').attr('id').split('-');
+            var $bs = $entry.closest('.block-section')
+            var section_arr = $bs.attr('id').split('-');
+            var order = Number($bs.find('.entry-region .entry:last').data('order')) + 1 || 0;
             var section = section_arr[section_arr.length - 1];
 
             // post the entry
@@ -45,9 +55,10 @@ $(function() {
                 url: '/business-model/projects/' + projectId + '/add-entry/',
                 method: 'POST',
                 data: {
-                    'csrfmiddlewaretoken': csrfmiddlewaretoken,
+                    'csrfmiddlewaretoken': this.csrfmiddlewaretoken(),
                     'text': simplemde.value(),
-                    'section': section
+                    'section': section,
+                    'order':order
                 },
                 success: function(data) {
                     // add the new entry
@@ -89,9 +100,7 @@ $(function() {
         updateEntry: function($entry) {
             // explicit or through state
             $entry = $entry || this.editedEntry.$entry;
-
             var entryId = $entry.data('id');
-            var csrfmiddlewaretoken = $entry.data('csrfmiddlewaretoken');
 
             // update the entry
             var that = this;
@@ -99,7 +108,7 @@ $(function() {
                 url: '/business-model/entries/' + entryId + '/update/',
                 method: 'POST',
                 data: {
-                    'csrfmiddlewaretoken': csrfmiddlewaretoken,
+                    'csrfmiddlewaretoken': this.csrfmiddlewaretoken(),
                     'text': that.editedEntry.simplemde.value()
                 },
                 success: function(data) {
@@ -109,6 +118,30 @@ $(function() {
 
                     // clear edit info
                     that.editedEntry = {};
+                }
+            });
+        },
+
+        updateEntryListOrder: function($entries) {
+            var data = [];
+            $.each($entries, function(index, entry) {
+                var $entry = $(entry);
+                $entry.data('order', index);
+                $entry.attr('data-order', index);
+                data.push({id: $entry.data('id'), order: index});
+            });
+
+            // update the orders
+            var that = this;
+            $.ajax({
+                url: '/business-model/entries/update-orders/',
+                method: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': that.csrfmiddlewaretoken(),
+                    'data': JSON.stringify(data)
+                },
+                success: function() {
+                    // nothing
                 }
             });
         },
@@ -139,7 +172,6 @@ $(function() {
 
         removeEntry: function($entry) {
             var entryId = $entry.data('id');
-            var csrfmiddlewaretoken = $entry.data('csrfmiddlewaretoken');
 
             if (confirm('Are you sure you want to delete this entry?')) {
                 // remove the entry
@@ -147,7 +179,7 @@ $(function() {
                     url: '/business-model/entries/' + entryId + '/remove/',
                     method: 'POST',
                     data: {
-                        'csrfmiddlewaretoken': csrfmiddlewaretoken,
+                        'csrfmiddlewaretoken': this.csrfmiddlewaretoken(),
                     },
                     success: function() {
                         $entry.remove();

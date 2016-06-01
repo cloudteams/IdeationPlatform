@@ -1,3 +1,6 @@
+import json
+
+from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -40,9 +43,13 @@ def add_entry(request, pk):
     if section not in [s[0] for s in BUSINESS_MODEL_SECTIONS]:
         return HttpResponse('Invalid section "%s"' % section, status=400)
 
+    order = request.POST.get('order', '')
+    if not order:
+        return HttpResponse('`order` field is required', status=400)
+
     # create the entry
     entry = BusinessModelEntry.objects.create(business_model=bmc, author=request.session['username'],
-                                              section=section, text=text)
+                                              section=section, text=text, order=order)
 
     # return the rendered entry
     return render(request, 'bm_canvas/entry.html', {'entry': entry})
@@ -62,6 +69,19 @@ def view_entry(request, pk):
         return HttpResponse('Access to entry #%d is forbidden' % pk, status=403)
 
     return render(request, 'bm_canvas/entry.html', {'entry': entry})
+
+
+def update_entry_orders(request):
+    if request.method != 'POST':
+        return HttpResponse('Only POST requests allowed', status=400)
+
+    # update all orders
+    data = json.loads(request.POST.get('data', '[]'))
+    with transaction.atomic():
+        for entry in data:
+            BusinessModelEntry.objects.filter(pk=entry['id']).update(order=entry['order'])
+
+    return HttpResponse('')
 
 
 def update_entry(request, pk):

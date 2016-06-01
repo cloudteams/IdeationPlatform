@@ -22,6 +22,7 @@ class BusinessModelEntry(models.Model):
     author = models.CharField(max_length=255)
     section = models.CharField(max_length=255, choices=BUSINESS_MODEL_SECTIONS)
     text = models.TextField(blank=False)
+    order = models.IntegerField()
     created = models.DateTimeField(auto_now_add=True, editable=False)
     updated = models.DateTimeField(auto_now=True, editable=False)
 
