@@ -15,7 +15,7 @@ def project_view(request, pk):
     except BusinessModel.DoesNotExist:
         project_name = ''
         for p in request.session['projects']:
-            if p['pid'] == pk:
+            if p['pid'] == str(pk):
                 project_name = p['title']
 
         if not project_name:
