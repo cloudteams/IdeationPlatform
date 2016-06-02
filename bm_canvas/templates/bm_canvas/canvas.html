@@ -21,96 +21,106 @@
     <div id="bmc-clearfix"></div>
     <div id="business-model-canvas" data-project_id="{{ bmc.project_id }}" data-csrfmiddlewaretoken="{{ csrf_token }}">
         <div class="row">
-            <div class="col-sm-2">
-                <div id="block-section-KP" class="block-section block-section-double">
-                    <h3>Key Partners</h3>
-                    <div class="entry-region">
-                        {% for entry in bmc|get_entries:"KP" %}
-                            {% include "bm_canvas/entry.html" %}
-                        {% endfor %}
-                    </div>
-                </div>
+            <div class="col-md-2 sidebar">
+                <div>Option 1</div>
+                <div>Option 2</div>
+                <div>Option 3</div>
             </div>
-            <div class="col-sm-2">
-                <div id="block-section-KA" class="block-section">
-                    <h3>Key Activities</h3>
-                    <div class="entry-region">
-                        {% for entry in bmc|get_entries:"KA" %}
-                            {% include "bm_canvas/entry.html" %}
-                        {% endfor %}
+            <div class="col-md-10 content">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <div id="block-section-KP" class="block-section block-section-double">
+                            <h3>Key Partners</h3>
+                            <div class="entry-region">
+                                {% for entry in bmc|get_entries:"KP" %}
+                                    {% include "bm_canvas/entry.html" %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div id="block-section-KA" class="block-section">
+                            <h3>Key Activities</h3>
+                            <div class="entry-region">
+                                {% for entry in bmc|get_entries:"KA" %}
+                                    {% include "bm_canvas/entry.html" %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div id="block-section-KR" class="block-section">
+                            <h3>Key Resources</h3>
+                            <div class="entry-region">
+                                {% for entry in bmc|get_entries:"KR" %}
+                                    {% include "bm_canvas/entry.html" %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div id="block-section-VP" class="block-section block-section-double">
+                            <h3>Value Proposition</h3>
+                            <div class="entry-region">
+                                {% for entry in bmc|get_entries:"VP" %}
+                                    {% include "bm_canvas/entry.html" %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div id="block-section-CR" class="block-section">
+                            <h3>Customer Relationships</h3>
+                            <div class="entry-region">
+                                {% for entry in bmc|get_entries:"CR" %}
+                                    {% include "bm_canvas/entry.html" %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div id="block-section-CH" class="block-section">
+                            <h3>Channels</h3>
+                            <div class="entry-region">
+                                {% for entry in bmc|get_entries:"CH" %}
+                                    {% include "bm_canvas/entry.html" %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div id="block-section-CS" class="block-section block-section-double">
+                            <h3>Customer Segments</h3>
+                            <div class="entry-region">
+                                {% for entry in bmc|get_entries:"CS" %}
+                                    {% include "bm_canvas/entry.html" %}
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div id="block-section-KR" class="block-section">
-                    <h3>Key Resources</h3>
-                    <div class="entry-region">
-                        {% for entry in bmc|get_entries:"KR" %}
-                            {% include "bm_canvas/entry.html" %}
-                        {% endfor %}
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div id="block-section-C$" class="block-section">
+                            <h3>Cost Structure</h3>
+                            <div class="entry-region">
+                                {% for entry in bmc|get_entries:"C$" %}
+                                    {% include "bm_canvas/entry.html" %}
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div id="block-section-VP" class="block-section block-section-double">
-                    <h3>Value Proposition</h3>
-                    <div class="entry-region">
-                        {% for entry in bmc|get_entries:"VP" %}
-                            {% include "bm_canvas/entry.html" %}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <div id="block-section-CR" class="block-section">
-                    <h3>Customer Relationships</h3>
-                    <div class="entry-region">
-                        {% for entry in bmc|get_entries:"CR" %}
-                            {% include "bm_canvas/entry.html" %}
-                        {% endfor %}
-                    </div>
-                </div>
-                <div id="block-section-CH" class="block-section">
-                    <h3>Channels</h3>
-                    <div class="entry-region">
-                        {% for entry in bmc|get_entries:"CH" %}
-                            {% include "bm_canvas/entry.html" %}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <div id="block-section-CS" class="block-section block-section-double">
-                    <h3>Customer Segments</h3>
-                    <div class="entry-region">
-                        {% for entry in bmc|get_entries:"CS" %}
-                            {% include "bm_canvas/entry.html" %}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-6">
-                <div id="block-section-C$" class="block-section">
-                    <h3>Cost Structure</h3>
-                    <div class="entry-region">
-                        {% for entry in bmc|get_entries:"C$" %}
-                            {% include "bm_canvas/entry.html" %}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <div id="block-section-R$" class="block-section">
-                    <h3>Revenue Streams</h3>
-                    <div class="entry-region">
-                        {% for entry in bmc|get_entries:"R$" %}
-                            {% include "bm_canvas/entry.html" %}
-                        {% endfor %}
+                    <div class="col-sm-6">
+                        <div id="block-section-R$" class="block-section">
+                            <h3>Revenue Streams</h3>
+                            <div class="entry-region">
+                                {% for entry in bmc|get_entries:"R$" %}
+                                    {% include "bm_canvas/entry.html" %}
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <div class="new-entry-template">
         <textarea></textarea>
         <div class="clearfix">

@@ -10,6 +10,16 @@
     background: whitesmoke;
 }
 
+#business-model-canvas > .row > .sidebar {
+    height: 750px;
+    background: #411f48;
+    color: whitesmoke;
+}
+
+#business-model-canvas > .row > .content {
+    padding-left: 0;
+}
+
 #bmc-clearfix {
     padding-bottom: 750px;
 }

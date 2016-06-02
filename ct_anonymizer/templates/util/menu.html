@@ -34,6 +34,19 @@
 							</div>
 						</li>
 
+						{% if request.session.project_id %}
+							<li>
+								<div class="vertical-align">
+									<div class="middle">
+										<a href="/business-model/projects/{{ request.session.project_id }}/">
+											<img class="icon menu-icon svg" src="{% static "img/icons/icon-folder.svg" %}">
+											Business Model
+										</a>
+									</div>
+								</div>
+							</li>
+						{% endif %}
+
 						<li class="profile">
 							<div class="vertical-align">
 								<div class="middle">
