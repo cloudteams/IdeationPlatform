@@ -15,6 +15,33 @@
                 {% include "persona_builder/persona/teaser.html" %}
             {% endwith %}
         {% endfor %}
+
+        <div id="persona-pool-chooser" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add a persona to your campaign</h4>
+              </div>
+              <div class="modal-body">
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-right add-persona">
+                    <i class="fa fa-plus"></i> Add
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
     </div>
 
+{% endblock %}
+
+{% block js %}
+    <script src="{% static "persona_builder/js/jquery-ui-basic.min.js" %}"></script>
+    <script src="{% static "persona_builder/js/persona-picker.js" %}"></script>
 {% endblock %}

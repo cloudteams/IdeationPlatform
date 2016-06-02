@@ -1,0 +1,22 @@
+{% load staticfiles %}
+
+<article class="selectable-persona campaign campaign-poll public-campaign block-line-half col-lg-6 col-md-12 clear-3"
+	data-persona_id="{{ persona.pk }}">
+	<div class="row">
+		<div class="background col-sm-3">
+
+				<div class="background-image" style="background-image: url({{ persona.get_avatar_url }});">
+				</div>
+
+		</div>
+		<div class="col-sm-9">
+			<div class="picker pull-right"><i class="fa fa-plus"></i></div>
+			<h3 class="header-medium secondary">{{ persona.name }}</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12">
+			{{ persona.description }}
+		</div>
+	</div>
+</article>

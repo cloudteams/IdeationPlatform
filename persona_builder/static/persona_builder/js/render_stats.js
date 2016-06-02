@@ -32,7 +32,7 @@
                     for (var key in p.property_values[prop]) {
                         var label = key;
                         if ((typeof(label) == 'undefined') || (label == 'null') || (label == '')) {
-                            label = 'Unknown/None';
+                            label = 'Unknown';
                         }
                         keys.push(label);
                         values.push(p.property_values[prop][key]);

@@ -644,6 +644,12 @@ class PropertyManager:
                 filters_generated.append(f)
             elif prop.aggregate is None:
                 f = f.replace(prop.name, prop.column)
+                # multiple choices
+                if '=' in f and '||' in f:
+                    f1 = f.split('=')[0]
+                    f2 = ' in (%s)' % ','.join(f.split('=')[1].split('||'))
+                    f = f1 + f2
+
                 filters_concrete.append(f)
                 filter_properties.append(prop.name)
             else:

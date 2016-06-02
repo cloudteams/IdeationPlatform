@@ -29,6 +29,7 @@ class Persona(models.Model):
     overview_prop_values = models.TextField(editable=False, default='[]')
     is_ready = models.BooleanField(default=False, editable=False)
     is_public = models.BooleanField(default=False)
+    based_on = models.ForeignKey('self', blank=True, null=True, default=None)
 
     def get_avatar_url(self):
         return '/media/%s' % self.avatar

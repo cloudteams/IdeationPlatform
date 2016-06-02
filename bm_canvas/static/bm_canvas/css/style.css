@@ -20,6 +20,7 @@
     background: white;
     height: 250px;
     overflow-y: auto;
+    position: relative;
 }
 
 .block-section-double {
@@ -93,6 +94,15 @@
 
 .entry.ui-sortable-helper {
     background: whitesmoke;
+}
+
+.entry .rendered-output {
+    cursor: move;
+}
+
+.entry .rendered-output a,
+.entry .rendered-output a:hover {
+    color: #5B97DE !important;
 }
 
 /* New entry form */

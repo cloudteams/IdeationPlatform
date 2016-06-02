@@ -68,6 +68,11 @@ label[for="id_avatar"]:hover {
     margin-left: 15px;
 }
 
+.add-from-pool {
+    cursor: pointer;
+    height: 276px;
+}
+
 .persona-teaser {
     margin: 20px 0;
 }
@@ -149,6 +154,53 @@ input[type="checkbox"] {
 
 .prop-chart a {
     display: none !important;
+}
+
+/* Modals */
+.modal {
+    color: #333;
+}
+
+.modal-title {
+    color: #7d3c8c !important;
+}
+
+/* Persona Picker */
+.highlight {
+    color: #777;
+}
+article.campaign {
+    color: #333;
+}
+
+.selectable-persona {
+    border: 1px solid #fff;
+    cursor: pointer;
+    transition: border 0.6s ease;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.selectable-persona.selected,
+.selectable-persona:hover {
+    border: 1px solid #1fa67a;
+}
+
+.selectable-persona .background-image {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    background-size: cover;
+}
+
+.selectable-persona .picker {
+    color: #AAA;
+    transition: color 0.6s ease;
+}
+
+.selectable-persona.selected .picker,
+.selectable-persona:hover .picker {
+    color: #1fa67a;
 }
 
 /* Loading animation */

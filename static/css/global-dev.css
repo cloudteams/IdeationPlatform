@@ -1097,6 +1097,9 @@ pre {
   width: 100%;
   max-width: 100%;
   margin-bottom: 1rem;
+    border-left: 2px solid #7d3c8c;
+    border-right: 2px solid #7d3c8c;
+    border-bottom: 2px solid #7d3c8c;
   }
   .table th,
   .table td {
@@ -1109,7 +1112,10 @@ pre {
     vertical-align: bottom;
     border-bottom: 2px solid #9F69AA;
     border-top: none;
+    border-top: 2px solid #7d3c8c;
     color: whitesmoke;
+    background: #663670;
+    vertical-align: middle;
     }
   .table tbody + tbody {
     border-top: 2px solid #eceeef; }
@@ -1129,7 +1135,7 @@ pre {
   .table-bordered thead td {
     border-bottom-width: 2px; }
 
-.table-striped tbody tr:nth-of-type(odd) {
+.table-striped tbody tr:nth-of-type(even) {
   background-color: #663670;
   }
 

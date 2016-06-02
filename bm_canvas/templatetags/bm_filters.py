@@ -15,4 +15,5 @@ def get_entries(bmc, section):
 
 @register.filter
 def markdown_to_html(markdown_text):
-    return mark_safe(markdown.markdown(markdown_text))
+    return mark_safe(markdown.markdown(markdown_text, extensions=['markdown.extensions.sane_lists',
+                                                                  'markdown.extensions.nl2br']))

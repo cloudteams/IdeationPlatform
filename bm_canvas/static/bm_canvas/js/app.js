@@ -21,7 +21,12 @@ $(function() {
             // make entries sortable
             var that = this;
             $('.entry-region').sortable({
-                items: '> .entry',
+                items: '> .entry:not(.editing)',
+                receive: function (event, ui) {
+                    if ($(ui.item).hasClass('editing')) {
+                        $(ui.item).remove();
+                    }
+                },
                 update: function(event, ui) {
                     $entries = $(this).find('.entry');
                     that.updateEntryListOrder($entries)

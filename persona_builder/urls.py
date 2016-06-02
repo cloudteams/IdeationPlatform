@@ -9,6 +9,9 @@ urlpatterns = [
     url(r'^personas/$', views.list_personas),
     url(r'^personas/pool/$', views.pool),
 
+    # clone persona
+    url(r'^personas/add-from-pool/(?P<pk>[\w-]+)/$', views.add_from_pool),
+
     # persona operations
     url(r'^personas/create/$', views.create_persona),
     url(r'^personas/(?P<pk>[\w-]+)/edit-properties/$', views.edit_persona_properties),

@@ -1,5 +1,6 @@
 import uuid
 
+from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -7,7 +8,7 @@ from django.views.generic import CreateView, DetailView, ListView, DeleteView, U
 from anonymizer.models import ConnectionConfiguration
 from pb_oauth.xmlrpc_oauth import get_srv_instance
 from persona_builder.forms import PersonaForm, PersonaPropertiesForm
-from persona_builder.models import Persona
+from persona_builder.models import Persona, PersonaUsers
 import simplejson as json
 
 
@@ -264,3 +265,39 @@ def perform_pending_action(request):
 
     # default next page
     return redirect('/persona-builder/personas/' + persona_id + '/')
+
+
+def add_from_pool(request, pk):
+    """
+    :param request: A request object
+    :param pk: The ID of the persona that should be cloned
+    :return: The ID of the new persona
+    """
+    if request.method != 'POST':
+        return HttpResponse('Only POST allowed', status=400)
+
+    try:
+        persona = Persona.objects.get(pk=pk)
+    except Persona.DoesNotExist:
+        return HttpResponse('Persona with id #%d not found' % pk, status=404)
+
+    if not persona.is_public:
+        return HttpResponse('Can\'t clone private personas', status=403)
+
+    # clone the persona with the appropriate properties
+    new_persona = persona
+    new_persona.pk = None
+    new_persona.uuid = uuid.uuid4()
+    new_persona.owner, new_persona.project_id, new_persona.campaign_id = request_context(request)
+    new_persona.based_on_id = pk
+    new_persona.save()
+
+    # clone persona users
+    with transaction.atomic():
+        for pu in PersonaUsers.objects.filter(persona_id=pk):
+            new_pu = pu
+            new_pu.pk = None
+            new_pu.persona_id = new_persona.pk
+            new_pu.save()
+
+    return HttpResponse('%d' % new_persona.pk)

@@ -1,19 +1,12 @@
-{% extends "base.html" %}
 
-{% load static from staticfiles %}
-{% load app_filters %}
+    <p>You can click on a persona from below to use in your campaign as they are. You can also customize it to match your customer segments.</p>
 
-{% block content %}
-    <h1>Persona Pool</h1>
-    <p>You can use personas from below to use them in your campaign as they are or to further customize them to match your customer segments.</p>
-
-    {% for persona in personas %}
-        {% with add_link=True add_edit_link=True %}
-            {% include "persona_builder/persona/teaser.html" %}
-        {% endwith %}
-    {% empty %}
+    {% if personas %}
+        <div id="persona-pool-list" class="row" data-csrfmiddlewaretoken="{{ csrf_token }}">
+            {% for persona in personas %}
+                {% include "persona_builder/persona/teaser-sm.html" %}
+            {% endfor %}
+        </div>
+    {% else %}
         <p>No personas found.</p>
-    {% endfor %}
-
-
-{% endblock %}
+    {% endif %}
