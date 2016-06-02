@@ -10,6 +10,8 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1.0">
 		<title>{% block title %}Persona Builder{% endblock %} | CloudTeams</title>
 		<link rel="apple-touch-icon" href="apple-touch-icon.png">
+		<link rel="stylesheet" href="{% static "css/jquery.switch-button.css" %}">
+
 		<link rel="stylesheet" href="{% static "css/global-dev.css" %}">
 		<link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
 		<link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
@@ -39,8 +41,16 @@
 
 		<script type="text/javascript" src="{% static "js/global-dev.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/common-dev.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/jquery-ui.min.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/jquery.switch-button.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/base.js" %}"></script>
 
+		<script>
+			$(function() {
+				$('input#avatar-clear_id').remove();
+				$('input[type="checkbox"]').switchButton()
+			});
+		</script>
 		{% block js %}
 		{% endblock %}
 	</body>
