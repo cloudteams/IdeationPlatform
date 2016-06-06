@@ -3,9 +3,18 @@
 
     {% if personas %}
         <div id="persona-pool-list" class="row" data-csrfmiddlewaretoken="{{ csrf_token }}">
-            {% for persona in personas %}
-                {% include "persona_builder/persona/teaser-sm.html" %}
-            {% endfor %}
+            <div id="persona-pool-search-container">
+                <i class="fa fa-search"></i>
+                <input id="persona-pool-search" type="text" placeholder="Search for public personas" class="col-sm-12" />
+            </div>
+
+            <div id="persona-pool-list-content" class="col-sm-12" >
+                <div class="row">
+                    {% for persona in personas %}
+                        {% include "persona_builder/persona/teaser-sm.html" %}
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     {% else %}
         <p>No personas found.</p>

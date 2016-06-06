@@ -7,6 +7,7 @@ form p > * {
     background: #f8f3f3;
     padding: 10px;
     margin-bottom: 10px;
+    color: #777;
 }
 
 .column-form .errorlist {
@@ -123,6 +124,11 @@ input[type="checkbox"] {
     margin: 20px 0;
 }
 
+.ps-scrollbar-x-rail,
+.ps-scrollbar-y-rail {
+    opacity: 0.6 !important;
+}
+
 /* Persona list page */
 .add-item:not(.document):hover .background {
     background: #7d3c8c !important;
@@ -173,17 +179,64 @@ article.campaign {
     color: #333;
 }
 
+#persona-pool-list-content {
+    max-height: 40vh;
+    margin: 20px 20px 20px 0;
+}
+
+#persona-pool-list-content > .row {
+    padding-right: 20px;
+}
+
+#persona-pool-search-container {
+    border: 1px solid #aaa;
+    border-radius: 10px;
+    transition: border-color 350ms cubic-bezier(0.785, 0.135, 0.15, 0.86);
+}
+
+#persona-pool-search-container.focused {
+    border: 1px solid #7d3c8c;
+}
+
+#persona-pool-search-container .fa.fa-search {
+    position: static;
+    margin: 10px;
+}
+
+#persona-pool-search {
+    color: #777;
+    width: calc(100% - 60px);
+    padding: 5px 0;
+    float: none;
+    display: inline-block;
+    position: static;
+    border: none !important;
+}
+
 .selectable-persona {
     border: 1px solid #fff;
     cursor: pointer;
     transition: border 0.6s ease;
     padding-top: 10px;
     padding-bottom: 10px;
+    margin-bottom: 10px !important;
+
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Chrome/Safari/Opera */
+    -khtml-user-select: none;    /* Konqueror */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* Non-prefixed version */
 }
 
 .selectable-persona.selected,
 .selectable-persona:hover {
-    border: 1px solid #1fa67a;
+    border: 1px solid #7d3c8c;
+}
+
+.selectable-persona a,
+.selectable-persona a:hover {
+    color: #7d3c8c !important;
 }
 
 .selectable-persona .background-image {
@@ -200,7 +253,7 @@ article.campaign {
 
 .selectable-persona.selected .picker,
 .selectable-persona:hover .picker {
-    color: #1fa67a;
+    color: #7d3c8c;
 }
 
 /* Loading animation */

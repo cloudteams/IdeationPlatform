@@ -23,27 +23,49 @@ $(function() {
 
                 success: function(data) {
                    $dBody.html($(data))
+                    // make persona list scrollable
+                   $('#persona-pool-list-content').perfectScrollbar();
                 }
             })
         },
 
+        unselect: function() {
+            if (typeof(this.$selectedPersona) != 'undefined') {
+                this.$selectedPersona.removeClass('selected')
+                this.$selectedPersona.find('.picker > .fa').removeClass('fa-check-circle').addClass('fa-plus')
+                this.$selectedPersona = undefined
+            }
+        },
+
         toggleSelect: function($persona) {
-            if (!$persona.hasClass('selected')) { // select
+            var selected = $persona.hasClass('selected');
+            this.unselect();
+
+            if (!selected) { // select
                 $persona.addClass('selected')
                 $persona.find('.picker > .fa').removeClass('fa-plus').addClass('fa-check-circle')
                 this.$selectedPersona = $persona
-            } else { // un-select
-                $persona.removeClass('selected')
-                $persona.find('.picker > .fa').removeClass('fa-check-circle').addClass('fa-plus')
-                this.$selectedPersona = undefined
             }
+        },
+
+        filter: function(text) {
+            $.each($('.selectable-persona'), function(idx, persona) {
+                var $persona = $(persona);
+                var name = $persona.find('h3').text().toLowerCase();
+                var description = $persona.find('.persona-description').text().toLowerCase();
+
+                if ((name.search(text.toLowerCase()) >= 0) || (description.search(text.toLowerCase()) >= 0)) {
+                    $persona.removeClass('hidden');
+                } else {
+                    $persona.addClass('hidden');
+                }
+            })
         },
 
         confirm: function() {
             if (typeof(this.$selectedPersona) != 'undefined') {
                 var personaId = this.$selectedPersona.data('persona_id')
 
-                console.log(this.csrfmiddlewaretoken())
                 $.ajax({
                     url: '/persona-builder/personas/add-from-pool/' + personaId + '/',
                     method: 'POST',
@@ -70,4 +92,18 @@ $(function() {
     $('body').on('click', '.add-persona', function() {
         PersonaPicker.confirm();
     });
+
+    $('body').on('click', '#persona-pool-search-container', function(e) {
+        $(this).addClass('focused');
+        e.stopPropagation();
+    });
+
+    $('body').on('click', function(e) {
+        $('#persona-pool-search-container').removeClass('focused');
+    });
+
+    $('body').on('input', '#persona-pool-search', function(e) {
+        PersonaPicker.filter($(this).val());
+    });
+
 });

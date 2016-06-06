@@ -1,6 +1,6 @@
 {% load staticfiles %}
 
-<article class="selectable-persona campaign campaign-poll public-campaign block-line-half col-lg-6 col-md-12 clear-3"
+<article class="selectable-persona campaign campaign-poll public-campaign block-line-half col-lg-6 col-md-12"
 	data-persona_id="{{ persona.pk }}">
 	<div class="row">
 		<div class="background col-sm-3">
@@ -16,7 +16,12 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-12">
-			{{ persona.description }}
+			<div class="persona-description">
+				{{ persona.description }}
+			</div>
+			<div class="clearfix">
+				<a href="{{ persona.get_absolute_url }}" class="pull-right" target="_blank">more</a>
+			</div>
 		</div>
 	</div>
 </article>
