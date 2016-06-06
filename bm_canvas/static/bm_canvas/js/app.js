@@ -22,11 +22,12 @@ $(function() {
             var that = this;
             $('.entry-region').sortable({
                 items: '> .entry:not(.editing)',
-                receive: function (event, ui) {
-                    if ($(ui.item).hasClass('editing')) {
-                        $(ui.item).remove();
-                    }
-                },
+                axis: 'y',
+
+                /* Cancel sort on edit */
+                cancel: ".editing",
+
+                /* Update order in the DB as well */
                 update: function(event, ui) {
                     $entries = $(this).find('.entry');
                     that.updateEntryListOrder($entries)
@@ -93,7 +94,6 @@ $(function() {
             var markdownContent = $entry.find('.markdown-content').text();
             var textareaId = 'entry-textarea-' + entryId;
             var color = $entry.find('.clr-val').css('background-color');
-            console.log(color);
 
             // add class to mark as editing, save info
             $entry.addClass('editing').closest('.block-section').addClass('editing');
@@ -251,8 +251,10 @@ $(function() {
         }
     });
 
-    //BusinessModelCanvas.clearEdit();
     $('#business-model-canvas').on('click', '.cancel-update-entry', function(e) {
         BusinessModelCanvas.clearEdit();
     });
+
+    // scrolling
+    $('.block-section').perfectScrollbar();
 })

@@ -1,10 +1,14 @@
 /* Basic Layout */
 
+h1 {
+    margin: 20px;
+}
+
 #business-model-canvas {
     color: #333;
     z-index: 2;
     left: 20px;
-    top: 120px;
+    top: 150px;
     position: absolute;
     width: calc(100vw - 60px);
     background: whitesmoke;
@@ -24,6 +28,34 @@
     padding-bottom: 750px;
 }
 
+/* Sidebar */
+
+.sidebar h5 {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 12px;
+}
+
+.sidebar svg {
+    width: 40px;
+    margin-top: 0;
+    display: inline-block;
+}
+
+.sidebar ul.projects > li:not(.active) {
+    padding-left: 26px;
+}
+
+.sidebar ul.projects > li i.fa {
+    margin-right: 10px;
+}
+
+.sidebar ul.projects > li.active a {
+    color: whitesmoke;
+}
+
+/* Regions */
+
 .block-section {
     padding: 5px 10px;
     border: 1px dashed #333;
@@ -42,12 +74,16 @@
     color: #333;
 }
 
+/* Scrollbar */
+.ps-scrollbar-y-rail
+
 /* Entries */
 .entry {
     border-top: 1px solid #eee;
     padding-top: 2px;
     margin-top: 2px;
     margin-bottom: 2px;
+    padding-right: 5px;
 }
 
 .entry:first-of-type {

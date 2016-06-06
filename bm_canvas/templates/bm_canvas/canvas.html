@@ -22,9 +22,17 @@
     <div id="business-model-canvas" data-project_id="{{ bmc.project_id }}" data-csrfmiddlewaretoken="{{ csrf_token }}">
         <div class="row">
             <div class="col-md-2 sidebar">
-                <div>Option 1</div>
-                <div>Option 2</div>
-                <div>Option 3</div>
+                <img src="{% static "img/icons/icon-projects.svg" %}" class="icon-projects svg" alt="Projects icon" width="20">
+                <h5>Projects</h5>
+                <ul class="projects">
+                    {% for project in request.session.projects %}
+                        <li class="project-item{% if bmc.project_id == project.pid|add:"0" %} active{% endif %}">
+                            <a href="/business-model/projects/{{ project.pid }}/">{% if bmc.project_id == project.pid|add:"0" %}<i class="fa fa-check"></i>{% endif %}{{ project.title }}</a>
+                        </li>
+                    {% empty %}
+                        <li>No projects</li>
+                    {% endfor %}
+                </ul>
             </div>
             <div class="col-md-10 content">
                 <div class="row">
