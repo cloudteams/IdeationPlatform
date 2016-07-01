@@ -43,12 +43,12 @@ input[type="submit"]:hover {
     margin-bottom: 5px;
 }
 
-.global-nav li.profile .submenu .project-item a,
-.global-nav li.profile .submenu .campaign-item a {
+.global-nav li.profile .submenu .project-item span,
+.global-nav li.profile .submenu .campaign-item span {
     font-size: 12px;
 }
 
-.global-nav li.profile .submenu li:not(.active) a {
+.global-nav li.profile .submenu li:not(.active) span {
     padding-left: 14px;
 }
 

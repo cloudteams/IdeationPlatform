@@ -62,9 +62,12 @@
 								{% endif %}
 								{% for project in request.session.projects %}
 									<li class="project-item{% if request.session.project_id == project.pid %} active{% endif %}">
-										<a href="#project-{{ project.pid }}">
+										<!--<a href="#project-{{ project.pid }}">-->
+										<span>
 										{% if request.session.project_id == project.pid %} <i class="fa fa-check"></i>{% endif %}
-										{{ project.title }}</a>
+										{{ project.title }}
+										</span>
+										<!--</a>-->
 									</li>
 								{% empty %}
 									<li>No projects</li>
@@ -74,14 +77,16 @@
 									<li class="projects-title">Campaigns</li>
 									{% for campaign in request.session.campaigns %}
 										<li class="campaign-item{% if request.session.campaign_id == campaign.cid %} active{% endif %}">
-												<a href="#project-{{ project.pid }}">
+												<!--<a href="#project-{{ project.pid }}">-->
+												<span>
 												{% if request.session.campaign_id == campaign.cid %} <i class="fa fa-check"></i>{% endif %}
-												{{ campaign.title }}</a>
+												{{ campaign.title }}<!--</a>-->
+												</span>
 											</li>
 									{% endfor %}
 								{% endif %}
-								<li class="seperator"></li>
-								<li><a href="#nowhere">Log out</a></li>
+								<!--<li class="seperator"></li>
+								<li><a href="#nowhere">Log out</a></li>-->
 							</ul>
 						</li>
 					</ul>
