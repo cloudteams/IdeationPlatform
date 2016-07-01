@@ -18,6 +18,15 @@ class PersonaForm(forms.ModelForm):
         self.fields['avatar'].widget.attrs['accept'] = 'image/*'
         self.fields['avatar'].label_suffix = ''
 
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+
+        # fix issue 219
+        if name.strip() == '':
+            self.add_error('name', 'The persona\'s name can\'t be empty')
+
+        return name
+
 
 class PersonaAPIForm(forms.ModelForm):
     class Meta:
