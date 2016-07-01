@@ -35,8 +35,8 @@ urlpatterns = [
     url(r'^$', views.index),
 ]
 
-if settings.DEBUG:
-    # media files should only be served from the django server in DEBUG mode
-    urlpatterns += patterns('',
-                            (r'^media/(?P<path>.*)$', 'django.views.static.serve', {
-                                'document_root': settings.MEDIA_ROOT}))
+# media files should only be served from the django server in DEBUG mode
+# todo fix
+urlpatterns += patterns('',
+                        (r'^media/(?P<path>.*)$', 'django.views.static.serve', {
+                            'document_root': settings.MEDIA_ROOT}))
