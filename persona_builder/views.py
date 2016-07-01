@@ -192,6 +192,11 @@ class PersonaListView(ListView):
     template_name = 'persona_builder/persona/list.html'
     context_object_name = 'personas'
 
+    def get_context_data(self, **kwargs):
+        ctx = super(PersonaListView, self).get_context_data(**kwargs)
+        ctx['q'] = self.request.GET.get('q', '')
+        return ctx
+
     def get_queryset(self):
         qs = super(PersonaListView, self).get_queryset()
 
@@ -201,6 +206,11 @@ class PersonaListView(ListView):
             qs = qs.filter(project_id=self.request.session['project_id'])
         else:
             qs = qs.filter(is_ready=True).filter(owner=self.request.session['username'])
+
+        # possible query
+        q = self.request.GET.get('q')
+        if q:
+            qs = qs.filter(Q(name__icontains=q) | Q(description__icontains=q))
 
         return qs.exclude(owner='SYSTEM')
 

@@ -6,15 +6,24 @@
 {% block content %}
     <h1>{{ request|list_page_title }}</h1>
 
-    <div class="row">
-        {% include "persona_builder/persona/create-teaser.html" %}
-        {% include "persona_builder/persona/add-from-pool.html" %}
+    {% if q %}
+        <h2 class="clearfix">
+            Search results for "{{ q }}":
+            <a href="/persona-builder/personas/" class="btn btn-plain pull-right">Clear search</a>
+        </h2>
+    {% endif %}
 
+    <div class="row">
         {% for persona in personas %}
             {% with more_link=True %}
                 {% include "persona_builder/persona/teaser.html" %}
             {% endwith %}
         {% endfor %}
+    </div>
+
+    <div class="row" style="margin-top: 4em;">
+        {% include "persona_builder/persona/create-teaser.html" %}
+        {% include "persona_builder/persona/add-from-pool.html" %}
 
         <div id="persona-pool-chooser" class="modal fade" role="dialog">
           <div class="modal-dialog">
