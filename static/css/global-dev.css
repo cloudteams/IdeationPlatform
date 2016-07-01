@@ -6293,6 +6293,7 @@ section.public-page {
   padding-top: 30px;
   padding-bottom: 30px;
   background: #411f48;
+  min-height: calc(100vh - 520px);
   }
   section.public-page header.main-header {
     padding-top: 30px;
