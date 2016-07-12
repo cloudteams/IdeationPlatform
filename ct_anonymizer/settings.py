@@ -137,4 +137,4 @@ MIN_USERS_IN_PERSONA = 3
 
 # Team Platform API credentials
 USER_PASSWD = 'cloudteams_api:cloudteams1!'
-SERVER_URL = 'https://teams-cloudteams.fit.fraunhofer.de/bscw/bscw.cgi'
+SERVER_URL = 'https://teams.cloudteams.eu/bscw/bscw.cgi'
