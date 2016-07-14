@@ -3,7 +3,7 @@ from httplib import BadStatusLine
 import datetime
 import simplejson as json
 import uuid
-from ct_anonymizer.settings import PRODUCTION
+from ct_anonymizer.settings import PRODUCTION, MIN_USERS_IN_PERSONA
 from django.db import models
 from django.db import transaction
 
@@ -46,6 +46,11 @@ class Persona(models.Model):
     def update_users(self, user_manager):
         t = datetime.datetime.now()
         new_users = user_manager.filter(self.query, true_id=True)
+
+        # check if minimum users requirement is validated
+        if len(new_users) < MIN_USERS_IN_PERSONA:
+            return False
+
         t2 = datetime.datetime.now(); print 'Filtering users: ' + str(t2 - t); t = t2
 
         # get all existing users in the persona
@@ -65,9 +70,12 @@ class Persona(models.Model):
 
                 try:
                     pu = old_users[str(uid)]
-                    pu.info = json.dumps(user_manager.combine(json.loads(pu.info), u))
+                    info_obj = user_manager.combine(json.loads(pu.info), u)
+                    del info_obj['__id__']
+                    pu.info = json.dumps(info_obj)
                     pu.save()
                 except KeyError:
+                    del u['__id__']
                     PersonaUsers.objects.create(persona=self, user_id=uid, info=json.dumps(u))
 
             # delete users removed from the persona
@@ -78,6 +86,8 @@ class Persona(models.Model):
         # update overview values
         self.update_overview_values(new_users)
         t2 = datetime.datetime.now(); print 'Updating overview values: ' + str(t2 - t); t = t2
+
+        return True
 
     def get_overview_values(self):
         return json.loads(self.overview_prop_values)

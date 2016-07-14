@@ -117,16 +117,19 @@ def edit_persona_properties(request, pk):
                 persona.query = form.cleaned_data['query']
 
             # generate users according to query
-            persona.update_users(user_manager)
+            if persona.update_users(user_manager):
 
-            # save changes & show full persona view
-            persona.is_ready = True
-            persona.save()
+                # save changes & show full persona view
+                persona.is_ready = True
+                persona.save()
 
-            # send info to customer platform
-            return redirect('/persona-builder/propagate/?send_persona=%d&next=absolute' % persona.pk)
-        else:
-            status = 400
+                # send info to customer platform
+                return redirect('/persona-builder/propagate/?send_persona=%d&next=absolute' % persona.pk)
+            else:
+                # not enough users
+                form.add_error(None, 'Use less strict filters')
+
+        status = 400
 
     params = {
         'persona': persona,

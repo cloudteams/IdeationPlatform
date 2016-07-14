@@ -51,8 +51,6 @@ class PersonaPropertiesForm(forms.Form):
                 q = self.cleaned_data['query']
             else:
                 q = ''
-            if self.user_manager.count(q) < MIN_USERS_IN_PERSONA:
-                self.add_error(None, 'Use less strict filters')
         except Exception as e:
             self.add_error('query', str(e))
 

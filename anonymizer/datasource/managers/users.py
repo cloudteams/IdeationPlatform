@@ -87,4 +87,4 @@ class UserManager:
 
             return u
         else:
-            raise UserManagerException('Combine different physical user accounts is not allowed')
+            return new_user

@@ -609,12 +609,22 @@ class PropertyManager:
 
     def all(self, true_id=False, start=None, end=None):
         # construct query
+        t = datetime.now()
         query = self.query() + self.group_by() + self.order_by() + self.paginate(start, end)
+        t2 = datetime.now(); print 'Create SQL: ' + str(t2 - t); t = t2
 
         # execute query & return results
-        return [self.info(row, true_id) for row in self.reduce(self.user_pk.connection.execute(query).fetchall())]
+        qs = self.user_pk.connection.execute(query).fetchall()
+        t2 = datetime.now(); print 'Running SQL: ' + str(t2 - t); t = t2
+        rqs = self.reduce(qs)
+        t2 = datetime.now(); print 'Reducing: ' + str(t2 - t); t = t2
+        res = [self.info(row, true_id) for row in rqs]
+        t2 = datetime.now(); print 'Anonymizing: ' + str(t2 - t); t = t2
+
+        return res
 
     def filter(self, filters, true_id=False, start=None, end=None):
+        t = datetime.now()
         if not filters:
             return self.all(true_id=true_id, start=start, end=end)
 
@@ -679,10 +689,19 @@ class PropertyManager:
         query = query.replace('"', '\'')
 
         # execute query & get results
-        result = [self.info(row, true_id) for row in self.reduce(self.user_pk.connection.execute(query).fetchall())]
+        t2 = datetime.now(); print 'Create SQL: ' + str(t2 - t); t = t2
+        qs = self.user_pk.connection.execute(query).fetchall()
+        t2 = datetime.now(); print 'Running SQL: ' + str(t2 - t); t = t2
+        rqs = self.reduce(qs)
+        t2 = datetime.now(); print 'Reducing: ' + str(t2 - t); t = t2
+        result = [self.info(row, true_id) for row in rqs]
+        t2 = datetime.now(); print 'Anonymizing: ' + str(t2 - t); t = t2
 
         # filter by generated fields & return result
-        return self.filter_by_generated(result, filters_generated)
+        res = self.filter_by_generated(result, filters_generated)
+        t2 = datetime.now(); print 'Filtering: ' + str(t2 - t); t = t2
+
+        return res
 
     def get(self, pk):
         where_clause = 'WHERE {0}={1}'.format(self.user_pk.full(), pk)
