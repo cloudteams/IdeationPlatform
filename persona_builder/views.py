@@ -1,5 +1,6 @@
 import uuid
 
+import datetime
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponse
@@ -145,13 +146,17 @@ def update_users(request, pk):
     :return: Refreshes which of the CloudTeams users belong to this persona.
     Maintains anonymized info for users that don't change
     """
+    t = datetime.datetime.now()
     persona = get_object_or_404(Persona, pk=pk)
+    t2 = datetime.datetime.now(); print 'Getting persona: ' + str(t2 - t); t = t2
     config = get_active_configuration()
     user_manager = config.get_user_manager(token=persona.uuid)
 
     if request.method == 'POST':
         persona.update_users(user_manager)
+        t = datetime.datetime.now()
         persona.save()
+        t2 = datetime.datetime.now(); print 'Saving: ' + str(t2 - t); t = t2
         return redirect(persona.get_absolute_url())
     else:
         return HttpResponse('%s method not allowed' % request.method, status=400)
@@ -176,7 +181,7 @@ class PersonaDetailView(DetailView):
         user_manager = config.get_user_manager(token=context['persona'].uuid)
 
         context['properties'] = user_manager.list_filters()
-        context['users'] = json.loads(kwargs['object'].users)
+        context['users'] = PersonaUsers.objects.filter(persona=context['persona'])
         context['not_container'] = True
 
         return context

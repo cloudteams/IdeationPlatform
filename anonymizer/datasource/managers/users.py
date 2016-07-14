@@ -61,40 +61,30 @@ class UserManager:
     def list_properties(self):
         return self.pm.list_properties()
 
-    # combine two lists of users, an old and a new version
-    # for users in both lists, keep generated information from the old (original) list
-    def combine(self, old_list, new_list):
+    # combine two users, an old and a new version
+    # keep generated information from the old (original) user
+    def combine(self, old_user, new_user):
         pk = self.pm.get_primary_key()
-        result = []
 
-        for user in new_list:
-            found = False
+        # try to find user in the old list
+        if old_user[pk.name] == new_user[pk.name]:
+            u = new_user.copy()
+            for prop in self.pm.properties:
+                if prop.is_generated():
+                    # check if this property depends on any other that has changes
+                    dependencies = self.pm.get_dependencies(prop)
+                    dirty = False
+                    for dependency in dependencies:
+                        if (dependency.name not in old_user) or (dependency.name not in u):
+                            dirty = True
+                            break
+                        elif u[dependency.name] != old_user[dependency.name]:
+                            dirty = True
+                            break
 
-            # try to find user in the old list
-            for old_user in old_list:
-                if old_user[pk.name] == user[pk.name]:
-                    found = True
-                    u = user.copy()
-                    for prop in self.pm.properties:
-                        if prop.is_generated():
-                            # check if this property depends on any other that has changes
-                            dependencies = self.pm.get_dependencies(prop)
-                            dirty = False
-                            for dependency in dependencies:
-                                if (dependency.name not in old_user) or (dependency.name not in u):
-                                    dirty = True
-                                    break
-                                elif u[dependency.name] != old_user[dependency.name]:
-                                    dirty = True
-                                    break
+                    if not dirty:
+                        u[prop.name] = old_user[prop.name]
 
-                            if not dirty:
-                                u[prop.name] = old_user[prop.name]
-
-                    result.append(u)
-                    break
-
-            if not found:
-                result.append(user)
-
-        return result
+            return u
+        else:
+            raise UserManagerException('Combine different physical user accounts is not allowed')

@@ -36,7 +36,7 @@ def get_persona_data(request, persona):
         'name': persona.name,
         'description': persona.description,
         'query': persona.query,
-        'user': json.loads(persona.users),
+        #'user': json.loads(persona.users),
         'is_public': persona.is_public,
     }
 
@@ -227,40 +227,8 @@ def find_user(request):
     if not res:
         res = PersonaUsers.objects.filter(user_id=uid, persona__project_id=pid, persona__owner='SYSTEM')
 
-    p = res[0].persona
+    pu = res[0]
+    # no need to load/parse json for better performance
+    user_info = pu.info[:-1] + ', "persona": %d}' % pu.persona_id
 
-    """
-    # removed due to bad performance
-    users = json.loads(p.users)
-    for user in users:
-        if user['__id__'] == uid:
-            result = user
-            result.pop('__id__')
-            result['persona'] = p.pk
-    """
-
-    id_str = '"__id__": %d,' % uid
-    uid_pos = p.users.find(id_str)
-    # find where user record starts/ends
-    start = None
-    end = None
-
-    c = uid_pos - 1
-    while True:
-        if p.users[c] == '{':
-            start = c
-            break
-        else:
-            c -= 1
-
-    c = uid_pos + len(id_str)
-    while True:
-        if p.users[c] == '}':
-            end = c
-            break
-        else:
-            c += 1
-
-    if start and end:
-        result = p.users[start:end] + ', "persona": %d}' % p.pk
-        return HttpResponse(result, content_type='application/json')
+    return HttpResponse(user_info, content_type='application/json')

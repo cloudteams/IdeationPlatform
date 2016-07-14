@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+import json
+
 from persona_builder.models import PersonaUsers
 
 __author__ = 'dimitris'
@@ -61,14 +64,14 @@ def list_page_title(request):
         cid = request.session['campaign_id']
         for campaign in request.session['campaigns']:
             if campaign['cid'] == cid:
-                return 'Personas in %s' % campaign['title']
+                return u'Personas in «%s» campaign' % campaign['title']
 
         return 'Personas in campaign with id #%s' % str(cid)
     elif 'project_id' in request.session:
         pid = request.session['project_id']
         for project in request.session['projects']:
             if project['pid'] == pid:
-                return 'Personas in %s' % project['title']
+                return u'Personas in «%s» project' % project['title']
 
         return 'Personas in project with id #%s' % str(pid)
     else:
@@ -83,3 +86,8 @@ def count_users(persona):
 @register.filter
 def no_underscore(text):
     return text.replace('_', ' ')
+
+
+@register.filter
+def get_user_info(persona_user):
+    return json.loads(persona_user.info)

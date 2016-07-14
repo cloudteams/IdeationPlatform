@@ -1,5 +1,6 @@
 from httplib import BadStatusLine
 
+import datetime
 import simplejson as json
 import uuid
 from ct_anonymizer.settings import PRODUCTION
@@ -25,7 +26,6 @@ class Persona(models.Model):
     description = models.TextField(null=True, blank=True, default='')
     avatar = models.ImageField(upload_to='persona-avatars', null=True, blank=True)
     query = models.TextField(editable=False)
-    users = models.TextField(editable=False, default='[]')
     overview_prop_values = models.TextField(editable=False, default='[]')
     is_ready = models.BooleanField(default=False, editable=False)
     is_public = models.BooleanField(default=False)
@@ -44,31 +44,56 @@ class Persona(models.Model):
         return self.get_absolute_url() + 'edit-info/'
 
     def update_users(self, user_manager):
-        old_users = json.loads(self.users)
+        t = datetime.datetime.now()
         new_users = user_manager.filter(self.query, true_id=True)
+        t2 = datetime.datetime.now(); print 'Filtering users: ' + str(t2 - t); t = t2
+
+        # get all existing users in the persona
+        _all = PersonaUsers.objects.filter(persona=self)
+        old_users = {}
+        for pu in _all:
+            old_users[str(pu.user_id)] = pu
+        del _all
 
         # combine the two sets
-        users = user_manager.combine(old_users, new_users)
-        self.users = json.dumps(users)
-
-        # update persona user entries
+        user_ids = []
         with transaction.atomic():
-            PersonaUsers.objects.filter(persona=self).delete()
-            for user in users:
-                PersonaUsers.objects.create(persona=self, user_id=user['__id__'])
+            # get or create new/remaining records
+            for u in new_users:
+                uid = u['__id__']
+                user_ids.append(uid)
+
+                try:
+                    pu = old_users[str(uid)]
+                    pu.info = json.dumps(user_manager.combine(json.loads(pu.info), u))
+                    pu.save()
+                except KeyError:
+                    PersonaUsers.objects.create(persona=self, user_id=uid, info=json.dumps(u))
+
+            # delete users removed from the persona
+            PersonaUsers.objects.filter(persona=self).exclude(user_id__in=user_ids).delete()
+
+        t2 = datetime.datetime.now(); print 'Combining users: ' + str(t2 - t); t = t2
 
         # update overview values
-        self.update_overview_values(users)
+        self.update_overview_values(new_users)
+        t2 = datetime.datetime.now(); print 'Updating overview values: ' + str(t2 - t); t = t2
 
     def get_overview_values(self):
         return json.loads(self.overview_prop_values)
 
     def update_overview_values(self, users=None, commit=False):
-        if not users:
-            users = json.loads(self.users)
+        if users:
+            qs = users
+        else:
+            qs = PersonaUsers.objects.filter(persona=self)
 
         overview_prop_values = {}
-        for u in users:
+        for u in qs:
+            # get user info
+            if type(u) == PersonaUsers:
+                u = json.loads(u.info)
+
             for prop in u.keys():
                 # don't include properties bound by the query itself
                 if prop in OVERVIEW_PROPERTIES and (prop + '=') not in self.query:
@@ -135,3 +160,4 @@ class PersonaUsers(models.Model):
     """
     persona = models.ForeignKey(Persona, db_index=True)
     user_id = models.IntegerField(db_index=True)
+    info = models.TextField()
