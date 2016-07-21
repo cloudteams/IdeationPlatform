@@ -9,3 +9,4 @@ psycopg2
 django-endless-pagination
 requests_oauthlib
 markdown
+python-cjson==1.1.0

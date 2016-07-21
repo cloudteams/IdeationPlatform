@@ -11,3 +11,16 @@
     border: 0;
     color: #7d3c8c;
 }
+
+input, select {
+    color: #333;
+}
+
+select option {
+    color: #777;
+}
+
+.switch-button-label.on,
+.switch-button-label.off {
+    color: #333;
+}

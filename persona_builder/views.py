@@ -124,7 +124,8 @@ def edit_persona_properties(request, pk):
                 persona.save()
 
                 # send info to customer platform
-                return redirect('/persona-builder/propagate/?send_persona=%d&next=absolute' % persona.pk)
+                # return redirect('/persona-builder/propagate/?send_persona=%d&next=absolute' % persona.pk)
+                return redirect(persona.get_absolute_url())
             else:
                 # not enough users
                 form.add_error(None, 'Use less strict filters')

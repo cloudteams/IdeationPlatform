@@ -1,6 +1,8 @@
 from httplib import BadStatusLine
 
 import datetime
+
+import cjson
 import simplejson as json
 import uuid
 from ct_anonymizer.settings import PRODUCTION, MIN_USERS_IN_PERSONA
@@ -51,8 +53,9 @@ class Persona(models.Model):
         if len(new_users) < MIN_USERS_IN_PERSONA:
             return False
 
-        t2 = datetime.datetime.now(); print 'Filtering users: ' + str(t2 - t); t = t2
+        t = datetime.datetime.now()
 
+        """
         # get all existing users in the persona
         _all = PersonaUsers.objects.filter(persona=self)
         old_users = {}
@@ -70,16 +73,22 @@ class Persona(models.Model):
 
                 try:
                     pu = old_users[str(uid)]
-                    info_obj = user_manager.combine(json.loads(pu.info), u)
+                    info_obj = user_manager.combine(cjson.decode(pu.info), u)
                     del info_obj['__id__']
-                    pu.info = json.dumps(info_obj)
+                    pu.info = cjson.encode(info_obj)
                     pu.save()
                 except KeyError:
                     del u['__id__']
-                    PersonaUsers.objects.create(persona=self, user_id=uid, info=json.dumps(u))
+                    PersonaUsers.objects.create(persona=self, user_id=uid, info=cjson.encode(u))
 
             # delete users removed from the persona
             PersonaUsers.objects.filter(persona=self).exclude(user_id__in=user_ids).delete()
+
+        """
+        with transaction.atomic():
+            PersonaUsers.objects.filter(persona=self).delete()
+            for u in new_users:
+                PersonaUsers.objects.create(persona=self, user_id=u['__id__'], info=cjson.encode(u))
 
         t2 = datetime.datetime.now(); print 'Combining users: ' + str(t2 - t); t = t2
 

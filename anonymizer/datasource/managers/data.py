@@ -58,17 +58,68 @@ class InvalidSegmentOperation(Exception):
     pass
 
 
+class TableCache:
+    """
+    Caches values for a specific property
+    Should be applied on a rarely-changing, small table
+    """
+    def __init__(self, prop):
+        # save the corresponding property
+        self.prop = prop
+
+        # get a DB connection
+        conn_name = prop.source.split('@')[1]
+        connection = prop.connection_manager.get(conn_name)
+
+        # fetch table data
+        spl = self.prop.cache_match.split('@')[0].split('.')
+        self._to_table = spl[0]
+        self._to_table_column = spl[1]
+        self._to_table_pk = connection.primary_key_of(self._to_table).split('@')[0]
+
+        # construct cache query
+        cache_query = "SELECT %s, %s FROM %s" % (self._to_table_pk, self._to_table_column, self._to_table)
+
+        # fetch data
+        _table_data = connection.execute(cache_query).fetchall()
+
+        # create hash with mapping between primary key and value
+        keys = {row[0] for row in _table_data}
+        self._table_map = dict.fromkeys(keys)
+        for row in _table_data:
+            self._table_map[row[0]] = row[1]
+
+    def value_of(self, key):
+        if key is None:
+            return None
+        elif type(key) == list:
+            return [self._table_map[k] if k is not None else None for k in key]
+        else:
+            return self._table_map[key]
+
+    def get_options(self):
+        return [(key, self._table_map[key]) for key in self._table_map.keys()]
+
+
 class Property:
     """
     A single property
     """
 
     def __init__(self, connection_manager, source, name=None, tp=None, aggregate=None, label=None,
-                 filter_by=True, is_pk=False, options=None, options_auto=False):
+                 filter_by=True, is_pk=False, cache_match=None, options=None, options_auto=False):
         self.connection_manager = connection_manager
         self.source = source
         self.table = source.split('@')[0].split('.')[0]
         self.column = source.split('@')[0].split('.')[1]
+
+        self.cache_match = cache_match
+        if self.column == "activity_name":
+            self.cache_match = "activitytracker_activity.activity_name@" + source.split('@')[1]
+            self.source = "activitytracker_performs.activity_key@" + source.split('@')[1]
+            self.table = self.source.split('@')[0].split('.')[0]
+            self.column = self.source.split('@')[0].split('.')[1]
+
         self.aggregate = aggregate
         self.filter_by = filter_by
         self.is_pk = is_pk
@@ -129,6 +180,10 @@ class Property:
 
                 self.tp = fn_type(self.fn_args[:])
 
+        if self.cache_match:
+            # fetch table
+            self.cached_table = TableCache(self)
+
     @staticmethod
     def humanize(string):
         result = string.replace('_', ' ')
@@ -151,6 +206,9 @@ class Property:
                 else:
                     self.options = []
             else:
+                if self.cache_match:
+                    return self.cached_table.get_options()
+
                 query = "SELECT DISTINCT {0} FROM {1}".format(self.column, self.table)
                 rows = self.connection.execute(query)
                 self.options = []
@@ -450,6 +508,9 @@ class PropertyManager:
                     result[prop.name] = hashlib.sha1(str(self.token) + '###' + str(row[idx])).hexdigest()
                     if true_id:
                         result['__id__'] = row[idx]
+                elif prop.cache_match:
+                    # cached
+                    result[prop.name] = prop.cached_table.value_of(row[idx])
                 else:
                     # default property
                     result[prop.name] = row[idx]
@@ -547,7 +608,8 @@ class PropertyManager:
         """
         # initially only the users table is ok because it's contained in the FROM clause
         current_tables = [self.user_pk.table]
-        target_tables = list(set([prop.table for prop in self.properties if not prop.is_generated()]))
+        target_tables = list(set([prop.table for prop in self.properties
+                                  if not prop.is_generated()]))
         current_keys = []
 
         while target_tables:  # while there are tables that are not covered by any join
@@ -611,6 +673,7 @@ class PropertyManager:
         # construct query
         t = datetime.now()
         query = self.query() + self.group_by() + self.order_by() + self.paginate(start, end)
+        print query
         t2 = datetime.now(); print 'Create SQL: ' + str(t2 - t); t = t2
 
         # execute query & return results
@@ -687,6 +750,7 @@ class PropertyManager:
 
         # postgres fix
         query = query.replace('"', '\'')
+        print query
 
         # execute query & get results
         t2 = datetime.now(); print 'Create SQL: ' + str(t2 - t); t = t2
