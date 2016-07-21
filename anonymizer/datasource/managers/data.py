@@ -107,9 +107,10 @@ class Property:
     A single property
     """
 
-    def __init__(self, connection_manager, source, name=None, tp=None, aggregate=None, label=None,
+    def __init__(self, property_manager, source, name=None, tp=None, aggregate=None, label=None,
                  filter_by=True, is_pk=False, cache_match=None, options=None, options_auto=False):
-        self.connection_manager = connection_manager
+        self.property_manager = property_manager
+        self.connection_manager = property_manager.connection_manager
         self.source = source
         self.table = source.split('@')[0].split('.')[0]
         self.column = source.split('@')[0].split('.')[1]
@@ -150,7 +151,7 @@ class Property:
         if not self.is_generated():
             # find responsible db connection
             conn_name = source.split('@')[1]
-            self.connection = connection_manager.get(conn_name)
+            self.connection = self.connection_manager.get(conn_name)
         else:
             # load provider class
             cls_name = 'anonymizer.datasource.providers.' + self.source.split('.')[0][1:]
@@ -234,6 +235,8 @@ class Property:
                 result = self.aggregate + '(%s)' % result
             else:  # @param style
                 result = self.aggregate.replace(param_str, result)
+        elif self.table != self.property_manager.user_pk.table:
+            result = 'array_agg(%s)' % result  # POSTGRES-only!! TODO investigate
 
         return result
 
@@ -338,7 +341,7 @@ class PropertyManager:
     def __init__(self, connection_manager, configuration, token=None):
         self.connection_manager = connection_manager
         self.configuration = configuration
-        self.user_pk = Property(self.connection_manager, self.configuration.data['sites'][0]['user_pk'], is_pk=True)
+        self.user_pk = Property(self, self.configuration.data['sites'][0]['user_pk'], is_pk=True)
 
         self.properties = [self.user_pk]
 
@@ -368,20 +371,11 @@ class PropertyManager:
             else:
                 options_auto = False
 
-            prop = Property(self.connection_manager, property_info['source'], name=property_info['name'],
+            prop = Property(self, property_info['source'], name=property_info['name'],
                             tp=property_info['type'], aggregate=aggregate, label=label, filter_by=expose,
                             options=options, options_auto=options_auto)
 
             self.properties.append(prop)
-
-        # group by tables
-        self.group_tables = []
-        for p in self.properties:
-            if not p.aggregate and not p.is_generated():
-                self.group_tables.append(p.table)
-
-        # unique tables
-        self.group_tables = list(set(self.group_tables))
 
         # generate manager token
         if not token:
@@ -441,60 +435,8 @@ class PropertyManager:
         else:
             return []
 
-    def reduce(self, rows):
-        """
-        Expects the first column to be the user id and the result to be sorted
-        """
-        result_rows = []
-
-        # detect which properties are NOT grouped by
-        prop_idx = 0
-        non_grouped = []
-        for prop in self.properties:
-            if not prop.is_generated():
-                if (not prop.aggregate) and (prop.table != self.user_pk.table):
-                    non_grouped.append(prop_idx)
-                prop_idx += 1
-
-        # find common users -- users should be sorted
-        row_idx = -1
-        idx = 0
-        while idx < len(rows):
-            if row_idx < 0 or rows[idx][0] != rows[row_idx][0]:  # new user
-                row_idx = idx
-
-                result_rows.append(list(rows[idx]))
-                for prop_idx in non_grouped:
-                    result_rows[-1][prop_idx] = [rows[idx][prop_idx]]
-            else:  # same user
-                for prop_idx in non_grouped:
-                    result_rows[-1][prop_idx].append(rows[idx][prop_idx])
-
-            # move to next row
-            idx += 1
-
-        return result_rows
-
     @staticmethod
     def apply(fn, fn_args):
-        # TODO investigate differences between plain & compound evaluation
-        """
-        compound = False
-        arg_lists = []
-        for fn_arg in fn_args:
-            if type(fn_arg) == list:
-                n_of_recs = len(fn_args[0])
-                for fn_arg in fn_args[1:]:
-                    if type(fn_arg) == list:
-                        if len(fn_arg) != n_of_recs:
-                            raise ValueError('Can not apply function %s to variable length list %s' % (fn, fn_args))
-
-            
-                for i in range(0, n_of_recs):
-                    arg_lists.append([fn_arg[i] for fn_arg in fn_args])
-                print arg_lists
-                return [fn(arg_list) for arg_list in arg_lists]
-        """
         return fn(fn_args)
 
     def info(self, row, true_id=False):
@@ -663,9 +605,7 @@ class PropertyManager:
         return self._query
 
     def group_by(self):
-        result = ' GROUP BY '
-        result += ','.join([self.user_pk.connection.primary_key_of(table).split('@')[0] for table in self.group_tables])
-        return result
+        return ' GROUP BY %s' % self.user_pk.full()
 
     def order_by(self):
         return ' ORDER BY ' + self.user_pk.column
@@ -680,10 +620,8 @@ class PropertyManager:
         # execute query & return results
         qs = self.user_pk.connection.execute(query).fetchall()
         t2 = datetime.now(); print 'Running SQL: ' + str(t2 - t); t = t2
-        rqs = self.reduce(qs)
-        t2 = datetime.now(); print 'Reducing: ' + str(t2 - t); t = t2
         random.seed(self.token)  # use the token as a seed to get the same results for the same token
-        res = [self.info(row, true_id) for row in rqs]
+        res = [self.info(row, true_id) for row in qs]
         t2 = datetime.now(); print 'Anonymizing: ' + str(t2 - t); t = t2
 
         return res
@@ -758,10 +696,8 @@ class PropertyManager:
         t2 = datetime.now(); print 'Create SQL: ' + str(t2 - t); t = t2
         qs = self.user_pk.connection.execute(query).fetchall()
         t2 = datetime.now(); print 'Running SQL: ' + str(t2 - t); t = t2
-        rqs = self.reduce(qs)
-        t2 = datetime.now(); print 'Reducing: ' + str(t2 - t); t = t2
         random.seed(self.token)  # use the token as a seed to get the same results for the same token
-        result = [self.info(row, true_id) for row in rqs]
+        result = [self.info(row, true_id) for row in qs]
         t2 = datetime.now(); print 'Anonymizing: ' + str(t2 - t); t = t2
 
         # filter by generated fields & return result
