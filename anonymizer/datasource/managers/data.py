@@ -1,3 +1,4 @@
+import random
 from datetime import datetime
 
 __author__ = 'dipap'
@@ -681,6 +682,7 @@ class PropertyManager:
         t2 = datetime.now(); print 'Running SQL: ' + str(t2 - t); t = t2
         rqs = self.reduce(qs)
         t2 = datetime.now(); print 'Reducing: ' + str(t2 - t); t = t2
+        random.seed(self.token)  # use the token as a seed to get the same results for the same token
         res = [self.info(row, true_id) for row in rqs]
         t2 = datetime.now(); print 'Anonymizing: ' + str(t2 - t); t = t2
 
@@ -758,6 +760,7 @@ class PropertyManager:
         t2 = datetime.now(); print 'Running SQL: ' + str(t2 - t); t = t2
         rqs = self.reduce(qs)
         t2 = datetime.now(); print 'Reducing: ' + str(t2 - t); t = t2
+        random.seed(self.token)  # use the token as a seed to get the same results for the same token
         result = [self.info(row, true_id) for row in rqs]
         t2 = datetime.now(); print 'Anonymizing: ' + str(t2 - t); t = t2
 

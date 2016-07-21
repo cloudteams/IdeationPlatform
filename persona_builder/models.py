@@ -55,36 +55,6 @@ class Persona(models.Model):
 
         t = datetime.datetime.now()
 
-        """
-        # get all existing users in the persona
-        _all = PersonaUsers.objects.filter(persona=self)
-        old_users = {}
-        for pu in _all:
-            old_users[str(pu.user_id)] = pu
-        del _all
-
-        # combine the two sets
-        user_ids = []
-        with transaction.atomic():
-            # get or create new/remaining records
-            for u in new_users:
-                uid = u['__id__']
-                user_ids.append(uid)
-
-                try:
-                    pu = old_users[str(uid)]
-                    info_obj = user_manager.combine(cjson.decode(pu.info), u)
-                    del info_obj['__id__']
-                    pu.info = cjson.encode(info_obj)
-                    pu.save()
-                except KeyError:
-                    del u['__id__']
-                    PersonaUsers.objects.create(persona=self, user_id=uid, info=cjson.encode(u))
-
-            # delete users removed from the persona
-            PersonaUsers.objects.filter(persona=self).exclude(user_id__in=user_ids).delete()
-
-        """
         with transaction.atomic():
             PersonaUsers.objects.filter(persona=self).delete()
             for u in new_users:
