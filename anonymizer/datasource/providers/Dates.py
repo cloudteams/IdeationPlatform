@@ -79,3 +79,43 @@ def part_of_day(*args):
             result.append(r)
 
     return result
+
+
+def part_of_day_from_hour(*args):
+    if len(*args) != 1:
+        raise ValueError('Exactly one argument (hour) was expected, %d were found' % len(*args))
+
+    t = zip(*args)[0][0]
+    if t is None:
+        return None
+
+    if type(t) != list:
+        ts = [t]
+        result = None
+    else:
+        ts = t
+        result = []
+
+    for tv in ts:
+        if tv is None:
+            r = None
+        else:
+            try:
+                t = int(tv)
+            except ValueError:
+                raise ValueError('%s can not be parsed into a 24-based hour value' % t)
+
+            pos = len(DAY_PERIODS) - 1
+            for idx in range(len(DAY_PERIODS) - 1):
+                if DAY_PERIODS[idx + 1]['hour'] > t:
+                    pos = idx
+                    break
+
+            r = DAY_PERIODS[pos]['name']
+
+        if result is None:
+            return r
+
+        result.append(r)
+
+    return result

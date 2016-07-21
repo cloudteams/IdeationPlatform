@@ -235,7 +235,8 @@ class Property:
                 result = self.aggregate + '(%s)' % result
             else:  # @param style
                 result = self.aggregate.replace(param_str, result)
-        elif self.table != self.property_manager.user_pk.table:
+
+        if self.table != self.property_manager.user_pk.table:
             result = 'array_agg(%s)' % result  # POSTGRES-only!! TODO investigate
 
         return result
@@ -435,10 +436,6 @@ class PropertyManager:
         else:
             return []
 
-    @staticmethod
-    def apply(fn, fn_args):
-        return fn(fn_args)
-
     def info(self, row, true_id=False):
         idx = 0
         result = {}
@@ -477,7 +474,7 @@ class PropertyManager:
 
                 # apply function and save the result
                 # must apply multiple times for list arguments
-                result[prop.name] = self.apply(prop.fn, fn_args)
+                result[prop.name] = prop.fn(fn_args)
 
         # removed non-exposed properties
         final_result = {}

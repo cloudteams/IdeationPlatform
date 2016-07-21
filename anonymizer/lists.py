@@ -16,6 +16,7 @@ AGGREGATE_LIST = [
     ('count(DISTINCT @param)', 'Count'),
     ('GROUP_CONCAT', 'Concatenate'),
 
+    ('to_char(@param, \'HH24\')', 'Hour from a datetime')
     # TODO: expand aggregate list
 ]
 
@@ -97,6 +98,14 @@ PROVIDER_PLUGINS = [
         'label': 'Find the part of the day based on a timestamp',
         'args': [
             ('timestamp', 'Timestamp'),
+        ],
+        'type': 'VARCHAR(255)',
+    },
+    {
+        'source': '^Dates.part_of_day_from_hour',
+        'label': 'Find the part of the day based on the hour',
+        'args': [
+            ('hour', '24-hour based value'),
         ],
         'type': 'VARCHAR(255)',
     },
