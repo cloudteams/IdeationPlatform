@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import CreateView, DetailView, ListView, DeleteView, UpdateView
 from anonymizer.models import ConnectionConfiguration
+from ct_anonymizer.settings import DEBUG
 from pb_oauth.xmlrpc_oauth import get_srv_instance
 from persona_builder.forms import PersonaForm, PersonaPropertiesForm
 from persona_builder.models import Persona, PersonaUsers
@@ -117,14 +118,17 @@ def edit_persona_properties(request, pk):
                 persona.query = form.cleaned_data['query']
 
             # generate users according to query
-            if persona.update_users(user_manager):
+            if persona.update_users(user_manager, async=True):
 
                 # save changes & show full persona view
                 persona.is_ready = True
                 persona.save()
 
                 # send info to customer platform
-                return redirect('/persona-builder/propagate/?send_persona=%d&next=absolute' % persona.pk)
+                if DEBUG:
+                    return redirect(persona.get_absolute_url())
+                else:
+                    return redirect('/persona-builder/propagate/?send_persona=%d&next=absolute' % persona.pk)
             else:
                 # not enough users
                 form.add_error(None, 'Use less strict filters')
@@ -156,7 +160,7 @@ def update_users(request, pk):
     user_manager = config.get_user_manager(token=persona.uuid)
 
     if request.method == 'POST':
-        persona.update_users(user_manager)
+        persona.update_users(user_manager, async=True)
         t = datetime.datetime.now()
         persona.save()
         t2 = datetime.datetime.now(); print 'Saving: ' + str(t2 - t); t = t2
@@ -190,6 +194,24 @@ class PersonaDetailView(DetailView):
         return context
 
 view_persona = PersonaDetailView.as_view()
+
+
+def get_persona_users(request, pk):
+    context = {
+        'persona': Persona.objects.get(pk=pk),
+    }
+
+    config = get_active_configuration()
+    user_manager = config.get_user_manager(token=context['persona'].uuid)
+
+    context['properties'] = user_manager.list_filters()
+    context['users'] = PersonaUsers.objects.filter(persona=context['persona'])
+    context['not_container'] = True
+
+    if not context['users'].exists():
+        return HttpResponse('')
+    else:
+        return render(request, 'persona_builder/persona/users.html', context)
 
 
 class PersonaListView(ListView):

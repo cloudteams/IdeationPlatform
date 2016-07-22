@@ -125,6 +125,7 @@ class Property:
         self.aggregate = aggregate
         self.filter_by = filter_by
         self.is_pk = is_pk
+        self._is_generated = self.source[0] in ['^']
 
         if options and options_auto:
             raise InvalidPropertyConfiguration('Both options and options_auto can\'t be enabled at the same time.')
@@ -225,7 +226,7 @@ class Property:
         return self.options
 
     def is_generated(self):
-        return self.source[0] in ['^']
+        return self._is_generated
 
     def full(self):
         result = self.table + '.' + self.column
@@ -378,6 +379,11 @@ class PropertyManager:
 
             self.properties.append(prop)
 
+        # keep hash of properties
+        self._property_hash = {}
+        for prop in self.properties:
+            self._property_hash[prop.name] = prop
+
         # generate manager token
         if not token:
             token = uuid.uuid4()
@@ -396,11 +402,7 @@ class PropertyManager:
         return None
 
     def get_property_by_name(self, name):
-        for prop in self.properties:
-            if prop.name == name:
-                return prop
-
-        return None
+        return self._property_hash[name]
 
     def list_filters(self, ignore_options=False):
         filters = []
@@ -445,9 +447,12 @@ class PropertyManager:
             if not prop.is_generated():
                 if prop.is_pk:
                     # primary key
-                    result[prop.name] = hashlib.sha1(str(self.token) + '###' + str(row[idx])).hexdigest()
                     if true_id:
                         result['__id__'] = row[idx]
+                        result[prop.name] = row[idx]
+                    else:
+                        result[prop.name] = hashlib.sha1(str(self.token) + '###' + str(row[idx])).hexdigest()
+
                 elif prop.cache_match:
                     # cached
                     result[prop.name] = prop.cached_table.value_of(row[idx])
@@ -477,16 +482,11 @@ class PropertyManager:
                 result[prop.name] = prop.fn(fn_args)
 
         # removed non-exposed properties
-        final_result = {}
-        for key in result:
-            if key == '__id__':
-                final_result[key] = result[key]
-            else:
-                prop = self.get_property_by_name(key)
-                if prop.filter_by:
-                    final_result[key] = result[prop.name]
+        for key in result.keys():
+            if key != '__id__' and not self.get_property_by_name(key).filter_by:
+                del result[key]
 
-        return final_result
+        return result
 
     def filter_by_generated(self, results, generated_filters):
         for g_filter in generated_filters:

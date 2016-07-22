@@ -5,6 +5,11 @@ import datetime
 import cjson
 import simplejson as json
 import uuid
+
+import sys
+
+import thread
+
 from ct_anonymizer.settings import PRODUCTION, MIN_USERS_IN_PERSONA
 from django.db import models
 from django.db import transaction
@@ -32,6 +37,7 @@ class Persona(models.Model):
     is_ready = models.BooleanField(default=False, editable=False)
     is_public = models.BooleanField(default=False)
     based_on = models.ForeignKey('self', blank=True, null=True, default=None)
+    is_processing = models.BooleanField(default=False)
 
     def get_avatar_url(self):
         return '/media/%s' % self.avatar
@@ -45,26 +51,32 @@ class Persona(models.Model):
     def get_edit_info_url(self):
         return self.get_absolute_url() + 'edit-info/'
 
-    def update_users(self, user_manager):
-        t = datetime.datetime.now()
+    def _do_update_users(self, new_users):
+        with transaction.atomic():
+            for u in new_users:
+                PersonaUsers.objects.create(persona=self, user_id=u['__id__'], info=cjson.encode(u))
+
+        print 'updated!'
+
+    def update_users(self, user_manager, async=False):
         new_users = user_manager.filter(self.query, true_id=True)
 
         # check if minimum users requirement is validated
         if len(new_users) < MIN_USERS_IN_PERSONA:
             return False
 
-        t = datetime.datetime.now()
-
-        with transaction.atomic():
-            PersonaUsers.objects.filter(persona=self).delete()
-            for u in new_users:
-                PersonaUsers.objects.create(persona=self, user_id=u['__id__'], info=cjson.encode(u))
-
-        t2 = datetime.datetime.now(); print 'Combining users: ' + str(t2 - t); t = t2
-
         # update overview values
         self.update_overview_values(new_users)
-        t2 = datetime.datetime.now(); print 'Updating overview values: ' + str(t2 - t); t = t2
+
+        # remove previous users
+        PersonaUsers.objects.filter(persona=self).delete()
+
+        # save persona users
+        if async:
+            # Persona.objects.filter(pk=self.pk).update(is_processing=True)
+            thread.start_new_thread(self._do_update_users, (new_users, ))
+        else:
+            self._do_update_users(new_users)
 
         return True
 

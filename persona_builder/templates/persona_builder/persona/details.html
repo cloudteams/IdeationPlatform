@@ -29,36 +29,14 @@
                     <input type="submit" class="btn btn-refresh" value="Refresh users" />
                 </form>
             </div>
-            {% paginate users %}
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            {% for property in properties %}
-                                <th>{{property.label}}</th>
-                            {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for pu in users %}
-                            {% with user=pu|get_user_info %}
-                                <tr>
-                                    {% for property in properties %}
-                                        {% if not property.is_pk %}
-                                            {% with p_key=property.name %}
-                                                {% with value=user|get_property:p_key %}
-                                                    <td>{{value|distinct|pretty_print|linebreaks}}</td>
-                                                {% endwith %}
-                                            {% endwith %}
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
-                            {% endwith %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            <div class="pagination">
-                {% show_pages %}
-            </div>
+
+            {% if not users %}
+                <div id="persona-processing">
+                    Fetching customers... <i class="fa fa-spin fa-spinner"></i>
+                </div>
+            {% else %}
+                {% include "persona_builder/persona/users.html" %}
+            {% endif %}
         </div>
     </section>
 {% endblock %}
@@ -69,4 +47,5 @@
     <script src="{% static "persona_builder/js/amcharts/themes/light.js" %}"></script>
 
     <script src="{% static "persona_builder/js/render_stats.js" %}"></script>
+    <script src="{% static "persona_builder/js/load-users.js" %}"></script>
 {% endblock %}
