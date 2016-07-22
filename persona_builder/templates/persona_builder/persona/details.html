@@ -22,14 +22,6 @@
 
             {% include "persona_builder/persona/stats.html" %}
 
-            <div class="clearfix">
-                <em>{{ persona|count_users }} users matching this profile:</em>
-                <form action="{{ persona.get_absolute_url }}update-users/" method="POST" class="pull-right">
-                    {% csrf_token %}
-                    <input type="submit" class="btn btn-refresh" value="Refresh users" />
-                </form>
-            </div>
-
             {% if not users %}
                 <div id="persona-processing">
                     Fetching customers... <i class="fa fa-spin fa-spinner"></i>

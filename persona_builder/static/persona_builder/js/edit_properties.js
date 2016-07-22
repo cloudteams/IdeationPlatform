@@ -128,7 +128,7 @@ $(function() {
     });
 
     $('form').submit(function() {
-        $('body').prepend('<div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">Matching customers... / This might take a few minutes</div></div>');
+        $('body').prepend('<div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">Matching customers... / This might take a few moments</div></div>');
         $('body').animate({ scrollTop: 0 }, 600);
     })
 });

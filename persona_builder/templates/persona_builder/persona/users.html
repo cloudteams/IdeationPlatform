@@ -1,6 +1,14 @@
             {% load endless %}
             {% load app_filters %}
 
+            <div class="clearfix">
+                <em>{{ persona|count_users }} users matching this profile:</em>
+                <form action="{{ persona.get_absolute_url }}update-users/" method="POST" class="pull-right">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-refresh" value="Refresh users" />
+                </form>
+            </div>
+
             {% paginate users %}
                 <table class="table table-striped">
                     <thead>

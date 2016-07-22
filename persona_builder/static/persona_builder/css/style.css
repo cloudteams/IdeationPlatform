@@ -256,7 +256,7 @@ article.campaign {
     color: #7d3c8c;
 }
 
-/* Loading animation */
+/* Loading animations */
 .progress {
   height: 25px;
   -webkit-box-shadow: none;
@@ -331,4 +331,13 @@ article.campaign {
   to {
     background-position: 0 0;
   }
+}
+
+#persona-processing {
+    color: white;
+    font-size: 20px;
+    font-weight: 300;
+    text-align: center;
+    min-height: 400px;
+    letter-spacing: 1.4px;
 }
