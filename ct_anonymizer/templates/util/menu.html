@@ -7,7 +7,7 @@
 						<li class="brand">
 							<div class="vertical-align">
 								<div class="middle">
-									<a href="/persona-builder/personas/" alt="home">
+									<a href="{% if request.session.dashboard_url %}{{ request.session.dashboard_url }}{% else %}/persona-builder/personas/{% endif %}" alt="home">
 										<img src="{% static "img/logo-white.svg" %}" class="logo svg" alt="Cloudteams logo">
 									</a>
 								</div>

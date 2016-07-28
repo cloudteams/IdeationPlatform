@@ -25,11 +25,13 @@ class AuthorizationMiddleware(object):
             if 'next' in request.GET:
                 request.session['next_page'] = request.GET.get('next')
 
-        # save information about current project & campaign
+        # save information about current project, campaign & return point
         if 'pid' in request.GET:
             request.session['project_id'] = request.GET.get('pid')
         if 'cid' in request.GET:
             request.session['campaign_id'] = request.GET.get('cid')
+        if 'back_url' in request.GET:
+            request.session['dashboard_url'] = request.GET.get('back_url')
 
         # make sure user has already authorized the app through customer platform
         if ('bswc_token' not in request.session) or ('send_persona' in request.GET):
