@@ -54,6 +54,10 @@ h1 {
     color: whitesmoke;
 }
 
+.sidebar #autocomplete-suggestions {
+    margin-top: 20px;
+}
+
 /* Regions */
 
 .block-section {
@@ -161,7 +165,8 @@ h1 {
 .new-entry-template {
     display: none;
 }
-.block-section:hover .new-entry {
+.block-section:hover .new-entry,
+.new-entry.active {
     display: block;
 }
 

@@ -9,6 +9,9 @@ urlpatterns = [
     url(r'^projects/(?P<pk>[\w-]+)/$', views.project_view, name='project-bmc'),
     url(r'^projects/(?P<pk>[\w-]+)/add-entry/$', views.add_entry, name='add-entry'),
 
+    # autocomplete
+    url(r'^projects/(?P<pk>[\w-]+)/suggest-term/$', views.suggest_term, name='suggest-term'),
+
     # entries
     url(r'^entries/update-orders/$', views.update_entry_orders, name='view-entry'),
     url(r'^entries/(?P<pk>[\w-]+)/$', views.view_entry, name='view-entry'),

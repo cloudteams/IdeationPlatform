@@ -1,11 +1,14 @@
 import json
 
 from django.db import transaction
+from django.db.models import Q
 from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 
 from bm_canvas.lists import BUSINESS_MODEL_SECTIONS
 from bm_canvas.models import BusinessModel, BusinessModelEntry
+from persona_builder.models import Persona
 
 
 def project_view(request, pk):
@@ -26,6 +29,24 @@ def project_view(request, pk):
     return render(request, 'bm_canvas/canvas.html', {
         'bmc': bmc
     })
+
+
+def suggest_term(request, pk):
+    """
+    :param request: The request of the user
+    :param pk: The project primary key
+    :return: List of suggestions
+    """
+    results = []
+    for p in Persona.objects.filter(Q(project_id=pk) | Q(is_public=True))[:5]:
+        results.append({
+            'url': p.get_absolute_url(),
+            'text': p.name,
+            'icon': p.get_avatar_url(),
+            'type': 'Persona',
+        })
+
+    return JsonResponse(data=results, safe=False)
 
 
 def add_entry(request, pk):
@@ -128,4 +149,5 @@ def remove_entry(request, pk):
     # delete & respond
     entry.delete()
     return HttpResponse('Entry #%d deleted' % pk, status=204)
+
 

@@ -33,6 +33,14 @@
                         <li>No projects</li>
                     {% endfor %}
                 </ul>
+
+                <div id="autocomplete-suggestions" style="visibility: hidden;">
+                    <img src="{% static "img/icons/icon-search.svg" %}" class="icon-search svg" alt="Projects icon" width="15">
+                    <h5>Suggestions</h5>
+                    <div class="suggestions-list">
+
+                    </div>
+                </div>
             </div>
             <div class="col-md-10 content">
                 <div class="row">

@@ -1,4 +1,40 @@
 $(function() {
+    var Autocomplete = {
+        $autocomplete: $('#autocomplete-suggestions'),
+        simplemde: undefined,
+        startPosition: undefined,
+        active: false,
+
+        // when the autocomplete is triggered
+        trigger: function(simplemde) {
+            this.$autocomplete.css('visibility', 'visible');
+
+            this.active = true;
+            this.simplemde = simplemde;
+            this.startPosition = simplemde.codemirror.getCursor('start');
+
+            this.fetchTerms()
+        },
+
+        fetchTerms: function() {
+            var term = this.simplemde.codemirror.getTokenAt(this.startPosition, this.simplemde.codemirror.getCursor('start'));
+            console.log(term);
+
+            var that = this;
+            $.ajax({
+                url: 'suggest-term/',
+                success: function(data) {
+                    var $list = that.$autocomplete.find('.suggestions-list');
+
+                    $list.html('');
+                    $.each(data, function(idx, term) {
+                        $list.append('<div>' + term.text + '</div>')
+                    });
+                }
+            })
+        }
+    };
+
     var BusinessModelCanvas = {
         editors: {},
         editedEntry: {},
@@ -35,7 +71,6 @@ $(function() {
             });
 
             // inject markdown editors & color pickers
-            var that = this;
             $('#business-model-canvas .block-section').each(function() {
                 var $this = $(this);
 
@@ -43,6 +78,16 @@ $(function() {
                 $textarea = $this.find('textarea');
                 var simplemde = new SimpleMDE(that.mdeConfig($textarea[0]));
                 simplemde.render();
+
+                // catch `@` to trigger autocomplete
+                simplemde.codemirror.on("keypress", function(instance, event) {
+                    if (Autocomplete.active) { // already triggered
+                        Autocomplete.fetchTerms()
+                    }
+                    else if (event.keyCode == 64) { // @ = 64
+                        Autocomplete.trigger(simplemde)
+                    }
+                });
 
                 // save the editor for future reference
                 that.editors[$this.attr('id')] = simplemde;
@@ -211,12 +256,17 @@ $(function() {
                 });
             }
         }
-    }
+    };
 
     // initialize the canvas
     BusinessModelCanvas.init();
 
     // connect events
+    $('#business-model-canvas').on('click', '.new-entry', function() {
+        $('.new-entry').removeClass('active')
+        $(this).addClass('active');
+    });
+    
     $('#business-model-canvas').on('click', '.add-entry', function(e) {
         BusinessModelCanvas.addEntry($(this).closest('.new-entry'))
         e.stopPropagation();
@@ -240,7 +290,7 @@ $(function() {
     $('#business-model-canvas').on('click', '.update-entry-form', function(e) {
         e.stopPropagation();
     });
-
+    
     $('#business-model-canvas').on('click', function(e) {
         if ($(e.target).hasClass('colorPicker-swatch')) {
             return
