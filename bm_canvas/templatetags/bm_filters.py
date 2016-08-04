@@ -17,3 +17,16 @@ def get_entries(bmc, section):
 def markdown_to_html(markdown_text):
     return mark_safe(markdown.markdown(markdown_text, extensions=['markdown.extensions.sane_lists',
                                                                   'markdown.extensions.nl2br']))
+
+
+@register.filter
+def get_default_project(request):
+    try:
+        return request.session['project_id']
+    except KeyError:
+        try:
+            return request.session['projects'][0]['pid']
+        except KeyError:
+            return None
+        except IndexError:
+            return None

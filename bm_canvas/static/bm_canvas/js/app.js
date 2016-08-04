@@ -17,21 +17,30 @@ $(function() {
         },
 
         fetchTerms: function() {
-            var term = this.simplemde.codemirror.getTokenAt(this.startPosition, this.simplemde.codemirror.getCursor('start'));
-            console.log(term);
-
             var that = this;
-            $.ajax({
-                url: 'suggest-term/',
-                success: function(data) {
-                    var $list = that.$autocomplete.find('.suggestions-list');
+            var fn = function() {
+                var endPosition = that.simplemde.codemirror.getCursor('end');
 
-                    $list.html('');
-                    $.each(data, function(idx, term) {
-                        $list.append('<div>' + term.text + '</div>')
-                    });
-                }
-            })
+                that.simplemde.codemirror.setSelection(that.startPosition, endPosition);
+                var term = that.simplemde.codemirror.getSelection();
+                console.log(term);
+                that.simplemde.codemirror.setSelection(endPosition, endPosition);
+
+                //this.simplemde.replaceSelection();
+                $.ajax({
+                    url: 'suggest-term/',
+                    success: function (data) {
+                        var $list = that.$autocomplete.find('.suggestions-list');
+
+                        $list.html('');
+                        $.each(data, function (idx, term) {
+                            $list.append('<div>' + term.text + '</div>')
+                        });
+                    }
+                })
+            }
+
+            setTimeout(fn, 50)
         }
     };
 

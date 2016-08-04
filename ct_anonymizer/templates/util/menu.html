@@ -1,4 +1,5 @@
         {% load staticfiles %}
+		{% load bm_filters %}
 
 		<header>
 			<nav class="global-nav">
@@ -34,11 +35,11 @@
 							</div>
 						</li>
 
-						{% if request.session.project_id %}
+						{% if request.session.projects %}
 							<li>
 								<div class="vertical-align">
 									<div class="middle">
-										<a href="/business-model/projects/{{ request.session.project_id }}/">
+										<a href="/business-model/projects/{{ request|get_default_project }}/">
 											<img class="icon menu-icon svg" src="{% static "img/icons/icon-folder.svg" %}">
 											Business Model
 										</a>
