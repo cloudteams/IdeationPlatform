@@ -7,7 +7,8 @@ $(function() {
 
         // when the autocomplete is triggered
         trigger: function(simplemde) {
-            this.$autocomplete.css('visibility', 'visible');
+            // TODO re-enable
+            // this.$autocomplete.css('visibility', 'visible');
 
             this.active = true;
             this.simplemde = simplemde;

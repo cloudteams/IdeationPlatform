@@ -78,6 +78,12 @@ h1 {
     color: #333;
 }
 
+#business-model-canvas .col-md-10.content > .row > .col-sm-2,
+#business-model-canvas .col-md-10.content > .row > .col-sm-3,
+#business-model-canvas .col-md-10.content > .row > .col-sm-6 {
+    padding: 0;
+}
+
 /* Scrollbar */
 .ps-scrollbar-y-rail
 
