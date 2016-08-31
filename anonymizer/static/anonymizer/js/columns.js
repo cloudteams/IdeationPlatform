@@ -32,6 +32,9 @@ $(function() {
         $('.form-list .column-form:last-of-type select').val('');
         $('.form-list .column-form:last-of-type select').change();
 
+        //select2
+        // $('.source-options').select2();
+
         //update the management form
         $('#id_form-TOTAL_FORMS').val(n + 1);
         $('#id_form-INITIAL_FORMS').val(n + 1);

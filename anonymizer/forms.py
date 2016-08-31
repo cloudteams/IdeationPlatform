@@ -54,7 +54,7 @@ class MySQLConnectionForm(forms.Form):
     host = forms.CharField(max_length=512)
     port = forms.CharField(initial=DEFAULT_PORT)
     user = forms.CharField()
-    password = forms.CharField(required=False)
+    password = forms.CharField(required=False, widget=forms.PasswordInput())
     database = forms.CharField()
 
     def clean(self):
@@ -82,7 +82,7 @@ class PostgresConnectionForm(forms.Form):
     host = forms.CharField(max_length=512)
     port = forms.CharField(initial=DEFAULT_PORT)
     user = forms.CharField()
-    password = forms.CharField(required=False)
+    password = forms.CharField(required=False, widget=forms.PasswordInput())
     database = forms.CharField()
 
     def clean(self):

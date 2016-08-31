@@ -52,7 +52,7 @@
 		<script>
 			$(function() {
 				$('input#avatar-clear_id').remove();
-				$('input[type="checkbox"]').switchButton()
+				$('input[type="checkbox"]:not([name^=form-])').switchButton()
 			});
 		</script>
 		{% block js %}
