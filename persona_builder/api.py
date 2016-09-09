@@ -227,7 +227,21 @@ def find_user(request):
     if not res:
         res = PersonaUsers.objects.filter(user_id=uid, persona__project_id=pid, persona__owner='SYSTEM')
 
-    pu = res[0]
+    # user not in system persona yet
+    if not res:
+        try:
+            project_persona = Persona.objects.filter(project_id=pid, persona__owner='SYSTEM')[0]
+        except IndexError:
+            project_persona = Persona.objects.create(project_id=pid, owner='SYSTEM', query='',
+                                                     description='Generic project persona',
+                                                     is_ready=True, is_public=False)
+
+        anonymized_user_info = get_active_configuration().get_user_manager(token=project_persona.uuid).get(pk=uid)
+        pu = PersonaUsers.objects.create(user_id=uid, persona=project_persona, info=json.dumps(anonymized_user_info))
+    else:
+        # get the record
+        pu = res[0]
+
     # no need to load/parse json for better performance
     user_info = pu.info[:-1] + ', "persona": %d}' % pu.persona_id
 

@@ -30,7 +30,7 @@ class UserManager:
 
     def get(self, pk):
         # Ensures the user exists
-        query = "SELECT {0} AS pk FROM {1} WHERE pk={2}".format(self.pm.user_pk.full(), self.pm.user_pk.table, pk)
+        query = "SELECT {0} AS pk FROM {1} WHERE {0}={2}".format(self.pm.user_pk.full(), self.pm.user_pk.table, pk)
         result = self.pm.user_pk.connection.execute(query).fetchall()
 
         # check uniqueness

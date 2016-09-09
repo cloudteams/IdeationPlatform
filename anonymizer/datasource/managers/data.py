@@ -705,9 +705,10 @@ class PropertyManager:
 
     def get(self, pk):
         where_clause = 'WHERE {0}={1}'.format(self.user_pk.full(), pk)
+        group_by_clause = ' GROUP BY {0}'.format(self.user_pk.full())
 
         # construct full query
-        query = self.query() + where_clause
+        query = self.query() + where_clause + group_by_clause
 
         # execute query & return results
         return self.info(self.user_pk.connection.execute(query).fetchone())
