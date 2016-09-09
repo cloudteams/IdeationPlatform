@@ -56,7 +56,7 @@ class Persona(models.Model):
             for u in new_users:
                 PersonaUsers.objects.create(persona=self, user_id=u['__id__'], info=cjson.encode(u))
 
-        print 'Persona updated successfully.' % self.pk
+        print 'Persona %d updated successfully.' % self.pk
 
     def update_users(self, user_manager, async=False):
         new_users = user_manager.filter(self.query, true_id=True)
