@@ -11,7 +11,7 @@ SRV_INSTANCES = {}
 bscw_oauth_args = {
     'op': 'OAuth'
 }
-DEFAULT_HOST = 'cloudteams.epu.ntua.gr:8000'
+DEFAULT_HOST = 'cloudteams.epu.ntua.gr/persona-builder'
 
 
 def log(*val):
