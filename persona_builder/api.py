@@ -1,9 +1,12 @@
+import random
 import uuid
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import simplejson as json
 
+from anonymizer.datasource.managers.users import UserManagerException
+from anonymizer.datasource.providers.Person import first_name, last_name_initial
 from anonymizer.models import ConnectionConfiguration
 from ct_anonymizer.settings import MEDIA_URL
 from persona_builder.forms import PersonaAPIForm, PersonaPropertiesForm
@@ -228,21 +231,37 @@ def find_user(request):
         res = PersonaUsers.objects.filter(user_id=uid, persona__project_id=pid, persona__owner='SYSTEM')
 
     # user not in system persona yet
-    if not res:
-        try:
-            project_persona = Persona.objects.filter(project_id=pid, persona__owner='SYSTEM')[0]
-        except IndexError:
-            project_persona = Persona.objects.create(project_id=pid, owner='SYSTEM', query='',
-                                                     description='Generic project persona',
-                                                     is_ready=True, is_public=False)
+    try:
+        if not res:
+            try:
+                project_persona = Persona.objects.filter(project_id=pid, persona__owner='SYSTEM')[0]
+            except IndexError:
+                project_persona = Persona.objects.create(project_id=pid, owner='SYSTEM', query='',
+                                                         description='Generic project persona',
+                                                         is_ready=True, is_public=False)
 
-        anonymized_user_info = get_active_configuration().get_user_manager(token=project_persona.uuid).get(pk=uid)
-        pu = PersonaUsers.objects.create(user_id=uid, persona=project_persona, info=json.dumps(anonymized_user_info))
-    else:
-        # get the record
-        pu = res[0]
+            anonymized_user_info = get_active_configuration().get_user_manager(token=project_persona.uuid).get(pk=uid)
+            pu = PersonaUsers.objects.create(user_id=uid, persona=project_persona, info=json.dumps(anonymized_user_info))
+        else:
+            # get the record
+            pu = res[0]
 
-    # no need to load/parse json for better performance
-    user_info = pu.info[:-1] + ', "persona": %d}' % pu.persona_id
+        # no need to load/parse json for better performance
+        user_info = pu.info[:-1] + ', "persona": %d}' % pu.persona_id
+    except (UserManagerException, IndexError):
+        # user does not exist any more - deleted user account?
+
+        # use unique seed per user/project
+        random.seed('%s-%s' % (pid, uid))
+
+        # just fake the very basic info
+        faked_info = {
+            'first_name': first_name(),
+            'last_name': last_name_initial(),
+            'deleted': True,
+        }
+        
+        # return as json
+        user_info = json.dumps(faked_info)
 
     return HttpResponse(user_info, content_type='application/json')
