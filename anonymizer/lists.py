@@ -38,6 +38,16 @@ PROVIDER_PLUGINS = [
         'type': 'VARCHAR(2)'
     },
 
+    # providers.Gamification
+    {
+        'source': '^Gamification.xp_points_to_level',
+        'label': 'Gamification: XP points to level',
+        'args': [
+            ('xp_points', 'The XP points of the user'),
+        ],
+        'type': 'INT(11)',
+    },
+
     # providers.Ranges
     {
         'source': '^Ranges.from_int_value',

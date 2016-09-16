@@ -116,12 +116,13 @@ class Property:
         self.column = source.split('@')[0].split('.')[1]
 
         self.cache_match = cache_match
+        """
         if self.column == "activity_name":
             self.cache_match = "activitytracker_activity.activity_name@" + source.split('@')[1]
             self.source = "activitytracker_performs.activity_key@" + source.split('@')[1]
             self.table = self.source.split('@')[0].split('.')[0]
             self.column = self.source.split('@')[0].split('.')[1]
-
+        """
         self.aggregate = aggregate
         self.filter_by = filter_by
         self.is_pk = is_pk

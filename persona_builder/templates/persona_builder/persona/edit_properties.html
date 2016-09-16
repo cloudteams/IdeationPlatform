@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load static from staticfiles %}
+{% load app_filters %}
 
 {% block section_class %}not-container{% endblock %}
 {% block content %}
@@ -29,7 +30,7 @@
             </div>
 
             {% for filter in filters %}
-                {% if filter.has_options %}
+                {% if filter|filterable %}
                     {% include "persona_builder/persona/filter.html" %}
                 {% endif %}
             {% endfor %}

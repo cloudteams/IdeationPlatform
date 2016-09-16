@@ -91,3 +91,8 @@ def no_underscore(text):
 @register.filter
 def get_user_info(persona_user):
     return json.loads(persona_user.info)
+
+
+@register.filter
+def filterable(filter):
+    return filter['name'] not in ['first_name', 'last_name', ]
