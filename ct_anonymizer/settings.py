@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     'anonymizer',
     'persona_builder',
     'bm_canvas',
+    'stories',
     'pb_oauth',
 )
 

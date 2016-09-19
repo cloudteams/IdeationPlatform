@@ -1,0 +1,37 @@
+.panel {
+    margin: 5px 0;
+    padding: 10px;
+}
+
+.bg-white {
+    background: white;
+}
+
+.panel.bg-white,
+.panel.bg-white input,
+.panel.bg-white textarea{
+    color: #333;
+}
+
+.panel.bg-white h3,
+.panel.bg-white h5 {
+    color: #444;
+}
+
+.panel.bg-white a {
+    color: #1c699d;
+}
+
+.panel.bg-white a:hover {
+    color: #1c699d !important;
+    text-decoration: underline;
+}
+
+.margin-top-5 {
+    margin-top: 25px;
+}
+
+.scenario-main-col {
+    border-left: 1px solid #ccc;
+    min-height: 500px;
+}

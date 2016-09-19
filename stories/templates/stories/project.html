@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% load endless %}
+{% load static from staticfiles %}
+
+{% load bm_filters %}
+
+{% block title %}{{ project.project_name }} - Project Overview{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static "stories/css/style.css" %}">
+    <link rel="stylesheet" href="{% static "persona_builder/css/style.css" %}">
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel bg-white">
+                <h3>General statistics</h3>
+                <p>Project: <span class="number">{{ project.project_name }}</span></p>
+                <p>Total Scenarios: <span class="number">{{ project.project_scenarios.all.count }}</span></p>
+                <p>Total Stories: <span class="number">{{ project.project_stories.all.count }}</span></p>
+            </div>
+
+            <div class="panel bg-white">
+                <form action="{{ project.get_absolute_url }}" method="GET">
+                    <label for="id_order_by">Order by:</label>
+                    <select id="id_order_by" name="order_by">
+                        <option value="updated">Time modified</option>
+                        <option value="title">Title</option>
+                        <option value="num_stories">Number of user stories</option>
+                        <option value="updated">Time created</option>
+                    </select>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            {% for scenario in project.project_scenarios.all %}
+                <div class="col-xs-12 panel bg-white">
+                    {% include "scenarios/teaser.html" %}
+                </div>
+            {% endfor %}
+
+            <article class="project add-item add-scenario col-xs-12" style="padding: 0;">
+                <a href="{{ project.get_absolute_url}}add-scenario/" alt="create new scenario">
+                    <div class="background" style="background: #411f48; padding: 20px;">
+                        <div class="vertical-align">
+                            <div class="middle">
+                                <div class="add-project-button">
+                                    <div class="vertical-align">
+                                        <div class="middle">
+                                            <i class="fa fa-2x fa-pencil" style="color: whitesmoke;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h2 class="header-small secondary">Create a new scenario</h2>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </article>
+        </div>
+    </div>
+{% endblock %}

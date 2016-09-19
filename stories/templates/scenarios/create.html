@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% load endless %}
+{% load static from staticfiles %}
+
+{% load bm_filters %}
+
+{% block title %}{{ project.project_name }} - Create a scenario{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static "stories/css/style.css" %}">
+    <link rel="stylesheet" href="{% static "persona_builder/css/style.css" %}">
+{% endblock %}
+
+{% block content %}
+    <h1>Create a new scenario</h1>
+
+    <form class="row panel bg-white"
+          action="{{ project.get_absolute_url }}add-scenario/" method="POST">{% csrf_token %}
+        {{ form.as_p }}
+
+        <div class="clearfix">
+            <button type="submit" class="btn btn-primary pull-left"><i class="fa fa-save"></i> Create &amp; add user stories</button>
+            <a href="{{ project.get_absolute_url }}" class="btn btn-transparent pull-right">Cancel</a>
+        </div>
+    </form>
+{% endblock %}

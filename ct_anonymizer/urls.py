@@ -31,6 +31,9 @@ urlpatterns = [
     # business model canvas
     url(r'^business-model/', include('bm_canvas.urls')),
 
+    # stories
+    url(r'^stories/', include('stories.urls')),
+
     # home page
     url(r'^$', views.index),
 ]
