@@ -34,19 +34,20 @@
 
             <div class="panel">
                 <form action="{{ project.get_absolute_url }}" method="GET">
-                    <label for="id_order_by">Order by:</label>
-                    <select id="id_order_by" name="order_by">
-                        <option value="updated">Time modified</option>
-                        <option value="title">Title</option>
-                        <option value="num_stories">Number of user stories</option>
-                        <option value="updated">Time created</option>
+                    <label for="id_order_scenarios_by">Order by:</label>
+                    <select id="id_order_scenarios_by" name="order_scenarios_by">
+                        <option value="scenario_id" {% if scenario_order == 'scenario_id' %}selected="selected"{% endif %}>Scenario ID</option>
+                        <option value="title" {% if scenario_order == 'title' %}selected="selected"{% endif %}>Title</option>
+                        <option value="num_stories" {% if scenario_order == 'num_stories' %}selected="selected"{% endif %}>Number of user stories</option>
+                        <option value="updated" {% if scenario_order == 'updated' %}selected="selected"{% endif %}>Time modified</option>
+                        <option value="created" {% if scenario_order == 'created' %}selected="selected"{% endif %}>Time created</option>
                     </select>
                 </form>
             </div>
         </div>
 
         <div class="col-md-8">
-            {% for scenario in project.project_scenarios.all %}
+            {% for scenario in scenarios %}
                 <div class="col-xs-12">
                     {% include "scenarios/teaser.html" %}
                 </div>
@@ -75,11 +76,5 @@
 {% endblock %}
 
 {% block js %}
-    <script>
-        $(function() {
-            $('#id_current_project').on('change', function() {
-                window.document.location = '/stories/projects/' + $(this).val() + '/';
-            })
-        });
-    </script>
+    <script src="{% static 'stories/js/stories.js' %}"></script>
 {% endblock %}

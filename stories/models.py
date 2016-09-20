@@ -34,13 +34,27 @@ class Scenario(Model):
     def get_create_story_url(self):
         return '/stories/projects/%d/scenarios/%d/add-story/' % (self.project_id, self.pk)
 
+    def get_all_stories(self):
+        return self.stories.all().order_by('project_story_id')
+
+    def involved_personas(self):
+        return Persona.objects.filter(stories__scenarios=self).distinct('id')
+
+    @property
+    def main_persona(self):
+        try:
+            return Persona.objects.filter(stories__scenarios=self).\
+                annotate(n_of_times=Count('id')).order_by('-n_of_times')[0]
+        except IndexError:
+            return None
+
 
 class Story(Model):
     # meta info
     created = DateTimeField(auto_now_add=True)
     updated = DateTimeField(auto_now=True)
     project = ForeignKey(Project, related_name='project_stories')
-    persona = ForeignKey(Persona)
+    persona = ForeignKey(Persona, related_name='stories')
     owner = TextField()
 
     # generic info

@@ -24,17 +24,17 @@
             <div class="col-md-3">
                 <h5>Related persona</h5>
                 <div class="row">
-                    {% with persona=story.persona %}
-                        {% include 'util/persona-xs.html' %}
+                    {% with persona=story.persona%}
+                        {% include 'util/persona-info.html' %}
                     {% endwith %}
                 </div>
 
                 <h5 class="margin-top-5">Info</h5>
-                <p><b>Created:</b><br />
+                <p><span class="underline">Created:</span><br />
                     <span class="number">{{ story.created }}</span></p>
-                <p><b>Last edited:</b><br />
+                <p><span class="underline">Last edited:</span><br />
                     <span class="number">{{ story.updated }}</span></p>
-                <p><b>Owner:</b><br />
+                <p><span class="underline">Owner:</span><br />
                     <span class="number">{{ story.owner }}</span></p>
             </div>
 
@@ -87,22 +87,42 @@
                 <div class="row margin-top-5">
                     <div class="col-xs-12">
                         <p><b>Comments</b><br />
-                        {{ scenario.comments|default:"No comments available" }}</p>
+                        {{ story.comments|default:"No comments available" }}</p>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-3">
                 <div class="row">
+                    <div class="col-xs-6">
+                        <span>Priority</span>
+                        <div class="text-center"><b class="story-metric">{{ story.priority }}</b></div>
+                    </div>
+
+                    <div class="col-xs-6">
+                        <span>Estimate</span>
+                        <div class="text-center"><b class="story-metric">{{ story.estimate }}d</b></div>
+                    </div>
+                </div>
+
+                <div class="row margin-top-5">
+                    <div class="col-xs-12">
+                        <div class="state-info">
+                            <b>State:</b> {{ story.get_state_display }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row margin-top-5">
                     <div class="col-xs-12">
                         <h5>Related Scenarios ({{ story.scenarios.count }})</h5>
-                        {% for scenario in story.scenarios.all %}
-                            <p>
-                                <a href="{{ scenario.get_absolute_url }}">#{{ scenario.project_scenario_id }} - {{ scenario.title }}</a>
-                            </p>
-                        {% empty %}
-                            <p>Not assigned to any scenarios.</p>
-                        {% endfor %}
+                        <p>
+                            {% for scenario in story.scenarios.all %}
+                                <a href="{{ scenario.get_absolute_url }}">#{{ scenario.project_scenario_id }} - {{ scenario.title }}</a><br/>
+                            {% empty %}
+                                Not assigned to any scenarios.
+                            {% endfor %}
+                        </p>
 
                         <div class="pull-right">
                             <a href="#"><i class="fa fa-plus-circle"></i> Add Scenario</a>
@@ -113,13 +133,13 @@
                 <div class="row margin-top-5">
                     <div class="col-xs-12">
                         <h5>Related User Stories</h5>
-                        {% for st in related_stories %}
-                            <p>
-                                <a href="{{ st.get_absolute_url }}">#{{ st.project_story_id }} - {{ st.title }} ({{ st.get_story_type_display }})</a>
-                            </p>
-                        {% empty %}
-                            <p>No related stories.</p>
-                        {% endfor %}
+                        <p>
+                            {% for st in related_stories %}
+                                <a href="{{ st.get_absolute_url }}">#{{ st.project_story_id }} - {{ st.title }} ({{ st.get_story_type_display }})</a><br />
+                            {% empty %}
+                                No related stories.
+                            {% endfor %}
+                        </p>
                     </div>
                 </div>
             </div>

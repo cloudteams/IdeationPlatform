@@ -54,4 +54,19 @@ $(function() {
             }
         });
     });
+
+    /* On scenario toggle stories */
+    $('.toggle-stories').on('click', function() {
+        $(this).closest('article.scenario').find('.stories-list').toggle(500);
+    });
+
+    /* Redirect on current project change */
+    $('#id_current_project').on('change', function() {
+        window.document.location = '/stories/projects/' + $(this).val() + '/';
+    });
+
+    /* Order scenarios in project */
+    $('#id_order_scenarios_by').on('change', function() {
+        $(this).closest('form').submit();
+    })
 });

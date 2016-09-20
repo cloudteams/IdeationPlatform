@@ -46,6 +46,10 @@
     color: #e74c3c;
 }
 
+.underline {
+    text-decoration: underline;
+}
+
 .margin-top-5 {
     margin-top: 25px;
 }
@@ -75,11 +79,26 @@
 }
 
 /* Scenario teaser */
+
+.bg-white .scenario a:not(.btn),
+.bg-white .scenario a:not(.btn):hover {
+    color: rgb(125, 60, 140) !important;
+}
+
 article.scenario {
     padding: 20px;
     border: 1px solid rgb(125, 60, 140);
     margin: 30px 0;
     border-radius: 5px;
+}
+
+article.scenario .fa.fa-angle-down {
+    position: static;
+    cursor: pointer;
+}
+
+article.scenario .fa.fa-angle-down:hover {
+    color: rgb(125, 60, 140);
 }
 
 /* Add scenario button */
@@ -106,4 +125,15 @@ article.scenario {
     position: static;
     left: auto;
     display: inline-block;
+}
+
+/* Stories */
+
+.story-metric {
+    font-size: 26px;
+}
+
+.state-info {
+    border: 1px solid #999;
+    padding: 10px 20px;
 }

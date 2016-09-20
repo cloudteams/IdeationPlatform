@@ -24,9 +24,28 @@ def project_view(request, project_id):
 
         project = Project.objects.create(project_id=pk, project_name=project_name)
 
+    # order scenarios
+    scenarios = project.project_scenarios.all().order_by('project_scenario_id')
+
+    scenario_order = request.GET.get('order_scenarios_by', 'scenario_id')
+
+    if scenario_order == 'title':
+        scenarios = scenarios.order_by('title')
+    elif scenario_order == 'num_stories':
+        scenarios = scenarios.annotate(num_stories=Count('stories')).order_by('-num_stories')
+    elif scenario_order == 'num_stories':
+        scenarios = scenarios.annotate(num_stories=Count('stories')).order_by('-num_stories')
+    elif scenario_order == 'updated':
+        scenarios = scenarios.order_by('-updated')
+    elif scenario_order == 'created':
+        scenarios = scenarios.order_by('-created')
+
     return render(request, 'stories/project.html', {
         'project': project,
+        'scenarios': scenarios,
+        'scenario_order': scenario_order,
     })
+
 
 """
 Scenario
