@@ -9,7 +9,7 @@ __author__ = 'dipap'
 class ScenarioForm(ModelForm):
     class Meta:
         model = Scenario
-        exclude = ['created', 'updated', 'project', 'owner', 'project_scenario_id', ]
+        exclude = ['created', 'updated', 'project', 'owner', 'project_scenario_id', 'comments', ]
         widgets = {
             'title': TextInput(),
             'tags': TextInput(attrs={'placeholder': 'Separate different tags by spaces'}),
@@ -19,7 +19,7 @@ class ScenarioForm(ModelForm):
 class StoryForm(ModelForm):
     class Meta:
         model = Story
-        exclude = ['created', 'updated', 'project', 'owner', 'project_story_id', 'scenarios']
+        exclude = ['created', 'updated', 'project', 'owner', 'project_story_id', 'scenarios', 'comments', ]
         widgets = {
             'title': TextInput(),
             'story_type': RadioSelect(),

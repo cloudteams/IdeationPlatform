@@ -10,7 +10,7 @@ __author__ = 'dipap'
 class PersonaForm(forms.ModelForm):
     class Meta:
         model = Persona
-        exclude = ['owner', 'project_id', 'campaign_id', 'query', 'based_on', ]
+        exclude = ['owner', 'project_id', 'campaign_id', 'query', 'based_on', 'is_processing', ]
 
     def __init__(self, *args, **kwargs):
         super(PersonaForm, self).__init__(*args, **kwargs)
