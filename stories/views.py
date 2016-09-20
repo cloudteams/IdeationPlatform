@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
 
 from stories.models import *
 from stories.forms import *
@@ -40,7 +41,7 @@ def add_scenario(request, project_id):
     try:
         project = Project.objects.get(project_id=project_id)
     except Project.DoesNotExist:
-        return HttpResponse('Project #%d was not found on TeamPlatform' % project_id)
+        return HttpResponse('Project #%d was not found on TeamPlatform' % project_id, status=404)
 
     if request.method == 'GET':
         form = ScenarioForm()
@@ -81,14 +82,14 @@ def scenario_details(request, project_id, scenario_id):
     try:
         project = Project.objects.get(project_id=project_id)
     except Project.DoesNotExist:
-        return HttpResponse('Project #%d was not found on TeamPlatform' % project_id)
+        return HttpResponse('Project #%d was not found on TeamPlatform' % project_id, status=404)
 
     # get scenario
     scenario_id = int(scenario_id)
     try:
         scenario = Scenario.objects.get(pk=scenario_id, project_id=project_id)
     except Scenario.DoesNotExist:
-        return HttpResponse('Scenario #%d does not exist' % scenario_id)
+        return HttpResponse('Scenario #%d does not exist' % scenario_id, status=404)
 
     ctx = {
         'project': project,
@@ -106,14 +107,14 @@ def edit_scenario(request, project_id, scenario_id):
     try:
         project = Project.objects.get(project_id=project_id)
     except Project.DoesNotExist:
-        return HttpResponse('Project #%d was not found on TeamPlatform' % project_id)
+        return HttpResponse('Project #%d was not found on TeamPlatform' % project_id, status=404)
 
-    # get story
+    # get scenario
     scenario_id = int(scenario_id)
     try:
         scenario = Scenario.objects.get(pk=scenario_id, project_id=project_id)
     except Scenario.DoesNotExist:
-        return HttpResponse('Scenario #%d does not exist' % scenario_id)
+        return HttpResponse('Scenario #%d does not exist' % scenario_id, status=404)
 
     if request.method == 'GET':
         form = ScenarioForm(instance=scenario)
@@ -148,7 +149,7 @@ def add_story(request, project_id, scenario_id=None):
     try:
         project = Project.objects.get(project_id=project_id)
     except Project.DoesNotExist:
-        return HttpResponse('Project #%d was not found on TeamPlatform' % project_id)
+        return HttpResponse('Project #%d was not found on TeamPlatform' % project_id, status=404)
 
     # optionally get scenario
     if scenario_id is not None:
@@ -156,7 +157,7 @@ def add_story(request, project_id, scenario_id=None):
         try:
             scenario = Scenario.objects.get(pk=scenario_id, project_id=project_id)
         except Scenario.DoesNotExist:
-            return HttpResponse('Scenario #%d does not exist' % scenario_id)
+            return HttpResponse('Scenario #%d does not exist' % scenario_id, status=404)
     else:
         scenario = None
 
@@ -191,6 +192,7 @@ def add_story(request, project_id, scenario_id=None):
     ctx = {
         'project': project,
         'form': form,
+        'scenario': scenario,
     }
 
     return render(request, 'stories/create.html', ctx)
@@ -204,14 +206,14 @@ def story_details(request, project_id, story_id):
     try:
         project = Project.objects.get(project_id=project_id)
     except Project.DoesNotExist:
-        return HttpResponse('Project #%d was not found on TeamPlatform' % project_id)
+        return HttpResponse('Project #%d was not found on TeamPlatform' % project_id, status=404)
 
     # get story
     story_id = int(story_id)
     try:
         story = Story.objects.get(pk=story_id, project_id=project_id)
     except Story.DoesNotExist:
-        return HttpResponse('Story #%d does not exist' % story_id)
+        return HttpResponse('Story #%d does not exist' % story_id, status=404)
 
     # find related stories
     related_stories = []
@@ -236,14 +238,14 @@ def edit_story(request, project_id, story_id):
     try:
         project = Project.objects.get(project_id=project_id)
     except Project.DoesNotExist:
-        return HttpResponse('Project #%d was not found on TeamPlatform' % project_id)
+        return HttpResponse('Project #%d was not found on TeamPlatform' % project_id, status=404)
 
     # get story
     story_id = int(story_id)
     try:
         story = Story.objects.get(pk=story_id, project_id=project_id)
     except Story.DoesNotExist:
-        return HttpResponse('Story #%d does not exist' % story_id)
+        return HttpResponse('Story #%d does not exist' % story_id, status=404)
 
     if request.method == 'GET':
         form = StoryForm(instance=story, project_id=project_id)
@@ -261,6 +263,67 @@ def edit_story(request, project_id, story_id):
     ctx = {
         'project': project,
         'form': form,
+        'story': story,
     }
 
     return render(request, 'stories/edit.html', ctx)
+
+
+def stories_to_add(request, scenario_id):
+    """
+    List all stories that can be added in the scenario
+    """
+    # get scenario
+    scenario_id = int(scenario_id)
+    try:
+        scenario = Scenario.objects.get(pk=scenario_id)
+    except Scenario.DoesNotExist:
+        return HttpResponse('Scenario #%d does not exist' % scenario_id, status=404)
+
+    # get all project stories that are not in the scenario
+    stories = Story.objects.filter(project=scenario.project).exclude(scenarios=scenario).order_by('project_story_id')
+
+    # render table
+    return render(request, 'stories/add-table.html', {
+        'scenario': scenario,
+        'stories': stories,
+    })
+
+
+@csrf_exempt
+def add_story_to_scenario(request, scenario_id):
+    """
+    Adds an existing story to the scenario
+    """
+    if request.method != 'POST':
+        return HttpResponse('Invalid method - only POST allowed', status=400)
+
+    # get scenario
+    scenario_id = int(scenario_id)
+    try:
+        scenario = Scenario.objects.get(pk=scenario_id)
+    except Scenario.DoesNotExist:
+        return HttpResponse('Scenario #%d does not exist' % scenario_id, status=404)
+
+    # get story
+    story_id = request.POST.get('story_id', '')
+    if not story_id:
+        return HttpResponse('`story_id` must be provided', status=400)
+
+    story_id = int(story_id)
+    try:
+        story = Story.objects.get(pk=story_id)
+    except Story.DoesNotExist:
+        return HttpResponse('Story #%d does not exist' % story_id)
+
+    # check if story can be added
+    ids = Story.objects.filter(project=scenario.project).exclude(scenarios=scenario).values_list('pk', flat=True)
+    if story_id not in ids:
+        return HttpResponse('Story #%d could not be added to scenario' % story_id, status=400)
+
+    # add story to scenario
+    story.scenarios.add(scenario)
+    story.save()
+
+    # return OK response
+    return HttpResponse('')

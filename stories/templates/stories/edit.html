@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Edist story #{{ story.project_story_id }}</h1>
+    <h1>Edit story #{{ story.project_story_id }}</h1>
 
     <form class="row panel"
           action="{{ request.path }}" method="POST">{% csrf_token %}

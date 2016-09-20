@@ -22,4 +22,8 @@ urlpatterns = [
         name='story-details'),
     url(r'^projects/(?P<project_id>[\w-]+)/stories/(?P<story_id>[\w-]+)/edit/$', views.edit_story,
         name='edit-story'),
+
+    # add existing story to scenario
+    url(r'^scenarios/(?P<scenario_id>[\w-]+)/stories-to-add/$', views.stories_to_add, name='stories-to-add'),
+    url(r'^scenarios/(?P<scenario_id>[\w-]+)/add-story/$', views.add_story_to_scenario, name='add-existing-story'),
 ]

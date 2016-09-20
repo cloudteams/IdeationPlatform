@@ -1,0 +1,31 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for story in stories %}
+            <tr>
+                <td>{{ story.project_story_id }}</td>
+                <td>{{ story.title }}</td>
+                <td>{{ story.get_story_type_display }}</td>
+                <td>
+                    <div class="btn btn-sm btn-transparent add-existing-story"
+                         data-story_id="{{ story.pk }}" data-scenario_id="{{ scenario.pk }}">Add story
+                    </div>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td></td>
+                <td>No stories to add</td>
+                <td></td>
+                <td></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

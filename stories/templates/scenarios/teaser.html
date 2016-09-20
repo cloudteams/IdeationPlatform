@@ -3,4 +3,5 @@
     <b>Title</b>: {{ scenario.title }}<br />
     <div class="teaser-separator"></div>
     <b>User stories: </b> {{ scenario.stories.count }}
+    <a class="pull-right btn btn-sm btn-transparent" href="{{ scenario.get_absolute_url }}">Open</a>
 </article>

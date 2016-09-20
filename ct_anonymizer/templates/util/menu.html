@@ -36,16 +36,29 @@
 						</li>
 
 						{% if request.session.projects %}
-							<li>
-								<div class="vertical-align">
-									<div class="middle">
-										<a href="/business-model/projects/{{ request|get_default_project }}/">
-											<img class="icon menu-icon svg" src="{% static "img/icons/icon-folder.svg" %}">
-											Business Models
-										</a>
+							{% with pid=request|get_default_project %}
+								<li>
+									<div class="vertical-align">
+										<div class="middle">
+											<a href="/business-model/projects/{{ pid }}/">
+												<img class="icon menu-icon svg" src="{% static "img/icons/icon-folder.svg" %}">
+												Business Models
+											</a>
+										</div>
 									</div>
-								</div>
-							</li>
+								</li>
+
+								<li>
+									<div class="vertical-align">
+										<div class="middle">
+											<a href="/stories/projects/{{ pid }}/">
+												<img class="icon menu-icon svg" src="{% static "img/icons/icon-requirement.svg" %}">
+												Requirements
+											</a>
+										</div>
+									</div>
+								</li>
+							{% endwith %}
 						{% endif %}
 
 						<li class="profile">

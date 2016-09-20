@@ -45,7 +45,7 @@
                 <div class="row margin-top-5">
                     <div class="col-xs-12">
                         <p><b>Scenario</b></p>
-                        <p>{{ scenario.description }}</p>
+                        <p>{{ scenario.description|linebreaksbr }}</p>
                     </div>
                 </div>
 
@@ -59,7 +59,7 @@
                 <div class="row margin-top-5">
                     <div class="col-xs-12">
                         <p><b>Comments</b></p>
-                        <p>{{ scenario.comments|default:"No comments available" }}</p>
+                        <p>{{ scenario.comments|linebreaksbr|default:"No comments available" }}</p>
                     </div>
                 </div>
             </div>
@@ -80,11 +80,17 @@
                         <div class="pull-right">
                             <a href="{{ scenario.get_create_story_url }}">Create</a>
                             <span class="separator"> | </span>
-                            <a href="#">Add</a>
+                            <a href="#" class="add-existing-story" data-scenario_id="{{ scenario.pk }}">Add existing</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    {% include 'util/popup.html' %}
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'stories/js/stories.js' %}"></script>
 {% endblock %}

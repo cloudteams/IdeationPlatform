@@ -18,9 +18,18 @@
         <div class="col-md-4">
             <div class="panel">
                 <h3>General statistics</h3>
-                <p>Project: <span class="number">{{ project.project_name }}</span></p>
-                <p>Total Scenarios: <span class="number">{{ project.project_scenarios.all.count }}</span></p>
-                <p>Total Stories: <span class="number">{{ project.project_stories.all.count }}</span></p>
+                <p><label for="id_current_project">Project:</label>
+                    <select name="current_project" id="id_current_project">
+                        <option value="{{ project.project_id }}" selected="selected">{{ project.project_name }}</option>
+                        {% for p in request.session.projects %}
+                            {% if p.pid != project.project_id %}
+                                <option value="{{ p.pid}}">{{ p.title }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </p>
+                <p>Total Scenarios: <span class="number">{{ project.project_scenarios.all.count }}</span><br />
+                Total Stories: <span class="number">{{ project.project_stories.all.count }}</span></p>
             </div>
 
             <div class="panel">
@@ -44,7 +53,7 @@
             {% endfor %}
 
             <article class="project add-item add-scenario col-xs-4 col-xs-push-4" style="padding: 0;">
-                <a href="{{ project.get_absolute_url}}add-scenario/" alt="create new scenario">
+                <a href="{{ project.get_absolute_url}}add-scenario/" alt="create new scenario" class="new-scenario-link">
                     <div class="background" style="padding: 20px;">
                         <div class="vertical-align">
                             <div class="middle">
@@ -63,4 +72,14 @@
             </article>
         </div>
     </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(function() {
+            $('#id_current_project').on('change', function() {
+                window.document.location = '/stories/projects/' + $(this).val() + '/';
+            })
+        });
+    </script>
 {% endblock %}
