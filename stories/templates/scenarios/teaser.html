@@ -12,14 +12,20 @@
     </div>
     <div class="teaser-separator"></div>
     <div>
-        <b>User stories: </b> {{ scenario.stories.count }} <i class="fa fa-angle-down toggle-stories"></i>
+        <span class="toggle-stories">
+            <b>User stories: </b> {{ scenario.stories.count }} <i class="fa fa-angle-down"></i>
+        </span>
         <a class="pull-right btn btn-sm btn-transparent" href="{{ scenario.get_absolute_url }}">Open</a>
     </div>
 
     <div class="stories-list" style="display: none;">
-        {% for story in scenario.get_all_stories %}
-            <a href="{{ story.get_absolute_url }}">#{{ story.project_story_id }} - {{ story.title }} ({{ story.get_story_type_display }})</a><br/>
-        {% endfor %}
+        {% with stories=scenario.get_all_stories %}
+            {% if stories %}<p>{% endif %}
+                {% for story in stories %}
+                    <a href="{{ story.get_absolute_url }}">#{{ story.project_story_id }} - {{ story.title }} ({{ story.get_story_type_display }})</a><br/>
+                {% endfor %}
+            {% if stories %}</p>{% endif %}
+        {% endwith %}
         <a href="{{ scenario.get_create_story_url }}">Create new</a>
     </div>
 

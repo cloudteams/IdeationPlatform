@@ -97,6 +97,10 @@ article.scenario .fa.fa-angle-down {
     cursor: pointer;
 }
 
+.toggle-stories {
+    cursor:pointer;
+}
+
 article.scenario .fa.fa-angle-down:hover {
     color: rgb(125, 60, 140);
 }
