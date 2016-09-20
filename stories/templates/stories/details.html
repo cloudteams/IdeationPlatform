@@ -132,7 +132,7 @@
 
                 <div class="row margin-top-5">
                     <div class="col-xs-12">
-                        <h5>Related User Stories</h5>
+                        <h5>Related Stories</h5>
                         <p>
                             {% for st in related_stories %}
                                 <a href="{{ st.get_absolute_url }}">#{{ st.project_story_id }} - {{ st.title }} ({{ st.get_story_type_display }})</a><br />
