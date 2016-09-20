@@ -13,7 +13,7 @@ $(function() {
             // initially clear the UI
             this.clear();
 
-            // tirn [(activity="Running")] to (activity="Running")
+            // turn [(activity="Running")] to (activity="Running")
             if (query.indexOf('[') >= 0) {
                 query = query.substring(1, query.length - 2);
             }
@@ -30,7 +30,7 @@ $(function() {
                 var f = parts[i];
                 // detect different parts of the expression
                 // e.g activity!="Running" must be split into activity / != / Running
-                var exp = ["", "", ""], ptr = 0, special = false, symbols=['=', '<', '>', '!'];
+                var exp = ["", "", ""], ptr = 0, special = false, symbols = ['=', '<', '>', '!'];
                 for (var c=0; c<f.length; c++) {
                     if ((symbols.indexOf(f[c]) >= 0) != special) {
                         special = !special;
@@ -47,7 +47,7 @@ $(function() {
                 // find the values -- could be more than one
                 var vals = exp[2].split('||');
 
-                //mark the filter as selected in the UI
+                // mark the filter as selected in the UI
                 var fr = $('.filter-row[data-name="' + exp[0] + '"]');
                 fr.find('.comparison-select').val(exp[1]);
                 fr.find('.filter-value').val(vals);

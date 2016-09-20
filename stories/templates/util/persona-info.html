@@ -5,5 +5,11 @@
         </div>
     {% endif %}
 
-    <p><b>{{ persona.name }}</b></p>
+    <p><a href="{{ persona.get_absolute_url }}">{{ persona.name }}</a><br />
+    {% for p in persona.properties %}
+        # {{ p.field|title }}
+        {% for v in p.values %}{% if forloop.counter > 1 %}, {% endif %}<b>{{ v }}</b>{% endfor %}
+        <br />
+    {% endfor %}
+    </p>
 </div>

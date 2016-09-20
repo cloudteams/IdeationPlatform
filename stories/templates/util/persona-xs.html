@@ -4,4 +4,4 @@
         </div>
     {% endif %}
 
-    <span style="font-size: 12px;">{{ persona.name }}</span>
+    <a href="{{ persona.get_absolute_url }}"><span style="font-size: 12px;">{{ persona.name }}</span></a>

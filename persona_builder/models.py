@@ -60,6 +60,54 @@ class Persona(models.Model):
     def get_edit_info_url(self):
         return self.get_absolute_url() + 'edit-info/'
 
+    @property
+    def properties(self):
+        query = self.query
+        result = []
+
+        # turn [(activity="Running")] to (activity="Running")
+        if query.startswith('['):
+            query = query[1:-1]
+
+        # turn activity="Running" to (activity="Running")
+        if '(' not in query:
+            query = '(' + query + ')'
+
+        # split parts based on parentheses
+        # remember - no support for multiple levels & complex logic
+        parts = query.split('(')
+        for i, f in enumerate(parts):
+            # ignore first part - empty
+            if i == 0:
+                continue
+
+            # detect different parts of the expression
+            # e.g activity!="Running" must be split into activity / != / Running
+            exp = ["", "", ""]
+            ptr = 0
+            special = False
+            symbols = ['=', '<', '>', '!']
+            for c in f:
+                if (c in symbols) != special:
+                    special = not special
+                    ptr += 1
+
+                # end of property
+                if c == ')':
+                    break
+
+                if c != '"':
+                    exp[ptr] += c
+
+            # find the values -- could be more than one
+            vals = exp[2].split('||')
+
+            # add the key-value object
+            if exp[0]:
+                result.append({'field': exp[0], 'values': vals})
+
+        return result
+
     def _do_update_users(self, new_users):
         with transaction.atomic():
             for u in new_users:
