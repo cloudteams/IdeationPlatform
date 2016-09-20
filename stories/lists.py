@@ -5,6 +5,7 @@ STORY_TYPES = (
 )
 
 STORY_STATES = (
+    ('UNSTARTED', 'Unstarted'),
     ('STARTED', 'Started'),
     ('FINISHED', 'Finished'),
     ('DELIVERED', 'Delivered'),
