@@ -5,7 +5,7 @@
 
 {% load bm_filters %}
 
-{% block title %}{{ project.project_name }} - Create a scenario{% endblock %}
+{% block title %}{{ project.project_name }} - Create a new story{% endblock %}
 {% block section_class %}bg-white{% endblock %}
 
 {% block css %}
@@ -14,15 +14,15 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Create a new scenario</h1>
+    <h1>Edist scenario #{{ scenario.project_scenario_id }}</h1>
 
     <form class="row panel"
-          action="{{ project.get_absolute_url }}add-scenario/" method="POST">{% csrf_token %}
+          action="{{ request.path }}" method="POST">{% csrf_token %}
         {{ form.as_p }}
 
         <div class="clearfix">
-            <button type="submit" class="btn btn-primary pull-left"><i class="fa fa-save"></i> Create &amp; add stories</button>
-            <a href="{{ project.get_absolute_url }}" class="btn btn-transparent pull-right">Cancel</a>
+            <button type="submit" class="btn btn-primary pull-left"><i class="fa fa-save"></i> Update scenario</button>
+            <a href="{{ scenario.get_absolute_url }}" class="btn btn-transparent pull-right">Cancel</a>
         </div>
     </form>
 {% endblock %}

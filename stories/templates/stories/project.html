@@ -7,6 +7,7 @@
 
 {% block title %}{{ project.project_name }} - Project Overview{% endblock %}
 
+{% block section_class %}bg-white{% endblock %}
 {% block css %}
     <link rel="stylesheet" href="{% static "stories/css/style.css" %}">
     <link rel="stylesheet" href="{% static "persona_builder/css/style.css" %}">
@@ -15,14 +16,14 @@
 {% block content %}
     <div class="row">
         <div class="col-md-4">
-            <div class="panel bg-white">
+            <div class="panel">
                 <h3>General statistics</h3>
                 <p>Project: <span class="number">{{ project.project_name }}</span></p>
                 <p>Total Scenarios: <span class="number">{{ project.project_scenarios.all.count }}</span></p>
                 <p>Total Stories: <span class="number">{{ project.project_stories.all.count }}</span></p>
             </div>
 
-            <div class="panel bg-white">
+            <div class="panel">
                 <form action="{{ project.get_absolute_url }}" method="GET">
                     <label for="id_order_by">Order by:</label>
                     <select id="id_order_by" name="order_by">
@@ -37,14 +38,14 @@
 
         <div class="col-md-8">
             {% for scenario in project.project_scenarios.all %}
-                <div class="col-xs-12 panel bg-white">
+                <div class="col-xs-12">
                     {% include "scenarios/teaser.html" %}
                 </div>
             {% endfor %}
 
-            <article class="project add-item add-scenario col-xs-12" style="padding: 0;">
+            <article class="project add-item add-scenario col-xs-4 col-xs-push-4" style="padding: 0;">
                 <a href="{{ project.get_absolute_url}}add-scenario/" alt="create new scenario">
-                    <div class="background" style="background: #411f48; padding: 20px;">
+                    <div class="background" style="padding: 20px;">
                         <div class="vertical-align">
                             <div class="middle">
                                 <div class="add-project-button">

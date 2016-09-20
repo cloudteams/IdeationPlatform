@@ -4,27 +4,41 @@
 }
 
 .bg-white {
-    background: white;
+    background: white !important;
 }
 
-.panel.bg-white,
-.panel.bg-white input,
-.panel.bg-white textarea{
+.bg-white,
+.bg-white input,
+.bg-white textarea{
     color: #333;
 }
 
-.panel.bg-white h3,
-.panel.bg-white h5 {
+.bg-white h1,
+.bg-white h2,
+.bg-white h3,
+.bg-white h4,
+.bg-white h5,
+.bg-white h6 {
     color: #444;
 }
 
-.panel.bg-white a {
+.bg-white a:not(.btn) {
     color: #1c699d;
 }
 
-.panel.bg-white a:hover {
+.bg-white a:not(.btn):hover {
     color: #1c699d !important;
     text-decoration: underline;
+}
+
+.bg-white .errorlist {
+    color: #e74c3c;
+    background: white;
+    padding: 5px 0;
+}
+
+.bg-white .errorlist > li{
+    color: #e74c3c;
 }
 
 .margin-top-5 {
@@ -34,4 +48,52 @@
 .scenario-main-col {
     border-left: 1px solid #ccc;
     min-height: 500px;
+}
+
+.teaser-separator {
+    border-bottom: 1px solid rgba(217, 217, 217, 0.5);
+    margin: 10px 0;
+}
+
+.persona-avatar {
+    height: 50px !important;
+    width: 50px;
+    border-radius: 50%;
+    background-size: cover;
+    left: calc(50% - 25px);
+    position: relative;
+    border: 1px solid #d7d7d7;
+}
+
+/* Scenario teaser */
+article.scenario {
+    padding: 20px;
+    border: 1px solid #d7d7d7;
+    margin-bottom: 30px
+}
+
+/* Add scenario button */
+.add-scenario {
+    border: none;
+}
+
+.add-scenario .header-small {
+    color: #777;
+}
+
+.add-scenario:hover .header-small {
+    color: white;
+}
+
+/* Story form */
+#id_story_type > li {
+    display: inline-block;
+    padding-right: 20px;
+}
+
+#id_story_type > li input[type="radio"] {
+    opacity: 1;
+    position: static;
+    left: auto;
+    display: inline-block;
 }

@@ -39,6 +39,15 @@ class Persona(models.Model):
     based_on = models.ForeignKey('self', blank=True, null=True, default=None)
     is_processing = models.BooleanField(default=False)
 
+    def __str__(self):
+        _public = ''
+        if self.is_public:
+            _public = ' (public persona)'
+
+        _cnt = ' - %d users matched' % PersonaUsers.objects.filter(persona_id=self.pk).count()
+
+        return '%s%s%s' % (self.name, _public, _cnt)
+
     def get_avatar_url(self):
         return '/media/%s' % self.avatar
 

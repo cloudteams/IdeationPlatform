@@ -1,6 +1,6 @@
-<article class="project">
-    <b>Scenario #{{ scenario.project_scenario_id }}</b><br />
+<article class="scenario">
+    <a href="{{ scenario.get_absolute_url }}"><b>Scenario #{{ scenario.project_scenario_id }}</b></a><br />
     <b>Title</b>: {{ scenario.title }}<br />
-    <div style="border-bottom: 1px solid rgba(177, 177, 177, 0.5)"></div>
+    <div class="teaser-separator"></div>
     <b>User stories: </b> {{ scenario.stories.count }}
 </article>

@@ -6,6 +6,7 @@
 {% load bm_filters %}
 
 {% block title %}{{ project.project_name }} - Scenario information{% endblock %}
+{% block section_class %}bg-white{% endblock %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static "stories/css/style.css" %}">
@@ -13,7 +14,10 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Scenario information</h1>
+    <div class="clerfix">
+        <h1 class="pull-left">Scenario information - Scenario # {{ scenario.project_scenario_id }}</h1>
+        <a href="{{ scenario.get_abolute_url }}edit/" class="btn btn-transparent btn-sm pull-right">Edit scenario</a>
+    </div>
 
     <div class="row">
         <div class="panel bg-white col-xs-12">
@@ -70,11 +74,11 @@
                             </p>
                         {% empty %}
                             <p>No stories yet in this scenario.</p>
-                            <p>Start by <a href="#">adding a story</a>.</p>
+                            <p>Start by <a href="{{ scenario.get_create_story_url }}">creating a story</a>.</p>
                         {% endfor %}
 
                         <div class="pull-right">
-                            <a href="#">Create</a>
+                            <a href="{{ scenario.get_create_story_url }}">Create</a>
                             <span class="separator"> | </span>
                             <a href="#">Add</a>
                         </div>

@@ -31,6 +31,9 @@ class Scenario(Model):
     def get_absolute_url(self):
         return '/stories/projects/%d/scenarios/%d/' % (self.project_id, self.pk)
 
+    def get_create_story_url(self):
+        return '/stories/projects/%d/scenarios/%d/add-story/' % (self.project_id, self.pk)
+
 
 class Story(Model):
     # meta info
@@ -43,7 +46,7 @@ class Story(Model):
     # generic info
     project_story_id = SmallIntegerField()
     title = TextField()
-    story_type = CharField(max_length=16, choices=STORY_TYPES)
+    story_type = CharField(max_length=16, choices=STORY_TYPES, default='USER_STORY')
 
     # the story itself
     role = TextField()
@@ -59,3 +62,6 @@ class Story(Model):
 
     # relationships
     scenarios = ManyToManyField(Scenario, related_name='stories')
+
+    def get_absolute_url(self):
+        return '/stories/projects/%d/stories/%d/' % (self.project_id, self.pk)

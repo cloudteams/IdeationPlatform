@@ -1,0 +1,9 @@
+<div class="col-xs-12 text-center">
+
+    {% if persona.avatar %}
+        <div class="background-image persona-avatar" style="background-image: url({{ persona.get_avatar_url }});">
+        </div>
+    {% endif %}
+
+    <p><b>{{ persona.name }}</b></p>
+</div>

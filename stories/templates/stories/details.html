@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% load endless %}
+{% load static from staticfiles %}
+
+{% load bm_filters %}
+
+{% block title %}{{ project.project_name }} - Story details{% endblock %}
+{% block section_class %}bg-white{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static "stories/css/style.css" %}">
+    <link rel="stylesheet" href="{% static "persona_builder/css/style.css" %}">
+{% endblock %}
+
+{% block content %}
+    <div class="clerfix">
+        <h1 class="pull-left">Story details - Story # {{ story.project_story_id }}</h1>
+        <a href="{{ story.get_abolute_url }}edit/" class="btn btn-transparent btn-sm pull-right">Edit story</a>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="col-md-3">
+                <h5>Related persona</h5>
+                <div class="row">
+                    {% with persona=story.persona %}
+                        {% include 'util/persona-xs.html' %}
+                    {% endwith %}
+                </div>
+
+                <h5 class="margin-top-5">Info</h5>
+                <p><b>Created:</b><br />
+                    <span class="number">{{ story.created }}</span></p>
+                <p><b>Last edited:</b><br />
+                    <span class="number">{{ story.updated }}</span></p>
+                <p><b>Owner:</b><br />
+                    <span class="number">{{ story.owner }}</span></p>
+            </div>
+
+            <div class="col-md-6 scenario-main-col">
+                <div class="row">
+                    <div class="col-xs-3">
+                        <b>ID</b>: #{{ story.project_story_id }}
+                    </div>
+
+                    <div class="col-xs-9">
+                        <b>Type</b>: {{ story.get_story_type_display }}
+                    </div>
+
+                    <div class="col-xs-12">
+                        <b>Title</b>: {{ story.title }}
+                    </div>
+                </div>
+
+                <div class="teaser-separator"></div>
+
+                <div class="row margin-top-5">
+                    <div class="col-xs-12">
+                        <p><b>As a:</b> {{ story.role }}</p>
+                    </div>
+                </div>
+
+                <div class="row margin-top-5">
+                    <div class="col-xs-12">
+                        <p><b>I want to</b><br />
+                        {{ story.purpose }}</p>
+                    </div>
+                </div>
+
+                <div class="row margin-top-5">
+                    <div class="col-xs-12">
+                        <p><b>So that</b><br />
+                        {{ story.target }}</p>
+                    </div>
+                </div>
+
+                <div class="teaser-separator"></div>
+
+                <div class="row margin-top-5">
+                    <div class="col-xs-12">
+                        <p><b>Acceptance criteria</b><br />
+                        {{ story.acceptance_criteria|default:"No acceptance criteria" }}</p>
+                    </div>
+                </div>
+
+                <div class="row margin-top-5">
+                    <div class="col-xs-12">
+                        <p><b>Comments</b><br />
+                        {{ scenario.comments|default:"No comments available" }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h5>Related Scenarios ({{ story.scenarios.count }})</h5>
+                        {% for scenario in story.scenarios.all %}
+                            <p>
+                                <a href="{{ scenario.get_absolute_url }}">#{{ scenario.project_scenario_id }} - {{ scenario.title }}</a>
+                            </p>
+                        {% empty %}
+                            <p>Not assigned to any scenarios.</p>
+                        {% endfor %}
+
+                        <div class="pull-right">
+                            <a href="#"><i class="fa fa-plus-circle"></i> Add Scenario</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row margin-top-5">
+                    <div class="col-xs-12">
+                        <h5>Related User Stories</h5>
+                        {% for st in related_stories %}
+                            <p>
+                                <a href="{{ st.get_absolute_url }}">#{{ st.project_story_id }} - {{ st.title }} ({{ st.get_story_type_display }})</a>
+                            </p>
+                        {% empty %}
+                            <p>No related stories.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
