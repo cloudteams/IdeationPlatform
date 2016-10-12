@@ -10,7 +10,7 @@ class AuthorizationMiddleware(object):
     def process_request(self, request):
 
         # except authorization pages
-        if request.path == '/persona-builder/authorize/':
+        if request.path == '/authorize/':
             return None
 
         # exclude api views

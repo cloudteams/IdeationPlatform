@@ -5,6 +5,5 @@ __author__ = 'dipap'
 
 
 urlpatterns = [
-    # persona
     url(r'^authorize/$', views.authorize),
 ]

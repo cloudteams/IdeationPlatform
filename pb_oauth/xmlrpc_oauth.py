@@ -186,7 +186,7 @@ class BscwApi:
 
     @staticmethod
     def authorization_url():
-        return '/persona-builder/authorize/?action=authorize&host=%s' % quote(DEFAULT_HOST)
+        return '/authorize/?action=authorize&host=%s' % quote(DEFAULT_HOST)
 
     def authorize(self, reply):
         import base64
