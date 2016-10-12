@@ -8,7 +8,7 @@
 						<li class="brand">
 							<div class="vertical-align">
 								<div class="middle">
-									<a href="{% if request.session.dashboard_url %}{{ request.session.dashboard_url }}{% else %}/team-ideation-platform/persona-builder/personas/{% endif %}" alt="home">
+									<a href="{% if request.session.dashboard_url %}{{ request.session.dashboard_url }}{% else %}/team-ideation-tools/persona-builder/personas/{% endif %}" alt="home">
 										<img src="{% static "img/logo-white.svg" %}" class="logo svg" alt="Cloudteams logo">
 									</a>
 								</div>
@@ -17,7 +17,7 @@
 
 						<li class="search">
 							<div class="vertical-align">
-								<form class="project-search middle" action="/team-ideation-platform/persona-builder/personas/" method="GET">
+								<form class="project-search middle" action="/team-ideation-tools/persona-builder/personas/" method="GET">
 									<input name="q" class="input-search" type="text" placeholder="Search personas" value="{{ q }}" autocomplete="false" />
 									<img src="{% static "img/icons/icon-search.svg" %}" class="icon-search svg" alt="Search icon">
 								</form>
@@ -27,7 +27,7 @@
 						<li>
 							<div class="vertical-align">
 								<div class="middle">
-									<a href="/team-ideation-platform/persona-builder/personas/">
+									<a href="/team-ideation-tools/persona-builder/personas/">
 										<img class="icon menu-icon svg" src="{% static "img/icons/icon-profile.svg" %}">
 										Personas
 									</a>
@@ -40,7 +40,7 @@
 								<li>
 									<div class="vertical-align">
 										<div class="middle">
-											<a href="/team-ideation-platform/business-model/projects/{{ pid }}/">
+											<a href="/team-ideation-tools/business-model/projects/{{ pid }}/">
 												<img class="icon menu-icon svg" src="{% static "img/icons/icon-folder.svg" %}">
 												Business Models
 											</a>
@@ -51,7 +51,7 @@
 								<li>
 									<div class="vertical-align">
 										<div class="middle">
-											<a href="/team-ideation-platform/stories/projects/{{ pid }}/">
+											<a href="/team-ideation-tools/stories/projects/{{ pid }}/">
 												<img class="icon menu-icon svg" src="{% static "img/icons/icon-requirement.svg" %}">
 												Requirements
 											</a>

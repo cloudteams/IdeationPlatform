@@ -8,9 +8,9 @@ class AuthorizationMiddleware(object):
 
     # Check if client IP is allowed
     def process_request(self, request):
-
+        import pdb;pdb.set_trace()
         # except authorization pages
-        if request.path == '/team-ideation-platform/authorize/':
+        if request.path == '/team-ideation-tools/authorize/':
             return None
 
         # exclude api views

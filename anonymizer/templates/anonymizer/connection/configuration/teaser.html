@@ -3,7 +3,7 @@
 
     <div class="content">
         {% if not configuration.is_active %}
-            <form method="POST" action = '/team-ideation-platform/anonymizer/connection/{{configuration.pk}}/set-active/' class="activation-form">
+            <form method="POST" action = '/team-ideation-tools/anonymizer/connection/{{configuration.pk}}/set-active/' class="activation-form">
                 {% csrf_token %}
                 <input type="submit" value="Activate" />
             </form>
@@ -12,8 +12,8 @@
             <span class="already-active">✓ Active</span>|
         {% endif %}
 
-        <a href="/team-ideation-platform/anonymizer/connection/{{configuration.pk}}/console/">Query</a> |
-        <a href="/team-ideation-platform/anonymizer/connection/{{configuration.pk}}/select-columns/">Edit</a> |
-        <a href="/team-ideation-platform/anonymizer/connection/{{configuration.pk}}/delete/">Delete</a>
+        <a href="/team-ideation-tools/anonymizer/connection/{{configuration.pk}}/console/">Query</a> |
+        <a href="/team-ideation-tools/anonymizer/connection/{{configuration.pk}}/select-columns/">Edit</a> |
+        <a href="/team-ideation-tools/anonymizer/connection/{{configuration.pk}}/delete/">Delete</a>
     </div>
 </div>

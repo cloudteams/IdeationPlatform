@@ -132,7 +132,7 @@ STATICFILES_DIRS = (
 )
 
 MEDIA_ROOT = 'media/'
-MEDIA_URL = '/team-ideation-platform/media/'
+MEDIA_URL = '/team-ideation-tools/media/'
 
 # minimum number of users a persona must contain
 MIN_USERS_IN_PERSONA = 3

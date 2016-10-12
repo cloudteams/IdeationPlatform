@@ -21,7 +21,7 @@ class ConnectionConfiguration(models.Model):
     is_active = models.BooleanField(default=False, editable=False)
 
     def update_info_url(self):
-        base_url = '/team-ideation-platform/anonymizer/connection/update-info'
+        base_url = '/team-ideation-tools/anonymizer/connection/update-info'
 
         if self.connection_type == 'django.db.backends.sqlite3':
             return '{0}/{1}/sqlite3/'.format(base_url, self.pk)

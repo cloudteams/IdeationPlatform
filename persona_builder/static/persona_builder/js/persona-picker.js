@@ -18,7 +18,7 @@ $(function() {
             $dBody.html(this.messages.loading)
 
             $.ajax({
-                url: '/team-ideation-platform/persona-builder/personas/pool/',
+                url: '/team-ideation-tools/persona-builder/personas/pool/',
                 method: 'GET',
 
                 success: function(data) {
@@ -67,13 +67,13 @@ $(function() {
                 var personaId = this.$selectedPersona.data('persona_id')
 
                 $.ajax({
-                    url: '/team-ideation-platform/persona-builder/personas/add-from-pool/' + personaId + '/',
+                    url: '/team-ideation-tools/persona-builder/personas/add-from-pool/' + personaId + '/',
                     method: 'POST',
                     data: {
                         'csrfmiddlewaretoken': this.csrfmiddlewaretoken()
                     },
                     success: function(data) {
-                       window.location = '/team-ideation-platform/persona-builder/personas/' + data + '/edit-info/'
+                       window.location = '/team-ideation-tools/persona-builder/personas/' + data + '/edit-info/'
                     }
                 })
             }
