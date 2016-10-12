@@ -9,7 +9,7 @@ class Project(Model):
     project_name = CharField(max_length=1023)
 
     def get_absolute_url(self):
-        return '/stories/projects/%d/' % self.project_id
+        return '/team-ideation-platform/stories/projects/%d/' % self.project_id
 
 
 class Scenario(Model):
@@ -29,10 +29,10 @@ class Scenario(Model):
     comments = TextField(blank=True)
 
     def get_absolute_url(self):
-        return '/stories/projects/%d/scenarios/%d/' % (self.project_id, self.pk)
+        return '/team-ideation-platform/stories/projects/%d/scenarios/%d/' % (self.project_id, self.pk)
 
     def get_create_story_url(self):
-        return '/stories/projects/%d/scenarios/%d/add-story/' % (self.project_id, self.pk)
+        return '/team-ideation-platform/stories/projects/%d/scenarios/%d/add-story/' % (self.project_id, self.pk)
 
     def get_all_stories(self):
         return self.stories.all().order_by('project_story_id')
@@ -78,4 +78,4 @@ class Story(Model):
     scenarios = ManyToManyField(Scenario, related_name='stories')
 
     def get_absolute_url(self):
-        return '/stories/projects/%d/stories/%d/' % (self.project_id, self.pk)
+        return '/team-ideation-platform/stories/projects/%d/stories/%d/' % (self.project_id, self.pk)

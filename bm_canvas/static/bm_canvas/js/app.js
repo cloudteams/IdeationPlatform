@@ -124,7 +124,7 @@ $(function() {
 
             // post the entry
             $.ajax({
-                url: '/business-model/projects/' + projectId + '/add-entry/',
+                url: '/team-ideation-platform/business-model/projects/' + projectId + '/add-entry/',
                 method: 'POST',
                 data: {
                     'csrfmiddlewaretoken': this.csrfmiddlewaretoken(),
@@ -183,7 +183,7 @@ $(function() {
             // update the entry
             var that = this;
             $.ajax({
-                url: '/business-model/entries/' + entryId + '/update/',
+                url: '/team-ideation-platform/business-model/entries/' + entryId + '/update/',
                 method: 'POST',
                 data: {
                     'csrfmiddlewaretoken': this.csrfmiddlewaretoken(),
@@ -213,7 +213,7 @@ $(function() {
             // update the orders
             var that = this;
             $.ajax({
-                url: '/business-model/entries/update-orders/',
+                url: '/team-ideation-platform/business-model/entries/update-orders/',
                 method: 'POST',
                 data: {
                     'csrfmiddlewaretoken': that.csrfmiddlewaretoken(),
@@ -235,7 +235,7 @@ $(function() {
 
                 var that = this;
                 $.ajax({
-                    url:  '/business-model/entries/' + entryId + '/',
+                    url:  '/team-ideation-platform/business-model/entries/' + entryId + '/',
                     method: 'GET',
                     success: function(data) {
                         // update the UI
@@ -255,7 +255,7 @@ $(function() {
             if (confirm('Are you sure you want to delete this entry?')) {
                 // remove the entry
                 $.ajax({
-                    url: '/business-model/entries/' + entryId + '/remove/',
+                    url: '/team-ideation-platform/business-model/entries/' + entryId + '/remove/',
                     method: 'POST',
                     data: {
                         'csrfmiddlewaretoken': this.csrfmiddlewaretoken(),

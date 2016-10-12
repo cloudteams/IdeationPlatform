@@ -52,7 +52,7 @@ class Persona(models.Model):
         return '/media/%s' % self.avatar
 
     def get_absolute_url(self):
-        return '/persona-builder/personas/%s/' % self.pk
+        return '/team-ideation-tools/personas/%s/' % self.pk
 
     def get_edit_properties_url(self):
         return self.get_absolute_url() + 'edit-properties/'

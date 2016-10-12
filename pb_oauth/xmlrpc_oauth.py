@@ -11,7 +11,7 @@ SRV_INSTANCES = {}
 bscw_oauth_args = {
     'op': 'OAuth'
 }
-DEFAULT_HOST = 'cloudteams.epu.ntua.gr/persona-builder'
+DEFAULT_HOST = 'cloudteams.epu.ntua.gr/team-ideation-tools'
 
 
 def log(*val):
@@ -186,7 +186,7 @@ class BscwApi:
 
     @staticmethod
     def authorization_url():
-        return '/authorize/?action=authorize&host=%s' % quote(DEFAULT_HOST)
+        return '/team-ideation-tools/authorize/?action=authorize&host=%s' % quote(DEFAULT_HOST)
 
     def authorize(self, reply):
         import base64
@@ -329,6 +329,6 @@ class BscwApi:
 
             # propagate persona info
             if 'send_persona' in request.session:
-                return redirect('/persona-builder/perform-pending-action/')
+                return redirect('/team-ideation-tools/perform-pending-action/')
 
-            return redirect('/persona-builder/personas/')
+            return redirect('/team-ideation-tools/personas/')

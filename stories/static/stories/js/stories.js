@@ -20,7 +20,7 @@ $(function() {
         // get possible stories
         $.ajax({
             type: 'GET',
-            url: '/stories/scenarios/' + scenarioId + '/stories-to-add/',
+            url: '/team-ideation-platform/stories/scenarios/' + scenarioId + '/team-ideation-platform/stories-to-add/',
             success: function(data) {
                 $modal.find('.modal-body').html(data)
             },
@@ -39,7 +39,7 @@ $(function() {
         // add the story
         $.ajax({
             type: 'POST',
-            url: '/stories/scenarios/' + scenarioId + '/add-story/',
+            url: '/team-ideation-platform/stories/scenarios/' + scenarioId + '/add-story/',
             data: {
                 story_id: storyId
             },
@@ -62,7 +62,7 @@ $(function() {
 
     /* Redirect on current project change */
     $('#id_current_project').on('change', function() {
-        window.document.location = '/stories/projects/' + $(this).val() + '/';
+        window.document.location = '/team-ideation-platform/stories/projects/' + $(this).val() + '/';
     });
 
     /* Order scenarios in project */

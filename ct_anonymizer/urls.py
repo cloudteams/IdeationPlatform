@@ -19,27 +19,27 @@ import views
 from ct_anonymizer import settings
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^team-ideation-platform/admin/', include(admin.site.urls)),
 
     # anonymizer
-    url(r'^anonymizer/', include('anonymizer.urls')),
+    url(r'^team-ideation-platform/anonymizer/', include('anonymizer.urls')),
 
     # persona builder & authentication
-    url(r'^persona-builder/', include('persona_builder.urls')),
-    url(r'^', include('pb_oauth.urls')),
+    url(r'^team-ideation-platform/', include('persona_builder.urls')),
+    url(r'^team-ideation-platform/', include('pb_oauth.urls')),
 
     # business model canvas
-    url(r'^business-model/', include('bm_canvas.urls')),
+    url(r'^team-ideation-platform/business-model/', include('bm_canvas.urls')),
 
     # stories
-    url(r'^stories/', include('stories.urls')),
+    url(r'^team-ideation-platform/stories/', include('stories.urls')),
 
     # home page
-    url(r'^$', views.index),
+    url(r'^team-ideation-platform/$', views.index),
 ]
 
 # media files should only be served from the django server in DEBUG mode
 # todo fix
 urlpatterns += patterns('',
-                        (r'^media/(?P<path>.*)$', 'django.views.static.serve', {
+                        (r'^team-ideation-platform/media/(?P<path>.*)$', 'django.views.static.serve', {
                             'document_root': settings.MEDIA_ROOT}))

@@ -28,7 +28,7 @@ class PersonaViewTests(TestCase):
             'description': 'A young person who runs',
         }
 
-        form_url = '/persona-builder/personas/create/'
+        form_url = '/team-ideation-tools/personas/create/'
 
         # should be created when we add the avatar
         data['avatar'] = open('test-data/profile.png', 'rb')
@@ -38,7 +38,7 @@ class PersonaViewTests(TestCase):
     def test_edit_persona(self):
         self.create_persona()
 
-        form_url = '/persona-builder/personas/1/edit-properties/'
+        form_url = '/team-ideation-tools/personas/1/edit-properties/'
 
         # test too narrow query
         query = 'age=37'
@@ -62,7 +62,7 @@ class PersonaViewTests(TestCase):
         self.assertEqual(old_uuid, new_uuid)
 
         # test persona details view
-        response = self.client.get('/persona-builder/personas/1/')
+        response = self.client.get('/team-ideation-tools/personas/1/')
         self.assertEqual(response.status_code, 200)
 
         # test update users
@@ -71,7 +71,7 @@ class PersonaViewTests(TestCase):
         connection.commit()
         users = Persona.objects.get(pk=1).users
 
-        response = self.client.post('/persona-builder/personas/1/update-users/')
+        response = self.client.post('/team-ideation-tools/personas/1/update-users/')
         self.assertEqual(response.status_code, 302)
         self.assertNotEqual(users, Persona.objects.get(pk=1).users)
 
@@ -81,10 +81,10 @@ class PersonaViewTests(TestCase):
     def test_delete_persona(self):
         self.create_persona()
 
-        response = self.client.post('/persona-builder/personas/1/delete/')
+        response = self.client.post('/team-ideation-tools/personas/1/delete/')
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Persona.objects.all().count(), 0)
 
     def test_personas_list(self):
-        response = self.client.get('/persona-builder/personas/')
+        response = self.client.get('/team-ideation-tools/personas/')
         self.assertEqual(response.status_code, 200)

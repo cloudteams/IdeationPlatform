@@ -80,7 +80,7 @@ def edit_persona_info(request, pk):
         form = PersonaForm(request.POST, instance=persona)
         if form.is_valid():
             persona = form.save()
-            return redirect('/persona-builder/propagate/?send_persona=%d&next=properties' % persona.pk)
+            return redirect('/team-ideation-tools/propagate/?send_persona=%d&next=properties' % persona.pk)
     else:
         form = PersonaForm(instance=persona)
 
@@ -128,7 +128,7 @@ def edit_persona_properties(request, pk):
                 if DEBUG:
                     return redirect(persona.get_absolute_url())
                 else:
-                    return redirect('/persona-builder/propagate/?send_persona=%d&next=absolute' % persona.pk)
+                    return redirect('/team-ideation-tools/propagate/?send_persona=%d&next=absolute' % persona.pk)
             else:
                 # not enough users
                 form.add_error(None, 'Use less strict filters')
@@ -276,7 +276,7 @@ def delete_persona(request, pk):
         })
     elif request.method == 'POST':
         # notify Team Platform
-        return redirect('/persona-builder/propagate/?send_persona=%d&delete=true' % persona.pk)
+        return redirect('/team-ideation-tools/propagate/?send_persona=%d&delete=true' % persona.pk)
     else:
         return HttpResponse('Invalid method', status=400)
 
@@ -292,7 +292,7 @@ def perform_pending_action(request):
     if 'delete_persona' in request.session:
         del request.session['delete_persona']
         persona.delete()
-        return redirect('/persona-builder/personas/')
+        return redirect('/team-ideation-tools/personas/')
 
     # is the next page specified?
     if 'next_page' in request.session:
@@ -304,7 +304,7 @@ def perform_pending_action(request):
             return redirect(persona.get_edit_properties_url())
 
     # default next page
-    return redirect('/persona-builder/personas/' + persona_id + '/')
+    return redirect('/team-ideation-tools/personas/' + persona_id + '/')
 
 
 def add_from_pool(request, pk):

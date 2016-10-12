@@ -10,7 +10,7 @@ class AuthorizationMiddleware(object):
     def process_request(self, request):
 
         # except authorization pages
-        if request.path == '/authorize/':
+        if request.path == '/team-ideation-platform/authorize/':
             return None
 
         # exclude api views

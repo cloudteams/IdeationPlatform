@@ -23,17 +23,17 @@ class PersonaBuilderAPITests(TestCase):
                                                users_table='users', properties=properties, foreign_keys=foreign_keys)
 
     def test_get_info(self):
-        self.assertEqual(self.client.get('/persona-builder/api/info/').status_code, 200)
+        self.assertEqual(self.client.get('/team-ideation-tools/api/info/').status_code, 200)
 
     def test_get_personas(self):
-        self.assertEqual(self.client.get('/persona-builder/api/personas/').status_code, 200)
+        self.assertEqual(self.client.get('/team-ideation-tools/api/personas/').status_code, 200)
 
     def test_new_persona(self):
         data = {
             'name': 'Test #1',
             'description': 'This is some test persona'
         }
-        response = self.client.post('/persona-builder/api/personas/', data=data)
+        response = self.client.post('/team-ideation-tools/api/personas/', data=data)
         self.assertEqual(response.status_code, 201)
 
         # make sure the Persona has been created
@@ -44,15 +44,15 @@ class PersonaBuilderAPITests(TestCase):
             'name': 'Test #1',
             'description': 'This is some test persona'
         }
-        self.client.post('/persona-builder/api/personas/', data=data)
+        self.client.post('/team-ideation-tools/api/personas/', data=data)
 
         # get persona #1
-        response = self.client.get('/persona-builder/api/persona/1/')
+        response = self.client.get('/team-ideation-tools/api/persona/1/')
         self.assertEqual(response.status_code, 200)
         self.assertGreater(len(response.content), 0)
 
         # get persona #2 - 404
-        response = self.client.get('/persona-builder/api/persona/2/')
+        response = self.client.get('/team-ideation-tools/api/persona/2/')
         self.assertEqual(response.status_code, 404)
 
     def test_update_persona(self):
@@ -60,10 +60,10 @@ class PersonaBuilderAPITests(TestCase):
             'name': 'Test #1',
             'description': 'This is some test persona'
         }
-        self.client.post('/persona-builder/api/personas/', data=data)
+        self.client.post('/team-ideation-tools/api/personas/', data=data)
 
         # update
-        response = self.client.post('/persona-builder/api/persona/1/', data={'query': 'age>="18..24"'})
+        response = self.client.post('/team-ideation-tools/api/persona/1/', data={'query': 'age>="18..24"'})
         self.assertEqual(response.status_code, 200)
 
         # make sure the Persona has been updated
@@ -74,22 +74,22 @@ class PersonaBuilderAPITests(TestCase):
             'name': 'Test #1',
             'description': 'This is some test persona'
         }
-        self.client.post('/persona-builder/api/personas/', data=data)
+        self.client.post('/team-ideation-tools/api/personas/', data=data)
 
-        response = self.client.delete('/persona-builder/api/persona/1/')
+        response = self.client.delete('/team-ideation-tools/api/persona/1/')
         self.assertEqual(response.status_code, 204)
 
         # make sure the Persona has been deleted
         self.assertEqual(Persona.objects.all().count(), 0)
 
     def test_not_allowed_on_personas_list(self):
-        self.assertEqual(self.client.put('/persona-builder/api/info/').status_code, 400)
-        self.assertEqual(self.client.delete('/persona-builder/api/info/').status_code, 400)
+        self.assertEqual(self.client.put('/team-ideation-tools/api/info/').status_code, 400)
+        self.assertEqual(self.client.delete('/team-ideation-tools/api/info/').status_code, 400)
 
     def test_not_allowed_on_persona(self):
         data = {
             'name': 'Test #1',
             'description': 'This is some test persona'
         }
-        self.client.post('/persona-builder/api/personas/', data=data)
-        self.assertEqual(self.client.put('/persona-builder/api/persona/1/').status_code, 400)
+        self.client.post('/team-ideation-tools/api/personas/', data=data)
+        self.assertEqual(self.client.put('/team-ideation-tools/api/persona/1/').status_code, 400)

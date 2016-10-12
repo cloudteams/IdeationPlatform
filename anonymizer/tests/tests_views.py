@@ -15,11 +15,11 @@ from django.test import TestCase
 class ConnectionViewTests(TestCase):
 
     def test_home_view(self):
-        response = self.client.get('/anonymizer/')
+        response = self.client.get('/team-ideation-platform/anonymizer/')
         self.assertEqual(response.status_code, 200)
 
     def test_create_connection(self):
-        form_url = '/anonymizer/connection/create/'
+        form_url = '/team-ideation-platform/anonymizer/connection/create/'
 
         # test that the page is accessible
         response = self.client.get(form_url)
@@ -53,7 +53,7 @@ class ConnectionViewTests(TestCase):
         ConnectionConfiguration.objects.create(name='test_connection',
                                                connection_type='django.db.backends.sqlite3', info='')
 
-        form_url = '/anonymizer/connection/update-info/1/sqlite3/'
+        form_url = '/team-ideation-platform/anonymizer/connection/update-info/1/sqlite3/'
 
         # test that we can get the form
         response = self.client.get(form_url)
@@ -84,7 +84,7 @@ class ConnectionViewTests(TestCase):
         ConnectionConfiguration.objects.create(name='test_connection',
                                                connection_type='django.db.backends.mysql', info='')
 
-        form_url = '/anonymizer/connection/update-info/1/mysql/'
+        form_url = '/team-ideation-platform/anonymizer/connection/update-info/1/mysql/'
 
         # test that we can get the form
         response = self.client.get(form_url)
@@ -110,7 +110,7 @@ class ConnectionViewTests(TestCase):
         ConnectionConfiguration.objects.create(name='test_connection',
                                                connection_type='django.db.backends.psycopg2', info='')
 
-        form_url = '/anonymizer/connection/update-info/1/postgres/'
+        form_url = '/team-ideation-platform/anonymizer/connection/update-info/1/postgres/'
 
         # test that we can get the form
         response = self.client.get(form_url)
@@ -141,7 +141,7 @@ class ConnectionViewTests(TestCase):
                                                connection_type='django.db.backends.sqlite3',
                                                info='"name": "test-data/test_site.sqlite3"')
 
-        form_url = '/anonymizer/connection/1/suggest-user-table/'
+        form_url = '/team-ideation-platform/anonymizer/connection/1/suggest-user-table/'
 
         # test that we can get the form
         response = self.client.get(form_url)
@@ -209,7 +209,7 @@ class ConnectionViewTests(TestCase):
                                                         info=connection_info,
                                                         users_table='users')
 
-        form_url = '/anonymizer/connection/1/select-columns/'
+        form_url = '/team-ideation-platform/anonymizer/connection/1/select-columns/'
 
         # test that we can get the form
         response = self.client.get(form_url)
@@ -236,11 +236,11 @@ class ConnectionViewTests(TestCase):
                                                         users_table='users',
                                                         user_pk='users.id@test_connection')
 
-        form_url = '/anonymizer/connection/1/suggest-user-table/'
+        form_url = '/team-ideation-platform/anonymizer/connection/1/suggest-user-table/'
         response = self.client.post(form_url, data={'users_table': 'users'})
         self.assertEqual(response.status_code, 302)
 
-        form_url = '/anonymizer/connection/1/select-columns/'
+        form_url = '/team-ideation-platform/anonymizer/connection/1/select-columns/'
         # post column info
         data = self.get_test_column_data()
 
@@ -264,8 +264,8 @@ class ConnectionViewTests(TestCase):
     def test_console(self):
         self.test_setup_standard_connection()
 
-        console_url = '/anonymizer/connection/1/console/'
-        query_url = '/anonymizer/connection/1/query/'
+        console_url = '/team-ideation-platform/anonymizer/connection/1/console/'
+        query_url = '/team-ideation-platform/anonymizer/connection/1/query/'
 
         # test the console view responds
         response = self.client.get(console_url)
@@ -313,7 +313,7 @@ class ConnectionViewTests(TestCase):
     def test_delete_view(self):
         self.test_setup_standard_connection()
 
-        form_url = '/anonymizer/connection/1/delete/'
+        form_url = '/team-ideation-platform/anonymizer/connection/1/delete/'
 
         # check that we can get the delete form
         response = self.client.get(form_url)

@@ -56,7 +56,7 @@ def sqlite3_info(request, pk):
             '''
             config.save()
 
-            return redirect('/anonymizer/connection/%d/suggest-user-table/' % config.pk)
+            return redirect('/team-ideation-platform/anonymizer/connection/%d/suggest-user-table/' % config.pk)
         else:
             status = 400
             params['form'] = form
@@ -87,7 +87,7 @@ def mysql_info(request, pk):
             '''
             config.save()
 
-            return redirect('/anonymizer/connection/%d/suggest-user-table/' % config.pk)
+            return redirect('/team-ideation-platform/anonymizer/connection/%d/suggest-user-table/' % config.pk)
         else:
             status = 400
             params['form'] = form
@@ -118,7 +118,7 @@ def postgres_info(request, pk):
             '''
             config.save()
 
-            return redirect('/anonymizer/connection/%d/suggest-user-table/' % config.pk)
+            return redirect('/team-ideation-platform/anonymizer/connection/%d/suggest-user-table/' % config.pk)
         else:
             status = 400
             params['form'] = form
@@ -157,7 +157,7 @@ def suggest_users_table(request, pk):
             # save changes
             config.save()
 
-            return redirect('/anonymizer/connection/%d/select-columns/' % config.pk)
+            return redirect('/team-ideation-platform/anonymizer/connection/%d/select-columns/' % config.pk)
         else:
             status = 400
             params['form'] = form
@@ -283,7 +283,7 @@ def select_columns(request, pk):
             config.properties = json.dumps(properties)
             config.save()
 
-            return redirect('/anonymizer/')
+            return redirect('/team-ideation-platform/anonymizer/')
         else:
             status = 400
             params['formset'] = formset
@@ -306,7 +306,7 @@ def set_active(request, pk):
 
             cc.save()
 
-        return redirect('/anonymizer/')
+        return redirect('/team-ideation-platform/anonymizer/')
     else:
         return HttpResponse('Only POST method allowed', status=400)
 
@@ -421,7 +421,7 @@ class ConnectionConfigurationManualDeleteView(DeleteView):
     model = ConnectionConfiguration
     template_name = 'anonymizer/connection/delete.html'
     context_object_name = 'configuration'
-    success_url = '/anonymizer/'
+    success_url = '/team-ideation-platform/anonymizer/'
 
 
 delete_view = ConnectionConfigurationManualDeleteView.as_view()
