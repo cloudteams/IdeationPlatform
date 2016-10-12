@@ -26,7 +26,7 @@ urlpatterns = [
 
     # persona builder & authentication
     url(r'^persona-builder/', include('persona_builder.urls')),
-    url(r'^$', include('pb_oauth.urls')),
+    url(r'^', include('pb_oauth.urls')),
 
     # business model canvas
     url(r'^business-model/', include('bm_canvas.urls')),
