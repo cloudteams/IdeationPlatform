@@ -10,7 +10,7 @@ import sys
 
 import thread
 
-from ct_anonymizer.settings import PRODUCTION, MIN_USERS_IN_PERSONA
+from ct_anonymizer.settings import PRODUCTION, MIN_USERS_IN_PERSONA, MEDIA_URL
 from django.db import models
 from django.db import transaction
 
@@ -49,7 +49,7 @@ class Persona(models.Model):
         return '%s%s%s' % (self.name, _public, _cnt)
 
     def get_avatar_url(self):
-        return '/media/%s' % self.avatar
+        return '%s/%s' % (MEDIA_URL, self.avatar)
 
     def get_absolute_url(self):
         return '/team-ideation-tools/personas/%s/' % self.pk
