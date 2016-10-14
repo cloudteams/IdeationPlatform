@@ -1,17 +1,3 @@
-{% extends "base.html" %}
-
-{% load static from staticfiles %}
-
-{% block section_class %}not-container{% endblock %}
-{% block content %}
-        {% with page="edit" %}
-            {% include "persona_builder/persona/intro.html" %}
-        {% endwith %}
-
-        <form class="persona-filters-form" method="POST" action=".">{% csrf_token %}
-
-            {{ form.as_p }}
-
-            <input class="btn btn-primary pull-right" type="submit" value="Save changes" />
-        </form>
-{% endblock %}
+{% with form_action='/team-ideation-tools/personas/{{ persona.pk }}/edit-info/' %}
+    {% include 'persona_builder/persona/info-form.html' %}
+{% endwith %}

@@ -76,11 +76,6 @@ label[for="id_avatar"]:hover {
     margin-left: 15px;
 }
 
-.add-from-pool {
-    cursor: pointer;
-    height: 276px;
-}
-
 .persona-teaser {
     margin: 20px 0;
 }

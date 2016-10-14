@@ -1,24 +1,3 @@
-{% extends "base.html" %}
-
-{% block content %}
-    <h1>Create new Persona</h1>
-
-    <form method="POST" action="." enctype="multipart/form-data" class="dropzone">{% csrf_token %}
-        {{ form.non_field_errors }}
-
-        {{ form.as_p }}
-        <input type="submit" value="Continue" />
-    </form>
-
-{% endblock %}
-
-{% block js %}
-    <script>
-
-        $('#id_avatar').change(function(){
-            var filename = $(this).val().split('\\').pop();
-            $('label[for="id_avatar"]').html('<i class="fa fa-file-image-o"></i> ' + filename);
-        });
-
-    </script>
-{% endblock %}
+{% with form_action='/team-ideation-tools/personas/create/' %}
+    {% include 'persona_builder/persona/info-form.html' %}
+{% endwith %}

@@ -64,7 +64,7 @@ class PersonaCreateView(CreateView):
         # create persona
         instance.save()
 
-        return redirect(instance.get_edit_properties_url() + '?initial=true')
+        return HttpResponse(instance.get_edit_properties_url() + '?initial=true')
 
 create_persona = PersonaCreateView.as_view()
 

@@ -20,9 +20,9 @@
 
 				<div class="information col-xs-8 middle hide-minimized">
 					<ul>
-						<li class="meta big">Bobbyd123</li>
+						<li class="meta big">{{ request.session.full_name }}</li>
 						<li class="meta">Member</li>
-						<li><a href="#nowhere">Edit profile</a></li>
+						<li><a href="{{ tp_url }}{{ request.session.dashboard_id }}?op=cloudteams.getstdb&action=cloudteams.editdevprofile&object={{ request.session.user_id }}">Edit profile</a></li>
 					</ul>
 				</div>
 			</div>
@@ -77,14 +77,14 @@
 					</li>
 
 					<li>
-						<a href="/views/developer/dashboard/projects/project/requirements">
+						<a href="/team-ideation-tools/stories/projects/{{ request.session.project_id }}">
 							<i class="icon icon-requirement"></i>
 							<span>Requirements</span>
 						</a>
 					</li>
 
 					<li>
-						<a href="/views/developer/dashboard/projects/project/personas">
+						<a href="/team-ideation-tools/personas/">
 							<i class="icon icon-user"></i>
 							<span>Personas</span>
 						</a>
@@ -105,7 +105,7 @@
 					</li>
 
 					<li>
-						<a href="/views/developer/dashboard/projects/project/documents">
+						<a href="{{ tp_url }}{{ request.session.dashboard_id }}?op=cloudteams.getstdb&action=cloudteams.manageprojectdocuments&object={{ request.session.project_id }}">
 							<i class="icon icon-document"></i>
 							<span>Documents</span>
 						</a>

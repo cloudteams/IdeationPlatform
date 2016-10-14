@@ -13,7 +13,6 @@ $(function() {
 
         /* Open the chooser & load personas */
         open: function() {
-            this.$ppc.modal('show')
             var $dBody = this.$ppc.find('.modal-body')
             $dBody.html(this.messages.loading)
 
@@ -22,7 +21,8 @@ $(function() {
                 method: 'GET',
 
                 success: function(data) {
-                   $dBody.html($(data))
+                   $dBody.html($(data));
+
                     // make persona list scrollable
                    $('#persona-pool-list-content').perfectScrollbar();
                 }

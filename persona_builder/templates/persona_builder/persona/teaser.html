@@ -1,6 +1,6 @@
 {% load staticfiles %}
 
-<article class="campaign campaign-poll public-campaign block-line-half col-lg-4 col-md-6 clear-3">
+<article class="campaign campaign-poll public-campaign block-line-half col-md-6">
 	<div class="background">
 		{% if persona.avatar %}
         	<div class="background-image" style="background-image: url({{ persona.get_avatar_url }});">
@@ -11,17 +11,14 @@
 			<p class="highlight bold">{% if persona.is_public %}Public{% else %}Private{% endif %} persona</p>
 
 			<div class="tooltip-container">
-				<a href="#nowhere" class="open-tooltip-button"><img class="more-options svg" src="{% static "img/icons/icon-more-options.svg" %}"></a>
+				<a href="#nowhere" class="open-tooltip-button"><i class="icon icon-more-options"></i></a>
 				<div class="custom-tooltip">
 					<ul>
 						<li>
 							<a href="{{ persona.get_absolute_url }}">Open</a>
                         </li>
                         <li>
-                            <a href="{{ persona.get_edit_info_url }}">Edit info</a>
-						</li>
-                        <li>
-                            <a href="{{ persona.get_edit_properties_url }}">Edit properties</a>
+                            <a href="{{ persona.get_edit_info_url }}" class="pb-open">Edit</a>
 						</li>
 					</ul>
 				</div>
@@ -38,7 +35,7 @@
 
 		<footer>
 			{% if more_link %}
-            	<a href="{{ persona.get_absolute_url }}" class="btn">Open persona<</a>
+            	<a href="{{ persona.get_absolute_url }}" class="btn pb-open">Open persona<</a>
 			{% endif %}
 			{% if add_link %}
 				<li>

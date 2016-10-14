@@ -229,12 +229,15 @@ class BscwApi:
         # change to verbose=True for debugging
         srv = XMLRPC_Server(self.oauth.server, verbose=self.verbose, oauth=oauth['Authorization'])
         user_home_id = srv.get_attributes()[0]['__id__']  # get user's home folder
-        user = srv.get_attributes(user_home_id, ['user', ])[0]['user']  # gets user's info
+        user_info = srv.get_attributes(user_home_id, ['user', ])
+
+        user = user_info[0]['user']  # gets user's info
 
         # store common items in session
         SRV_INSTANCES[user['name']] = srv
         request.session['user_id'] = user['__id__']
         request.session['username'] = user['name']
+        request.session['full_name'] = user['name']  # TODO fix
         self.store_user_content(request, srv)
 
         return srv

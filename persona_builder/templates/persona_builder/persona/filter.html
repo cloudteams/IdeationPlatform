@@ -1,47 +1,49 @@
         {% load app_filters %}
 
-        <div class="filter-row" data-name="{{ filter.name }}" data-type="{{ filter.type }}">
-            <h3 class="header-extra-small">{{ filter.label }}</h3>
-            {% if filter.type == "integer" %}
-                <select class="comparison-select">
-                    <option value="">Choose filter</option>
-                    <option value="=">=</option>
-                    <option value=">">&gt;</option>
-                    <option value=">=">&gt;=</option>
-                    <option value="<">&lt;</option>
-                    <option value="<=">&lt;=</option>
-                    <option value="!=">!=</option>
-                </select>
-
-                {% if filter.has_options %}
-                    <select class="filter-value inline">
-                        {% for option in filter|process_options %}
-                            <option value="{{ option.0 }}">{{ option.1 }}</option>
-                        {% endfor %}
-                    </select>
-                {% else %}
-                    <input class="filter-value" type="number" placeholder="type {{ filter.label }} value"/>
-                {% endif %}
-
-            {% else %}
-                {% if filter.has_options %}
-                    <select class="comparison-select hidden">
-                        <option value="=">=</option>
-                    </select>
-
-                    <select class="filter-value" multiple="multiple">
-                        {% for option in filter|process_options %}
-                            <option value="{{ option.0 }}">{{ option.1 }}</option>
-                        {% endfor %}
-                    </select>
-                {% else %}
+        <div class="col-md-6 filter-row" data-name="{{ filter.name }}" data-type="{{ filter.type }}">
+            <fieldset>
+                <label for="filter-{{ filter.name }}" class="header-medium secondary">{{ filter.label }}</label>
+                {% if filter.type == "integer" %}
                     <select class="comparison-select">
                         <option value="">Choose filter</option>
                         <option value="=">=</option>
+                        <option value=">">&gt;</option>
+                        <option value=">=">&gt;=</option>
+                        <option value="<">&lt;</option>
+                        <option value="<=">&lt;=</option>
                         <option value="!=">!=</option>
                     </select>
 
-                    <input class="filter-value inline" type="text" placeholder="type {{ filter.label }} value"/>
+                    {% if filter.has_options %}
+                        <select class="filter-value inline" id="filter-{{ filter.name }}">
+                            {% for option in filter|process_options %}
+                                <option value="{{ option.0 }}">{{ option.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    {% else %}
+                        <input class="filter-value" type="number" placeholder="type {{ filter.label }} value" id="filter-{{ filter.name }}"/>
+                    {% endif %}
+
+                {% else %}
+                    {% if filter.has_options %}
+                        <select class="comparison-select hidden">
+                            <option value="=">=</option>
+                        </select>
+
+                        <select class="filter-value" multiple="multiple" id="filter-{{ filter.name }}">
+                            {% for option in filter|process_options %}
+                                <option value="{{ option.0 }}">{{ option.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    {% else %}
+                        <select class="comparison-select">
+                            <option value="">Choose filter</option>
+                            <option value="=">=</option>
+                            <option value="!=">!=</option>
+                        </select>
+
+                        <input class="filter-value inline" type="text" placeholder="type {{ filter.label }} value" id="filter-{{ filter.name }}"/>
+                    {% endif %}
                 {% endif %}
-            {% endif %}
+            </fieldset>
         </div>

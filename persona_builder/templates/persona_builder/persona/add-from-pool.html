@@ -1,23 +1,29 @@
-            <article class="project add-item add-persona-create col-md-4 col-xs-12" style="
-    height: 276px;
-    /* background: #411f48; */
-">
-                <div class="add-from-pool" title="create new persona">
-                    <div class="background" style="
-    background: #411f48;
-">
-                        <div class="vertical-align">
-                            <div class="middle">
-                                <div class="add-project-button">
-                                    <div class="vertical-align">
-                                        <div class="middle">
-                                            <i class="fa fa-2x fa-plus" style="color: whitesmoke;"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <h2 class="header-small secondary">Find & add an existing persona</h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </article>
+<article class="persona persona-add-button col-md-12">
+    <a data-toggle="modal" data-target="#persona-pool-chooser" class="btn confirm-button project add-item add-from-pool" alt="find and add an existing member">
+        Find &amp; add an existing persona
+    </a>
+</article>
+
+    <div class="row" style="margin-top: 4em;">
+       <div id="persona-pool-chooser" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add a persona to your campaign</h4>
+              </div>
+              <div class="modal-body">
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-right add-persona">
+                    <i class="fa fa-plus"></i> Add
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+    </div>

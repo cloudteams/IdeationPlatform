@@ -49,43 +49,28 @@
 						<li class="profile">
 							<div class="vertical-align">
 								<div class="middle">
-									<i class="icon icon-profile"></i>
+									<i class="icon icon-user"></i>
 									<a href="#nowhere" data-user_id="{{ request.session.user_id }}">{{ request.session.username }}</a>
 
 									<i class="fa fa-angle-down"></i>
 								</div>
 							</div>
 							<ul class="submenu">
-								{% if request.session.projects %}
-									<li class="projects-title">Projects</li>
-								{% endif %}
-								{% for project in request.session.projects %}
-									<li class="project-item{% if request.session.project_id == project.pid %} active{% endif %}">
-										<!--<a href="#project-{{ project.pid }}">-->
-										<span>
-										{% if request.session.project_id == project.pid %} <i class="fa fa-check"></i>{% endif %}
-										{{ project.title }}
-										</span>
-										<!--</a>-->
-									</li>
-								{% empty %}
-									<li>No projects</li>
-								{% endfor %}
-
-								{% if request.session.campaigns %}
-									<li class="projects-title">Campaigns</li>
-									{% for campaign in request.session.campaigns %}
-										<li class="campaign-item{% if request.session.campaign_id == campaign.cid %} active{% endif %}">
-												<!--<a href="#project-{{ project.pid }}">-->
-												<span>
-												{% if request.session.campaign_id == campaign.cid %} <i class="fa fa-check"></i>{% endif %}
-												{{ campaign.title }}<!--</a>-->
-												</span>
-											</li>
-									{% endfor %}
-								{% endif %}
-								<!--<li class="seperator"></li>
-								<li><a href="#nowhere">Log out</a></li>-->
+								<li>
+                                    <a href="{{ tp_url }}{{ request.session.dashboard_id }}?op=cloudteams.getstdb&action=cloudteams.editdevprofile&object={{ request.session.user_id }}">
+                                        <i class="icon icon-user"></i> Edit profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ tp_url }}{{ request.session.user_id }}?op=chpwd">
+                                        <i class="icon icon-settings"></i> Change password
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ tp_url }}{{ request.session.user_id }}?op=login">
+                                        <i class="icon icon-sign-out"></i> Log out
+                                    </a>
+                                </li>
 							</ul>
 						</li>
 					</ul>
