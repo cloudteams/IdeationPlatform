@@ -1,0 +1,4 @@
+/**
+ * Created by dimitris on 14/10/2016.
+ */
+webpackJsonp([10],[function(n,t,e){(function(n){"use strict";!function(){function t(){function t(){setTimeout(function(){o.fadeOut(function(){c.fadeIn()})},2e3),setTimeout(function(){c.fadeOut(function(){u.css("height","auto"),i.fadeIn()})},4e3)}var e=n(".confirm-button"),i=n(".entire-section"),c=n(".confirm-wrapper"),o=n(".sending-wrapper"),u=n(".modal-body");e.click(function(n){n.preventDefault();var e=u.outerHeight();u.css("height",""+e),i.fadeOut(function(){o.fadeIn()}),t()})}function e(){n("main a").click(function(n){n.preventDefault()})}n(document).ready(function(){e(),t()})}()}).call(t,e(2))}]);

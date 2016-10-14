@@ -1,13 +1,17 @@
 /* Generic */
-a:not(.btn):not(.btn-confirm):not(.btn-decline):not(.btn-download) {
+/*a:not(.btn):not(.btn-confirm):not(.btn-decline):not(.btn-download) {
     transition: color 0.3s ease-in-out;
 }
 a:not(.btn):not(.btn-confirm):not(.btn-decline):not(.btn-download):hover {
     text-decoration: underline;
-}
+}*/
 
 .hidden {
     display: none;
+}
+
+aside .select-dropdown .select2 {
+    width: 170px !important;
 }
 
 /* Fix for danger input buttons */
@@ -72,11 +76,6 @@ body > header .global-nav .container > ul li.profile:before {
 /* Pages */
 .public-page.not-container {
     padding-top: 0;
-}
-
-h1 {
-    padding-bottom: 20px;
-    margin-bottom: 20px;
 }
 
 .pagination {

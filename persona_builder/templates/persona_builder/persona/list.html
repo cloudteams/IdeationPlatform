@@ -3,8 +3,17 @@
 {% load static from staticfiles %}
 {% load app_filters %}
 
+ {% block section_class %}page-developer-dashboard-project-personas{% endblock %}
+
 {% block content %}
-    <h1>{{ request|list_page_title }}</h1>
+    <header class="main-header">
+        <div class="vertical-align">
+            <div class=" middle">
+                <i class="icon icon-user"></i>
+                <h1 class="header-large">Personas</h1>
+            </div>
+        </div>
+    </header>
 
     {% if q %}
         <h2 class="clearfix">

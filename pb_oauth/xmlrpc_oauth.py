@@ -174,6 +174,8 @@ class BscwApi:
                 project_lst.append(obj)
             elif classname == 'bscw.core.cloudteams.cl_campaign.Campaign':
                 campaign_lst.append(obj)
+            elif classname == 'bscw.core.cloudteams.cl_dashboard.Dashboard':
+                request.session['dashboard_id'] = obj['__id__']
 
         request.session['projects'] = [{
             'pid': p['__id__'],

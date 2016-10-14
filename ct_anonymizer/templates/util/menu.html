@@ -19,7 +19,7 @@
 							<div class="vertical-align">
 								<form class="project-search middle" action="/team-ideation-tools/personas/" method="GET">
 									<input name="q" class="input-search" type="text" placeholder="Search personas" value="{{ q }}" autocomplete="false" />
-									<img src="{% static "img/icons/icon-search.svg" %}" class="icon-search svg" alt="Search icon">
+									<i class="icon icon-search"></i>
 								</form>
 							</div>
 						</li>
@@ -27,45 +27,30 @@
 						<li>
 							<div class="vertical-align">
 								<div class="middle">
-									<a href="/team-ideation-tools/personas/">
-										<img class="icon menu-icon svg" src="{% static "img/icons/icon-profile.svg" %}">
-										Personas
+									<a href="/views/developer/dashboard/projects">
+										<i class="icon icon-dashboard"></i>
+										Dashboard
 									</a>
 								</div>
 							</div>
 						</li>
 
-						{% if request.session.projects %}
-							{% with pid=request|get_default_project %}
-								<li>
-									<div class="vertical-align">
-										<div class="middle">
-											<a href="/team-ideation-tools/business-model/projects/{{ pid }}/">
-												<img class="icon menu-icon svg" src="{% static "img/icons/icon-folder.svg" %}">
-												Business Models
-											</a>
-										</div>
-									</div>
-								</li>
-
-								<li>
-									<div class="vertical-align">
-										<div class="middle">
-											<a href="/team-ideation-tools/stories/projects/{{ pid }}/">
-												<img class="icon menu-icon svg" src="{% static "img/icons/icon-requirement.svg" %}">
-												Requirements
-											</a>
-										</div>
-									</div>
-								</li>
-							{% endwith %}
-						{% endif %}
+                        <li>
+                            <div class="vertical-align">
+                                <div class="middle">
+                                    <a href="/views/developer/dashboard/notifications">
+										<i class="icon icon-notification"></i>
+										Notifications
+									</a>
+                                </div>
+                            </div>
+                        </li>
 
 						<li class="profile">
 							<div class="vertical-align">
 								<div class="middle">
-									<img class="icon menu-icon svg" src="{% static "img/icons/icon-profile.svg" %}">
-									<a href="#nowhere">{{ request.session.username }}</a>
+									<i class="icon icon-profile"></i>
+									<a href="#nowhere" data-user_id="{{ request.session.user_id }}">{{ request.session.username }}</a>
 
 									<i class="fa fa-angle-down"></i>
 								</div>

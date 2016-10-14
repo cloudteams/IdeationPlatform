@@ -29,21 +29,27 @@
 	<body>
 		{% include "util/menu.html" %}
 
-		<section class="page public-page {% block section_class %}{% endblock %}">
-			<div class="content">
-				<main>
-					<div class="{% if not_container %}{% else %}container{% endif %}">
-						{% block content %}
-						{% endblock %}
-					</div>
-				</main>
-			</div>
+		<section class="page dashboard-page {% block section_class %}{% endblock %}">
+            <div class="container">
+                <div class="content">
+                    <div class="row">
+                        {% include "util/sidebar.html" %}
+
+                        <main>
+                            {% block content %}
+                            {% endblock %}
+                        </main>
+                    </div>
+                </div>
+            </div>
 		</section>
 
 		{% include "util/footer.html" %}
 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 		<script type="text/javascript" src="{% static "js/global-dev.js" %}?v=20160701.1"></script>
 		<script type="text/javascript" src="{% static "js/common-dev.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/personas.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/jquery-ui.min.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/perfect-scrollbar.jquery.min.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/jquery.switch-button.js" %}"></script>
