@@ -2,7 +2,7 @@
  * Created by dimitris on 14/10/2016.
  */
 $(function() {
-    var PB = {
+    PB = {
         $pb: $('.persona-popup'),
         $selectedPersona: undefined,
 
@@ -28,11 +28,6 @@ $(function() {
                     $dBody.html($(data));
                     $dBody.find('select:not(.comparison-select)').select2();
                     $dBody.find('#subpage-2').perfectScrollbar();
-
-                    // ajax forms
-                    $dBody.find('form').ajaxForm(function(url) {
-                        PB.get(url);
-                    });
                 }
             })
         },
@@ -59,11 +54,9 @@ $(function() {
                 var $confirmBtn = $('<button class="btn confirm-button" />')
                     .text(actionBefore || 'Confirm')
                     .on('click', function() {
-                        $(this)
-                            .append('<i class="fa fa-spin fa-spinner" />')
-                            .text(actionDuring || 'Saving');
+                        $(this).html('<i class="fa fa-spin fa-spinner" /> ' + (actionDuring || 'Saving'));
 
-                        // $form.submit()
+                        $form.submit()
                     });
 
                 $fieldset.append($confirmBtn);

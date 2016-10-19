@@ -64,7 +64,7 @@ class PersonaCreateView(CreateView):
         # create persona
         instance.save()
 
-        return HttpResponse(instance.get_edit_properties_url() + '?initial=true')
+        return redirect(instance.get_edit_properties_url(full=True))
 
     def get_context_data(self, **kwargs):
         context = super(PersonaCreateView, self).get_context_data(**kwargs)
@@ -133,7 +133,7 @@ def edit_persona_properties(request, pk):
 
                 # send info to customer platform
                 if DEBUG:
-                    return redirect(persona.get_absolute_url())
+                    return redirect(persona.get_absolute_url(full=True))
                 else:
                     return redirect('/team-ideation-tools/propagate/?send_persona=%d&next=absolute' % persona.pk)
             else:
@@ -147,7 +147,6 @@ def edit_persona_properties(request, pk):
         'form': form,
         'filters': user_manager.list_filters(),
         'not_container': True,
-        'show_basic_info': not request.GET.get('initial'),
         'page': 'edit-properties'
     }
 
@@ -234,6 +233,11 @@ class PersonaListView(ListView):
     def get_context_data(self, **kwargs):
         ctx = super(PersonaListView, self).get_context_data(**kwargs)
         ctx['q'] = self.request.GET.get('q', '')
+
+        # possible default action
+        ctx['default_persona'] = self.request.GET.get('persona')
+        ctx['default_persona_action'] = self.request.GET.get('action')
+
         return ctx
 
     def get_queryset(self):
@@ -308,9 +312,9 @@ def perform_pending_action(request):
         nxt = request.session['next_page']
         del request.session['next_page']
         if nxt == 'absolute':
-            return redirect(persona.get_absolute_url())
+            return redirect(persona.get_absolute_url(full=True))
         elif nxt == 'properties':
-            return redirect(persona.get_edit_properties_url())
+            return redirect(persona.get_edit_properties_url(full=True))
 
     # default next page
     return redirect('/team-ideation-tools/personas/' + persona_id + '/')

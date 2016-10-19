@@ -51,14 +51,23 @@ class Persona(models.Model):
     def get_avatar_url(self):
         return '%s/%s' % (MEDIA_URL, self.avatar)
 
-    def get_absolute_url(self):
-        return '/team-ideation-tools/personas/%s/' % self.pk
+    def get_absolute_url(self, full=False):
+        if not full:
+            return '/team-ideation-tools/personas/%s/' % self.pk
+        else:
+            return '/team-ideation-tools/personas/?persona=%s&action=details' % self.pk
 
-    def get_edit_properties_url(self):
-        return self.get_absolute_url() + 'edit-properties/'
+    def get_edit_properties_url(self, full=False):
+        if not full:
+            return '/team-ideation-tools/personas/%s/edit-properties/' % self.pk
+        else:
+            return '/team-ideation-tools/personas/?persona=%s&action=edit-properties' % self.pk
 
-    def get_edit_info_url(self):
-        return self.get_absolute_url() + 'edit-info/'
+    def get_edit_info_url(self, full=False):
+        if not full:
+            return '/team-ideation-tools/personas/%s/edit-info/' % self.pk
+        else:
+            return '/team-ideation-tools/personas/?persona=%s&action=edit-info' % self.pk
 
     @property
     def properties(self):

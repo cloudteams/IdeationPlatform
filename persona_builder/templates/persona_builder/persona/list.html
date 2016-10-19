@@ -40,4 +40,20 @@
 
     <script src="{% static "persona_builder/js/persona-picker.js" %}"></script>
     <script src="{% static "persona_builder/js/persona-builder.js" %}"></script>
+
+    {% if default_persona and default_persona_action %}
+        <script>
+            $(function() {
+                var autoLoadUrl = '';
+
+                if ('{{ default_persona_action }}' == 'edit-properties') {
+                    autoLoadUrl = '/team-ideation-tools/personas/{{ default_persona }}/edit-properties/';
+                } else {
+                    autoLoadUrl = '/team-ideation-tools/personas/{{ default_persona }}';
+                }
+
+                PB.get(autoLoadUrl);
+            })
+        </script>
+    {% endif %}
 {% endblock %}
