@@ -56,9 +56,9 @@ input[type="submit"]:hover {
     padding-left: 14px;
 }
 
-body > header .global-nav .container > ul li.profile:before {
+/* body > header .global-nav .container > ul li.profile:before {
     background: none;
-}
+} */
 
 .menu-subpage li a {
     color: #ccc;
@@ -93,6 +93,10 @@ body > header .global-nav .container > ul li.profile:before {
 
 .endless_page_link, .endless_page_current {
     padding: 0 5px;
+}
+
+input.select2-search__field:focus {
+    box-shadow: none !important;
 }
 
 /* Anonymizer */

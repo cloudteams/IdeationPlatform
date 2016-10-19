@@ -53,7 +53,7 @@ class PersonaCreateView(CreateView):
     """
     model = Persona
     form_class = PersonaForm
-    template_name = 'persona_builder/persona/create.html'
+    template_name = 'persona_builder/persona/details.html'
 
     def form_valid(self, form):
         instance = form.save()
@@ -65,6 +65,12 @@ class PersonaCreateView(CreateView):
         instance.save()
 
         return HttpResponse(instance.get_edit_properties_url() + '?initial=true')
+
+    def get_context_data(self, **kwargs):
+        context = super(PersonaCreateView, self).get_context_data(**kwargs)
+        context['page'] = 'edit-info'
+
+        return context
 
 create_persona = PersonaCreateView.as_view()
 
@@ -87,9 +93,10 @@ def edit_persona_info(request, pk):
     ctx = {
         'form': form,
         'persona': persona,
+        'page': 'edit-info',
     }
 
-    return render(request, 'persona_builder/persona/edit_info.html', ctx)
+    return render(request, 'persona_builder/persona/details.html', ctx)
 
 
 def edit_persona_properties(request, pk):
@@ -141,9 +148,10 @@ def edit_persona_properties(request, pk):
         'filters': user_manager.list_filters(),
         'not_container': True,
         'show_basic_info': not request.GET.get('initial'),
+        'page': 'edit-properties'
     }
 
-    return render(request, 'persona_builder/persona/edit_properties.html', params, status=status)
+    return render(request, 'persona_builder/persona/details.html', params, status=status)
 
 
 def update_users(request, pk):
@@ -189,6 +197,7 @@ class PersonaDetailView(DetailView):
 
         context['properties'] = user_manager.list_filters()
         context['users'] = PersonaUsers.objects.filter(persona=context['persona'])
+        context['page'] = 'stats'
         context['not_container'] = True
 
         return context

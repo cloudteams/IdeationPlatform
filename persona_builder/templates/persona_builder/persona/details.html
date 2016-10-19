@@ -1,43 +1,22 @@
-{% extends "base.html" %}
+    {% load app_filters %}
+    <ul class="menu-subpage">
+        <li id="link-to-subpage-1" class="link-to-subpage{% if page == 'edit-info' %} active{% endif %}">Basic information</li>
+        <li id="link-to-subpage-2" class="link-to-subpage{% if page == 'edit-properties' %} active{% endif %}{% if not persona %} disabled{% endif %}">Properties</li>
+        <li id="link-to-subpage-3" class="link-to-subpage{% if page == 'stats' %} active{% endif %}{% if not persona or not persona.is_ready %} disabled{% endif %}">Persona overview</li>
+    </ul>
 
-{% load endless %}
-{% load static from staticfiles %}
-{% load app_filters %}
-{% block section_class %}not-container{% endblock %}
+    {% with active=page|eq:'edit-info' %}
+        {% include 'persona_builder/persona/edit_info.html' %}
+    {% endwith %}
 
-{% block content %}
-        {% with page="view" %}
-            {% include "persona_builder/persona/intro.html" %}
+    {% if persona %}
+        {% with active=page|eq:'edit-properties' %}
+            {% include 'persona_builder/persona/edit_properties.html' %}
         {% endwith %}
+    {% endif %}
 
-            <p></p>
-            <h3 class="header-extra-small">Description</h3>
-            <p>
-                {% if persona.description %}
-                    {{ persona.description }}
-                {% else %}
-                    No persona description
-                {% endif %}
-            </p>
-
-            {% include "persona_builder/persona/stats.html" %}
-
-            {% if not users %}
-                <div id="persona-processing">
-                    Fetching customers... <i class="fa fa-spin fa-spinner"></i>
-                </div>
-            {% else %}
-                {% include "persona_builder/persona/users.html" %}
-            {% endif %}
-        </div>
-    </section>
-{% endblock %}
-
-{% block js %}
-    <script src="{% static "persona_builder/js/amcharts/amcharts.js" %}"></script>
-    <script src="{% static "persona_builder/js/amcharts/pie.js" %}"></script>
-    <script src="{% static "persona_builder/js/amcharts/themes/light.js" %}"></script>
-
-    <script src="{% static "persona_builder/js/render_stats.js" %}"></script>
-    <script src="{% static "persona_builder/js/load-users.js" %}"></script>
-{% endblock %}
+    {% if persona and persona.is_ready %}
+        {% with active=page|eq:'stats' %}
+            {% include 'persona_builder/persona/stats.html' %}
+        {% endwith %}
+    {% endif %}

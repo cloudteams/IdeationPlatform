@@ -11,7 +11,7 @@ $(function() {
         },
 
         csrfmiddlewaretoken: function () {
-            return this.$pb.find('input[name="csrfmiddlewaretoken"]').val()
+            return $.cookie('csrftoken')
         },
 
         get: function(url) {
@@ -37,6 +37,46 @@ $(function() {
             })
         },
 
+        post: function($form, confirmation, actionBefore, actionDuring) {
+            if (confirmation) {
+                // show popup
+                PB.$pb.addClass('in').css('display', 'block');
+                var $dBody = PB.$pb.find('.modal-body');
+                $dBody.empty();
+
+                // add confirmation message
+                var $row = $('<div class="row" />');
+                var $content = $('<div />')
+                    .addClass('col-xs-12')
+                    .css('padding-top', '2em')
+                    .css('padding-bottom', '2em')
+                    .text(confirmation);
+                $row.append($content);
+
+                // add cancel/confirm buttons
+                var $fieldset = $('<fieldset class="form-group form-submit" />');
+                $fieldset.append('<a href="#nowhere" data-dismiss="modal" class="btn-transparent">Cancel</a>');
+                var $confirmBtn = $('<button class="btn confirm-button" />')
+                    .text(actionBefore || 'Confirm')
+                    .on('click', function() {
+                        $(this)
+                            .append('<i class="fa fa-spin fa-spinner" />')
+                            .text(actionDuring || 'Saving');
+
+                        // $form.submit()
+                    });
+
+                $fieldset.append($confirmBtn);
+                var $btnContainer = $('<div />').addClass('col-xs-12');
+                $btnContainer.append($fieldset);
+                $row.append($btnContainer);
+
+                $dBody.append($row);
+            } else {
+                $form.submit();
+            }
+        },
+
         create: {
             get: function () {
                 PB.get('/team-ideation-tools/personas/create/')
@@ -59,12 +99,21 @@ $(function() {
         PB.create.post();
     });
 
-    /* Open persona */
+    /* Action in persona dialog */
     $('body').on('click', 'a.pb-open', function(e) {
-        console.log($(this).attr('href'))
         e.preventDefault();
         e.stopPropagation();
 
-        PB.get($(this).attr('href'));
-    })
+        if ($(this).data('submit')) {
+            PB.post($(this).closest('form'), $(this).data('confirmation'),
+                $(this).data('action_before'), $(this).data('action_during'));
+        } else {
+            PB.get($(this).attr('href'));
+        }
+    });
+
+    /* Close modals */
+    $('body').on('click', '.modal [data-dismiss="modal"]', function() {
+       $(this).closest('.modal').removeClass('in').css('display', 'none');
+    });
 });

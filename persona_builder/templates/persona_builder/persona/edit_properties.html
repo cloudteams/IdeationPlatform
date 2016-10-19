@@ -1,20 +1,12 @@
         {% load app_filters %}
 
-        <ul class="menu-subpage">
-            <li id="link-to-subpage-1" class="link-to-subpage">Basic information</li>
-            <li id="link-to-subpage-2" class="link-to-subpage active">Properties</li>
-            <li id="link-to-subpage-3" class="link-to-subpage">Persona overview</li>
-        </ul>
-
-        <form class="persona-filters-form" method="POST" action="/team-ideation-tools/personas/{{ persona.pk }}/edit-properties/">{% csrf_token %}
-            <section id="subpage-2" class="subpage active">
-
+        <section id="subpage-2" class="subpage{% if active %} active{% endif %}">
+            <form class="persona-filters-form" method="POST" action="/team-ideation-tools/personas/{{ persona.pk }}/edit-properties/">{% csrf_token %}
                 <div class="col-md-12 inform-block">
                     Define some or all of the properties below to describe this persona
                 </div>
+                    {{ form.non_field_errors }}
 
-
-                    {{ form.non_field_errors}}
                     {{ form.query.errors }}
                     <div class="query-box">
                         {{ form.query }}
@@ -28,9 +20,9 @@
 
                 <div class="col-md-12">
                     <fieldset class="form-group form-submit">
-                        <a href="#nowhere" data-dismiss="modal" class="btn-transparent" alt="cancel">Cancel</a>
+                        <a href="#" data-dismiss="modal" class="btn-transparent">Cancel</a>
                         <button type="submit" class="btn confirm-button">Save</button>
                     </fieldset>
                 </div>
-            </section>
-        </form>
+            </form>
+        </section>

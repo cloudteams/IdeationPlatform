@@ -13,6 +13,11 @@ register = template.Library()
 
 # logic
 @register.filter
+def eq(a, b):
+    return a == b
+
+
+@register.filter
 def get_property(dictionary, key):
     if key in dictionary:
         return dictionary[key]

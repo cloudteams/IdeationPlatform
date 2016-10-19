@@ -1,27 +1,29 @@
     {% load app_filters %}
-    <p><b>Persona Overview</b></p>
 
-    {% with overview_values=persona.get_overview_values %}
-        <div class="row property-stats-list">
-            {% for property,values in overview_values.items %}
-                <div class="col-md-4 property-stats" data-prop="{{ property }}">
-                    <p class="property-name"><b>{{ property|title|no_underscore  }}</b></p>
-                    <div id="chart-{{ property }}" class="prop-chart"></div>
-                </div>
-            {% endfor %}
+    <section id="subpage-3" class="subpage{% if active %} active{% endif %}">
+        <p><b>Persona Overview</b></p>
 
-        </div>
-
-        <script>
-            var PersonaStats = function() {
-                this.property_values = {};
+        {% with overview_values=persona.get_overview_values %}
+            <div class="row property-stats-list">
                 {% for property,values in overview_values.items %}
-                    this.property_values['{{ property }}'] = {};
-                    {% for v,o in values.items %}
-                        this.property_values['{{ property }}']['{{ v }}'] = {{ o }};
-                    {% endfor %}
+                    <div class="col-md-4 property-stats" data-prop="{{ property }}">
+                        <p class="property-name"><b>{{ property|title|no_underscore  }}</b></p>
+                        <div id="chart-{{ property }}" class="prop-chart"></div>
+                    </div>
                 {% endfor %}
-            }
-        </script>
-    {% endwith %}
 
+            </div>
+
+            <script>
+                var PersonaStats = function() {
+                    this.property_values = {};
+                    {% for property,values in overview_values.items %}
+                        this.property_values['{{ property }}'] = {};
+                        {% for v,o in values.items %}
+                            this.property_values['{{ property }}']['{{ v }}'] = {{ o }};
+                        {% endfor %}
+                    {% endfor %}
+                }
+            </script>
+        {% endwith %}
+    </section>

@@ -15,10 +15,18 @@
 				<div class="custom-tooltip">
 					<ul>
 						<li>
-							<a href="{{ persona.get_absolute_url }}">Open</a>
+							<a href="{{ persona.get_absolute_url }}" class="pb-open">Open</a>
                         </li>
                         <li>
                             <a href="{{ persona.get_edit_info_url }}" class="pb-open">Edit</a>
+						</li>
+                        <li>
+                            <form method="POST" action="{{ persona.get_absolute_url }}delete/">{% csrf_token %}
+                                <a href="#" class="pb-open"
+                                    data-action_before="Delete" data-action_during="Deleting"
+                                    data-confirmation="Are you sure you want to delete this persona?" data-submit="true">Delete</a>
+                                <input type="submit" class="hidden" />
+                            </form>
 						</li>
 					</ul>
 				</div>
@@ -35,7 +43,11 @@
 
 		<footer>
 			{% if more_link %}
-            	<a href="{{ persona.get_absolute_url }}" class="btn pb-open">Open persona<</a>
+                {% if persona.is_ready %}
+            	    <a href="{{ persona.get_absolute_url }}" class="btn pb-open">Show persona</a>
+                {% else %}
+                    <a href="{{ persona.get_edit_properties_url }}" class="btn pb-open">Complete persona</a>
+                {% endif %}
 			{% endif %}
 			{% if add_link %}
 				<li>
