@@ -336,4 +336,10 @@ class BscwApi:
             if 'send_persona' in request.session:
                 return redirect('/team-ideation-tools/perform-pending-action/')
 
-            return redirect('/team-ideation-tools/personas/')
+            if 'after_auth_url' in request.session:
+                after_auth_path = request.session['after_auth_url']
+                del request.session['after_auth_url']
+            else:
+                after_auth_path = '/team-ideation-tools/personas/'
+                
+            return redirect(after_auth_path)

@@ -35,6 +35,7 @@ class AuthorizationMiddleware(object):
 
         # make sure user has already authorized the app through customer platform
         if ('bswc_token' not in request.session) or ('send_persona' in request.GET):
+            request.session['after_auth_url'] = request.path
             return redirect(BscwApi.authorization_url())
 
         return None
