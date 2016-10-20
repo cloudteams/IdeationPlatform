@@ -43,14 +43,23 @@
     <script src="{% static "persona_builder/js/persona-builder.js" %}"></script>
     <script src="{% static "persona_builder/js/edit_properties.js" %}"></script>
 
-    {% if default_persona and default_persona_action %}
+    {% if default_persona or default_persona_action %}
         <script>
             $(function() {
                 var autoLoadUrl = '';
 
+                if ('{{ default_persona_action }}' == 'create') {
+                    PB.create.get();
+                    return
+                }
+
                 if ('{{ default_persona_action }}' == 'edit-properties') {
                     autoLoadUrl = '/team-ideation-tools/personas/{{ default_persona }}/edit-properties/';
-                } else {
+                }
+                else if ('{{ default_persona_action }}' == 'edit-info') {
+                    autoLoadUrl = '/team-ideation-tools/personas/{{ default_persona }}/edit-info/';
+                }
+                else {
                     autoLoadUrl = '/team-ideation-tools/personas/{{ default_persona }}';
                 }
 

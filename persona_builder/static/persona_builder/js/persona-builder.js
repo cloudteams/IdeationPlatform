@@ -46,6 +46,15 @@ $(function() {
             })
         },
 
+        markSubmitAsLoading: function() {
+            var $btn = PB.$pb.find('.confirm-button'),
+                loadingText = $btn.data('loading_text') || 'Saving';
+
+            console.log($btn);
+            $btn.attr('disabled', 'disabled')
+                .html('<i class="fa fa-spin fa-spinner" /> ' + loadingText + '...');
+        },
+
         post: function($form, confirmation, actionBefore, actionDuring) {
             if (confirmation) {
                 // show popup
@@ -80,6 +89,7 @@ $(function() {
 
                 $dBody.append($row);
             } else {
+                PB.markSubmitAsLoading();
                 $form.submit();
             }
         },
@@ -106,6 +116,11 @@ $(function() {
         PB.create.post();
     });
 
+    /* On form submit */
+    $('body').on('submit', '.persona-popup form', function(e) {
+        PB.markSubmitAsLoading();
+    });
+
     /* Action in persona dialog */
     $('body').on('click', 'a.pb-open', function(e) {
         e.preventDefault();
@@ -122,5 +137,20 @@ $(function() {
     /* Close modals */
     $('body').on('click', '.modal [data-dismiss="modal"]', function() {
        $(this).closest('.modal').removeClass('in').css('display', 'none');
+    });
+
+    /* On persona avatar change */
+    $('body').on('change', '#file-upload', function (e) {
+        var tgt = e.target || window.event.srcElement,
+            files = tgt.files;
+
+        // FileReader support
+        if (FileReader && files && files.length) {
+            var fr = new FileReader();
+            fr.onload = function () {
+                $('.file-upload-image-container').get(0).style.backgroundImage = "url('" +fr.result + "')";
+            };
+            fr.readAsDataURL(files[0]);
+        }
     });
 });

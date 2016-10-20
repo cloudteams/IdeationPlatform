@@ -142,6 +142,9 @@ article.scenario .fa.fa-angle-down:hover {
     padding: 10px 20px;
 }
 
+.modal-header [data-dismiss] {
+    font-size: 25px;
+}
 
 /* Teasers */
 .requirement .content.user .image-container {
@@ -153,3 +156,4 @@ article.scenario .fa.fa-angle-down:hover {
 .requirement .content.user .middle {
     padding-left: 10px;
 }
+

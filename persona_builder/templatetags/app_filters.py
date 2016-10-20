@@ -110,6 +110,15 @@ def get_percentage(value, total):
 
 
 @register.filter
+def get_percentage_for_chart(value, total):
+    if total == 0:
+        return 0
+
+    result = round(float(value)/total, 4)*100 - 0.1
+    return result if result >= 0 else 0
+
+
+@register.filter
 def get_total(values):
     total = 0
 

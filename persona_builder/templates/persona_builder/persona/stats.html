@@ -16,8 +16,8 @@
                                 {% with total=values|get_total %}
                                     {% for vo in values %}
                                         {% with v=vo.0 o=vo.1 %}
-                                            {% with cnt=forloop.counter perc=o|get_percentage:total vtitle=v|no_underscore %}
-                                                <div style="width: {{ perc }}%" class="persona-percentage-block">
+                                            {% with cnt=forloop.counter perc=o|get_percentage:total bar_perc=o|get_percentage_for_chart:total vtitle=v|no_underscore %}
+                                                <div style="width: {{ bar_perc }}%" class="persona-percentage-block">
                                                     <div class="persona-percentage-item item-{{ cnt }}"></div>
                                                     <div class="persona-percentage-context">{{ vtitle }}</div>
                                                     <div class="persona-block-popup item-{{ cnt }}">{{ vtitle }} : {{ perc }}% ({{ o }})</div>

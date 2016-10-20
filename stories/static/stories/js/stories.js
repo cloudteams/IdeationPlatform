@@ -15,12 +15,12 @@ $(function() {
         var $modal = $('#story-modal');
         $modal.find('.modal-title').text('Add an existing story');
         $modal.find('.modal-body').html('');
-        $modal.modal('show');
+        $modal.addClass('in').css('display', 'block');
 
         // get possible stories
         $.ajax({
             type: 'GET',
-            url: '/team-ideation-tools/stories/scenarios/' + scenarioId + '/team-ideation-tools/stories-to-add/',
+            url: '/team-ideation-tools/stories/scenarios/' + scenarioId + '/stories-to-add/',
             success: function(data) {
                 $modal.find('.modal-body').html(data)
             },
@@ -44,7 +44,7 @@ $(function() {
                 story_id: storyId
             },
             success: function(data) {
-                $modal.modal('hide');
+                $modal.removeClass('in').css('display', 'none');
 
                 // reload the scenario
                 window.document.location.reload();
@@ -68,5 +68,10 @@ $(function() {
     /* Order scenarios in project */
     $('#id_order_scenarios_by').on('change', function() {
         $(this).closest('form').submit();
-    })
+    });
+
+    /* Close modals */
+    $('body').on('click', '.modal [data-dismiss="modal"]', function() {
+       $(this).closest('.modal').removeClass('in').css('display', 'none');
+    });
 });

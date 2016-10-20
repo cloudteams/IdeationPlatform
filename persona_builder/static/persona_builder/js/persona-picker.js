@@ -73,7 +73,7 @@ $(function() {
                         'csrfmiddlewaretoken': this.csrfmiddlewaretoken()
                     },
                     success: function(data) {
-                       window.location = '/team-ideation-tools/personas/' + data + '/edit-info/'
+                       window.location = '/team-ideation-tools/personas/?persona=' + data + '&action=edit-info'
                     }
                 })
             }

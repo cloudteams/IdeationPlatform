@@ -71,6 +71,11 @@ class PersonaCreateView(CreateView):
 
         return redirect(instance.get_edit_properties_url(full=True))
 
+    def form_invalid(self, form):
+        self.request.session['auto_load_create'] = True
+
+        return redirect('/team-ideation-tools/personas/')
+
     def get_context_data(self, **kwargs):
         context = super(PersonaCreateView, self).get_context_data(**kwargs)
         context['page'] = 'edit-info'
@@ -88,7 +93,7 @@ def edit_persona_info(request, pk):
     persona = get_object_or_404(Persona, pk=pk)
     if request.method == 'POST':
         # update persona, send info & redirect
-        form = PersonaForm(request.POST, instance=persona)
+        form = PersonaForm(request.POST, request.FILES, instance=persona)
         if form.is_valid():
             persona = form.save()
             return redirect('/team-ideation-tools/propagate/?send_persona=%d&next=properties' % persona.pk)
@@ -237,9 +242,13 @@ class PersonaListView(ListView):
         ctx = super(PersonaListView, self).get_context_data(**kwargs)
         ctx['q'] = self.request.GET.get('q', '')
 
-        # possible default action
+        # possible default actions
         ctx['default_persona'] = self.request.GET.get('persona')
         ctx['default_persona_action'] = self.request.GET.get('action')
+
+        if 'auto_load_create' in self.request.session:
+            del self.request.session['auto_load_create']
+            ctx['default_persona_action'] = 'create'
 
         return ctx
 
@@ -346,6 +355,7 @@ def add_from_pool(request, pk):
     new_persona.uuid = uuid.uuid4()
     new_persona.owner, new_persona.project_id, new_persona.campaign_id = request_context(request)
     new_persona.based_on_id = pk
+    new_persona.is_public = False
     new_persona.save()
 
     # clone persona users

@@ -84,6 +84,7 @@ select.val-input {
 
 .background-image {
     height: 150px;
+    border-radius: 5px 5px 0 0;
     background-position: center;
 }
 
@@ -185,6 +186,7 @@ input[type="checkbox"] {
 }
 article.campaign {
     color: #333;
+    margin-top: 10px;
 }
 
 #persona-pool-list-content {
@@ -227,8 +229,9 @@ article.campaign {
     transition: border 0.6s ease;
     padding-top: 10px;
     padding-bottom: 10px;
+    height: 140px;
+    overflow: hidden;
     margin-bottom: 10px !important;
-
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none;   /* Chrome/Safari/Opera */
     -khtml-user-select: none;    /* Konqueror */
@@ -266,6 +269,11 @@ article.campaign {
 
 .page-developer-dashboard-project-personas .modal-dialog.medium .modal-body #subpage-3 {
     height: 380px;
+}
+
+.file-upload-image-container.has-value {
+    height: 200px;
+    background-size: cover;
 }
 
 /* Loading animations */

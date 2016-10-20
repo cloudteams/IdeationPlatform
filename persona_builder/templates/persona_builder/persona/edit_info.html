@@ -5,14 +5,14 @@
 
                 <fieldset class="form-group fieldset-upload">
 
-                    <div class="input-container">
+                    <div class="input-container file-upload-image-container {% if persona.avatar %}has-value{% endif %}" {% if persona.avatar %}style="background-image: url({{ persona.get_avatar_url }});"{% endif %}>
                         <label class="file-upload-image" for="file-upload">
                             <div class="vertical-align">
                                 <div class="middle">
                                     <div class="add-image-button">
-                                        <i class="icon icon-plus"></i>
+                                        <i class="icon {% if persona.avatar %}icon-plus{% else %}icon-edit{% endif %}"></i>
                                     </div>
-                                    <p class="meta big">Add picture</p>
+                                    <p class="meta big">{% if persona.avatar %}Change{% else %}Add{% endif %} picture</p>
                                 </div>
                             </div>
                         </label>
@@ -27,7 +27,7 @@
                     <label for="add-persona-name" class="header-medium secondary">Name</label>
 
                     <div class="input-container">
-                        <input type="text" id="add-persona-name" placeholder="Persona name" name="name" value="{{ persona.name }}">
+                        <input type="text" id="add-persona-name" placeholder="Persona name" required="required" name="name" value="{{ persona.name }}">
                     </div>
                 </fieldset>
 
@@ -59,7 +59,7 @@
             <div class="col-md-12">
                 <fieldset class="form-group form-submit">
                     <a href="#nowhere" data-dismiss="modal" class="btn-transparent" alt="cancel">Cancel</a>
-                    <button type="submit" class="btn confirm-button">{% if persona %}Save{% else %}Create{% endif %}</button>
+                    <button type="submit" class="btn confirm-button" {% if not persona %}data-loading_text="Creating"{% endif %}>{% if persona %}Save{% else %}Create{% endif %}</button>
                 </fieldset>
             </div>
         </form>
