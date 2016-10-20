@@ -264,6 +264,10 @@ article.campaign {
     color: #7d3c8c;
 }
 
+.page-developer-dashboard-project-personas .modal-dialog.medium .modal-body #subpage-3 {
+    height: 380px;
+}
+
 /* Loading animations */
 .progress {
   height: 25px;

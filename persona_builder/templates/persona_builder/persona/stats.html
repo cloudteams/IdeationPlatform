@@ -31,8 +31,19 @@
                 {% endfor %}
             {% endwith %}
 
-            <div class="col-md-12 persona-download" style="margin-top: 20px;">
-                <a href="{{ persona.get_absolute_url }}download/" target="blank"><i class="icon icon-download"></i>Download the detailed users profiles file</a>
+            <div class="col-xs-6 persona-download" style="margin-top: 20px;">
+                <a href="{{ persona.get_absolute_url }}download/" target="blank" class="pull-left"><i class="icon icon-download"></i>Download the detailed users profiles file</a>
+            </div>
+            <div class="col-xs-6" style="text-align: right; margin-top: 20px">
+                <i class="icon icon-check"></i> This persona is now ready to use
+                {% if persona.campaign_id %}
+                    <a href="{{ tp_url }}{{ request.session.dashboard_id }}?op=cloudteams.getstdb&action=cloudteams.getcampaign&object={{ persona.campaign_id }}"
+                       class="btn btn-primary" style="margin-top: 20px;">
+                        <i class="icon icon-campaign"></i> Continue with campaign
+                    </a>
+                {% endif %}
+            </div>
+
             </div>
         </div>
     </section>
