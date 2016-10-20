@@ -30,15 +30,14 @@
                             <option value="=">=</option>
                         </select>
 
-                        <select class="filter-value" multiple="multiple" id="filter-{{ filter.name }}">
+                        <select class="filter-value" multiple="multiple" id="filter-{{ filter.name }}" data-placeholder="Any {{ filter.label }}">
                             {% for option in filter|process_options %}
                                 <option value="{{ option.0 }}">{{ option.1 }}</option>
                             {% endfor %}
                         </select>
                     {% else %}
-                        <select class="comparison-select">
-                            <option value="">Choose filter</option>
-                            <option value="=">=</option>
+                        <select class="comparison-select hidden">
+                            <option value="=" selected="selected">=</option>
                             <option value="!=">!=</option>
                         </select>
 

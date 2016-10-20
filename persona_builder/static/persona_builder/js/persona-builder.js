@@ -14,9 +14,10 @@ $(function() {
             return $.cookie('csrftoken')
         },
 
-        get: function(url) {
+        get: function(url, title) {
             PB.$pb.addClass('in').css('display', 'block');
-
+            PB.$pb.find('.modal-header .header-medium').text(title || '');
+            
             var $dBody = PB.$pb.find('.modal-body');
             $dBody.html(PB.messages.loading);
 
@@ -26,7 +27,20 @@ $(function() {
 
                 success: function (data) {
                     $dBody.html($(data));
-                    $dBody.find('select:not(.comparison-select)').select2();
+
+                    // initialize select2 with placeholders
+                    $.each($dBody.find('select:not(.comparison-select)'), function(idx, select){
+                        var $select = $(select);
+                        $select.select2({
+                            placeholder: $select.data('placeholder') || ''
+                        });
+                    });
+
+                    // load the query
+                    if ($('#id_query').length === 1) {
+                        QueryUI.from_string($('#id_query').val());
+                    }
+
                     $dBody.find('#subpage-2').perfectScrollbar();
                 }
             })
@@ -72,13 +86,13 @@ $(function() {
 
         create: {
             get: function () {
-                PB.get('/team-ideation-tools/personas/create/')
+                PB.get('/team-ideation-tools/personas/create/', 'Create a new persona')
             }
         },
 
         /* Open the chooser & load personas */
         open: function (persona_id) {
-            PB.get('/team-ideation-tools/personas/' + persona_id + '/')
+            PB.get('/team-ideation-tools/personas/' + persona_id + '/', 'Persona details')
         }
     };
 
@@ -101,7 +115,7 @@ $(function() {
             PB.post($(this).closest('form'), $(this).data('confirmation'),
                 $(this).data('action_before'), $(this).data('action_during'));
         } else {
-            PB.get($(this).attr('href'));
+            PB.get($(this).attr('href'), '');
         }
     });
 

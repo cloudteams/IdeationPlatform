@@ -90,7 +90,7 @@ def count_users(persona):
 
 @register.filter
 def no_underscore(text):
-    return text.replace('_', ' ')
+    return text.replace('_', ' ').replace('null', 'None / Unknown')
 
 
 @register.filter
@@ -101,3 +101,21 @@ def get_user_info(persona_user):
 @register.filter
 def filterable(filter):
     return filter['name'] not in ['first_name', 'last_name', ]
+
+
+@register.filter
+def get_percentage(value, total):
+    if total == 0:
+        return 0
+
+    return round(float(value)/total, 2)*100
+
+
+@register.filter
+def get_total(values):
+    total = 0
+
+    for v in values:
+        total += v[1]
+
+    return total

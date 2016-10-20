@@ -1,11 +1,7 @@
 $(function() {
-    // make select boxes into chosen
-    $('select.filter-value').chosen();
-
     QueryUI = {
         clear: function() {
-            $('.filter-value').val('');
-            $('select.filter-value').trigger('chosen:updated')
+            $('.filter-value').val('').trigger('change');
         },
 
         // load UI from query text
@@ -51,7 +47,7 @@ $(function() {
                 var fr = $('.filter-row[data-name="' + exp[0] + '"]');
                 fr.find('.comparison-select').val(exp[1]);
                 fr.find('.filter-value').val(vals);
-                fr.find('select.filter-value').trigger('chosen:updated');
+                fr.find('select.filter-value').trigger('change');
             }
         },
 
@@ -107,10 +103,7 @@ $(function() {
                          .replace(/ \(\) AND /g, '').replace(/\(\) AND /g, '')
                          .replace(/\[\(\) \]/g, '');
         }
-    }
-
-    // intially load the query
-    QueryUI.from_string($('#id_query').val());
+    };
 
     // update query on changes
     $('body').on('change', '.filter-value', function() {

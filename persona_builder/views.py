@@ -87,11 +87,18 @@ def edit_persona_info(request, pk):
         if form.is_valid():
             persona = form.save()
             return redirect('/team-ideation-tools/propagate/?send_persona=%d&next=properties' % persona.pk)
-    else:
-        form = PersonaForm(instance=persona)
+        else:
+            return redirect(persona.get_edit_info_url(full=True))
+
+    form = PersonaForm(instance=persona)
+
+    # also load other forms
+    property_form = PersonaPropertiesForm(None, initial={'query': persona.query})
 
     ctx = {
-        'form': form,
+        'info_form': form,
+        'property_form': property_form,
+        'filters': get_active_configuration().get_user_manager(token=persona.uuid).list_filters(),
         'persona': persona,
         'page': 'edit-info',
     }
@@ -138,17 +145,23 @@ def edit_persona_properties(request, pk):
                     return redirect('/team-ideation-tools/propagate/?send_persona=%d&next=absolute' % persona.pk)
             else:
                 # not enough users
-                form.add_error(None, 'Use less strict filters')
+                request.session['persona_form_error'] = 'Use less strict filters'
+                return redirect(persona.get_edit_properties_url(full=True))
 
         status = 400
 
     params = {
         'persona': persona,
-        'form': form,
+        'info_form': PersonaForm(instance=persona),
+        'property_form': form,
         'filters': user_manager.list_filters(),
         'not_container': True,
         'page': 'edit-properties'
     }
+
+    if 'persona_form_error' in request.session:
+        params['persona_form_error'] = request.session['persona_form_error']
+        del request.session['persona_form_error']
 
     return render(request, 'persona_builder/persona/details.html', params, status=status)
 
@@ -196,6 +209,9 @@ class PersonaDetailView(DetailView):
 
         context['properties'] = user_manager.list_filters()
         context['users'] = PersonaUsers.objects.filter(persona=context['persona'])
+        context['info_form'] = PersonaForm(instance=context['persona'])
+        context['property_form'] = PersonaPropertiesForm(None, initial={'query': context['persona'].query})
+        context['filters'] = get_active_configuration().get_user_manager(token=context['persona'].uuid).list_filters()
         context['page'] = 'stats'
         context['not_container'] = True
 

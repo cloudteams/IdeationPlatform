@@ -1,29 +1,38 @@
     {% load app_filters %}
 
     <section id="subpage-3" class="subpage{% if active %} active{% endif %}">
-        <p><b>Persona Overview</b></p>
-
-        {% with overview_values=persona.get_overview_values %}
-            <div class="row property-stats-list">
+        <div class="row">
+            {% with overview_values=persona.get_overview_values %}
                 {% for property,values in overview_values.items %}
-                    <div class="col-md-4 property-stats" data-prop="{{ property }}">
-                        <p class="property-name"><b>{{ property|title|no_underscore  }}</b></p>
-                        <div id="chart-{{ property }}" class="prop-chart"></div>
-                    </div>
+                        <div class="col-md-2 persona-property-column">
+                            <div class="vertical-align">
+                                <div class="middle">
+                                    <strong>{{ property|title|no_underscore  }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-10">
+                            <div class="row percentage-wrapper">
+                                {% with total=values|get_total %}
+                                    {% for vo in values %}
+                                        {% with v=vo.0 o=vo.1 %}
+                                            {% with cnt=forloop.counter perc=o|get_percentage:total vtitle=v|no_underscore %}
+                                                <div style="width: {{ perc }}%" class="persona-percentage-block">
+                                                    <div class="persona-percentage-item item-{{ cnt }}"></div>
+                                                    <div class="persona-percentage-context">{{ vtitle }}</div>
+                                                    <div class="persona-block-popup item-{{ cnt }}">{{ vtitle }} : {{ perc }}% ({{ o }})</div>
+                                                </div>
+                                            {% endwith %}
+                                        {% endwith %}
+                                    {% endfor %}
+                                {% endwith %}
+                            </div>
+                        </div>
                 {% endfor %}
+            {% endwith %}
 
+            <div class="col-md-12 persona-download" style="margin-top: 20px;">
+                <a href="{{ persona.get_users_download_link }}" target="blank"><i class="icon icon-download"></i>Download the detailed users profiles file</a>
             </div>
-
-            <script>
-                var PersonaStats = function() {
-                    this.property_values = {};
-                    {% for property,values in overview_values.items %}
-                        this.property_values['{{ property }}'] = {};
-                        {% for v,o in values.items %}
-                            this.property_values['{{ property }}']['{{ v }}'] = {{ o }};
-                        {% endfor %}
-                    {% endfor %}
-                }
-            </script>
-        {% endwith %}
+        </div>
     </section>

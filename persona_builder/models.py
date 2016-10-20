@@ -146,8 +146,43 @@ class Persona(models.Model):
 
         return True
 
-    def get_overview_values(self):
-        return json.loads(self.overview_prop_values)
+    def get_overview_values(self, n=6, cutoff=0.05):
+        """
+        :param n: Number of most popular options to fetch. Remaining options will be grouped in an 'Other' options
+        :param cutoff: A percentage under which an option will also be assigned to 'Other'
+        :return: A dictionary of the following form: {'Device': [('Mobile', 12), ('Desktop', 10), ('Other', 2)], ...}
+        """
+        result = {}
+        data = json.loads(self.overview_prop_values)
+
+        # sort
+        for p in data:
+            # get total & avoid empty list manipulation
+            total = sum([data[p][v] for v in data[p]])
+
+            if total == 0:
+                return []
+
+            # sort options by popularity
+            p_list = sorted([(v, data[p][v]) for v in data[p]], key=lambda x: x[1], reverse=True)
+
+            # remove options under cutoff
+            other_sum = 0
+            head = []
+            for x in p_list[:n]:
+                if float(x[1])/total >= cutoff:
+                    head.append(x)
+                else:
+                    other_sum += x[1]
+
+            # only first n options
+            if len(p_list) > n:
+                p_list = head + [('Other', other_sum + sum([x[1] for x in p_list[n+1:]])), ]
+
+            # add to result
+            result[p] = p_list
+
+        return result
 
     def update_overview_values(self, users=None, commit=False):
         if users:
@@ -212,6 +247,11 @@ class Persona(models.Model):
             except:
                 print('Error on Team Platform notification')
                 return -1
+
+    # get persona size
+    @property
+    def size(self):
+        return PersonaUsers.objects.filter(persona_id=self.pk).count()
 
     # weird UUID bug fix
     def save(self, *args, **kwargs):

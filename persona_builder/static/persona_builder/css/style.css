@@ -46,15 +46,13 @@ label[for="id_avatar"]:hover {
     color: red;
 }
 
-.errorlist {
-    background: #e74c3c;
-    color: white;
-    padding: 5px;
-    box-shadow: 0 0 5px #fff;
-}
-
-.errorlist > li {
-    color: white;
+.errorlist > li  {
+    color: #ff5071;
+    display: inline-block;
+    margin-bottom: 0;
+    margin-top: .5rem;
+    text-align: left;
+    width: 50%;
 }
 
 .action-container {
@@ -109,6 +107,15 @@ input[type="checkbox"] {
     margin-right: 20px;
 }
 
+.persona-filters-form .select2 {
+    width: 100% !important;
+}
+
+.filter-row {
+    height: 90px;
+    overflow: hidden;
+}
+
 .comparison-select {
     width: 200px;
     padding: 5px;
@@ -123,10 +130,6 @@ input[type="checkbox"] {
     width: calc(100% - 210px);
     /* min-width: 250px; */
     background: white;
-}
-
-.filter-row {
-    margin: 20px 0;
 }
 
 .ps-scrollbar-x-rail,

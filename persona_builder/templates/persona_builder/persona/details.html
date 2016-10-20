@@ -6,12 +6,16 @@
     </ul>
 
     {% with active=page|eq:'edit-info' %}
-        {% include 'persona_builder/persona/edit_info.html' %}
+        {% with form=info_form %}
+            {% include 'persona_builder/persona/edit_info.html' %}
+        {% endwith %}
     {% endwith %}
 
     {% if persona %}
         {% with active=page|eq:'edit-properties' %}
-            {% include 'persona_builder/persona/edit_properties.html' %}
+            {% with form=property_form %}
+                {% include 'persona_builder/persona/edit_properties.html' %}
+            {% endwith %}
         {% endwith %}
     {% endif %}
 

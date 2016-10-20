@@ -99,6 +99,15 @@ input.select2-search__field:focus {
     box-shadow: none !important;
 }
 
+input.select2-search__field {
+    width: 100% !important;
+}
+
+.page-developer-dashboard-project-personas .persona-percentage-item.item-7 {
+    background-color: #afa7b0;
+    border-color: #afa7b0;
+}
+
 /* Anonymizer */
 #test-console {
     width: 100%;

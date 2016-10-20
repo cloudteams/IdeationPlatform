@@ -5,7 +5,13 @@
                 <div class="col-md-12 inform-block">
                     Define some or all of the properties below to describe this persona
                 </div>
-                    {{ form.non_field_errors }}
+                    {% if persona_form_error %}
+                        <div class="col-xs-12">
+                            <ul class="errorlist">
+                                <li>{{ persona_form_error }}</li>
+                            </ul>
+                        </div>
+                    {% endif %}
 
                     {{ form.query.errors }}
                     <div class="query-box">
