@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import json
 
+from django.utils.safestring import mark_safe
+
 from persona_builder.models import PersonaUsers
 
 __author__ = 'dimitris'
@@ -31,11 +33,7 @@ def pretty_print(value):
     if value is None:
         return ''
     elif type(value) == list:
-        result = ''
-        for var in value:
-            result += str(var) + '\n'
-
-        return result
+        return mark_safe('"%s"' % ','.join([v for v in value if v is not None]))
     else:
         return value
 

@@ -17,7 +17,7 @@ $(function() {
         get: function(url, title) {
             PB.$pb.addClass('in').css('display', 'block');
             PB.$pb.find('.modal-header .header-medium').text(title || '');
-            
+
             var $dBody = PB.$pb.find('.modal-body');
             $dBody.html(PB.messages.loading);
 

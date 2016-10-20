@@ -1,0 +1,21 @@
+{% load endless %}
+{% load app_filters %}
+
+{% for property in properties %}
+    {{property.label}}{% if not forloop.last %},{% endif %}
+{% endfor %}
+\n
+{% for pu in users %}
+    {% with user=pu|get_user_info %}
+        {% for property in properties %}
+            {% if not property.is_pk %}
+                {% with p_key=property.name %}
+                    {% with value=user|get_property:p_key %}
+{{value|distinct|pretty_print}}{% if not forloop.last %},{% endif %}
+                    {% endwith %}
+                {% endwith %}
+            {% endif %}
+        {% endfor %}
+    {% endwith %}
+    \n
+{% endfor %}

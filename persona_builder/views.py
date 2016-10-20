@@ -1,10 +1,15 @@
+import os
 import uuid
 
 import datetime
+from tempfile import NamedTemporaryFile
+from wsgiref.util import FileWrapper
+
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.views.generic import CreateView, DetailView, ListView, DeleteView, UpdateView
 from anonymizer.models import ConnectionConfiguration
 from ct_anonymizer.settings import DEBUG
@@ -211,31 +216,13 @@ class PersonaDetailView(DetailView):
         context['users'] = PersonaUsers.objects.filter(persona=context['persona'])
         context['info_form'] = PersonaForm(instance=context['persona'])
         context['property_form'] = PersonaPropertiesForm(None, initial={'query': context['persona'].query})
-        context['filters'] = get_active_configuration().get_user_manager(token=context['persona'].uuid).list_filters()
+        context['filters'] = context['properties']
         context['page'] = 'stats'
         context['not_container'] = True
 
         return context
 
 view_persona = PersonaDetailView.as_view()
-
-
-def get_persona_users(request, pk):
-    context = {
-        'persona': Persona.objects.get(pk=pk),
-    }
-
-    config = get_active_configuration()
-    user_manager = config.get_user_manager(token=context['persona'].uuid)
-
-    context['properties'] = user_manager.list_filters()
-    context['users'] = PersonaUsers.objects.filter(persona=context['persona'])
-    context['not_container'] = True
-
-    if not context['users'].exists():
-        return HttpResponse('')
-    else:
-        return render(request, 'persona_builder/persona/users.html', context)
 
 
 class PersonaListView(ListView):
@@ -370,3 +357,30 @@ def add_from_pool(request, pk):
             new_pu.save()
 
     return HttpResponse('%d' % new_persona.pk)
+
+
+def download_persona_users(request, pk):
+    persona = get_object_or_404(Persona, pk=pk)
+    um = get_active_configuration().get_user_manager(token=persona.uuid)
+
+    # generate the csv with user info
+    csv = NamedTemporaryFile(suffix='.csv', delete=False)
+    # get content
+    content = render_to_string('persona_builder/persona/users.csv', {
+        'properties': um.list_filters(),
+        'users': PersonaUsers.objects.filter(persona_id=persona.pk)
+    })
+    # preprocess content
+    clear_content = ''.join([line.strip().replace('\\n', '\n') for line in content.split('\n') if line.strip()])
+    # write & close
+    csv.write(clear_content)
+    csv.close()
+
+    # serve the csv
+    response = HttpResponse(FileWrapper(file(csv.name, 'rb')), content_type='text/csv')
+    filename = "Persona #%d users (%s).csv" % (persona.pk, datetime.datetime.now().strftime('%Y.%m.%d,%H.%M'))
+    response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+    response['Content-Length'] = os.path.getsize(csv.name)
+
+    # return HTTP response
+    return response
