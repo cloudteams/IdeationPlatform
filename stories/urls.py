@@ -6,7 +6,7 @@ __author__ = 'dipap'
 
 urlpatterns = [
     # project
-    url(r'^projects/(?P<project_id>[\w-]+)/$', views.project_view, name='project-stories'),
+    url(r'^projects/(?P<project_id>[\w-]+)/?$', views.project_view, name='project-stories'),
 
     # scenario
     url(r'^projects/(?P<project_id>[\w-]+)/add-scenario/$', views.add_scenario, name='add-scenario'),
