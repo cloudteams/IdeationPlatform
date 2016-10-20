@@ -20,6 +20,7 @@ def project_view(request, pk):
         for p in request.session['projects']:
             if p['pid'] == str(pk):
                 project_name = p['title']
+                request.session['project_id'] = str(pk)
 
         if not project_name:
             return HttpResponse('Project #%d was not found on TeamPlatform' % pk)

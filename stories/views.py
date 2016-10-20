@@ -17,6 +17,7 @@ def project_view(request, project_id):
         project_name = ''
         for p in request.session['projects']:
             if p['pid'] == str(pk):
+                request.session['project_id'] = project_id
                 project_name = p['title']
 
         if not project_name:
