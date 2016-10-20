@@ -32,7 +32,7 @@ urlpatterns = [
     url(r'^team-ideation-tools/business-model/', include('bm_canvas.urls')),
 
     # stories
-    url(r'^team-ideation-tools/stories/', include('stories.urls')),
+    url(r'^team-ideation-tools/requirements-library/', include('stories.urls')),
 
     # home page
     url(r'^team-ideation-tools/$', views.index),
