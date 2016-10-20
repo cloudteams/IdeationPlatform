@@ -6,7 +6,7 @@
 {% load bm_filters %}
 
 {% block title %}{{bmc.project_name}} - Business Model Canvas{% endblock %}
-{% block section_class %}not-container{% endblock %}
+{% block section_class %}developer-dashboard-project-requirements-content{% endblock %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static "bm_canvas/css/sortable.min.css" %}">
@@ -16,33 +16,20 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{bmc.project_name}} - Business Model Canvas</h1>
+    <header class="main-header">
+        <div class="vertical-align">
+            <div class=" middle">
+                <i class="icon icon-user"></i>
+                <h1 class="header-large">Business Model Canvas</h1>
+                <p class="header-medium secondary">{{ bmc.project_name }}</p>
+            </div>
+        </div>
+    </header>
 
     <div id="bmc-clearfix"></div>
     <div id="business-model-canvas" data-project_id="{{ bmc.project_id }}" data-csrfmiddlewaretoken="{{ csrf_token }}">
         <div class="row">
-            <div class="col-md-2 sidebar">
-                <img src="{% static "img/icons/icon-projects.svg" %}" class="icon-projects svg" alt="Projects icon" width="20">
-                <h5>Projects</h5>
-                <ul class="projects">
-                    {% for project in request.session.projects %}
-                        <li class="project-item{% if bmc.project_id == project.pid|add:"0" %} active{% endif %}">
-                            <a href="/team-ideation-tools/business-model/projects/{{ project.pid }}/">{% if bmc.project_id == project.pid|add:"0" %}<i class="fa fa-check"></i>{% endif %}{{ project.title }}</a>
-                        </li>
-                    {% empty %}
-                        <li>No projects</li>
-                    {% endfor %}
-                </ul>
-
-                <div id="autocomplete-suggestions" style="visibility: hidden;">
-                    <img src="{% static "img/icons/icon-search.svg" %}" class="icon-search svg" alt="Projects icon" width="15">
-                    <h5>Suggestions</h5>
-                    <div class="suggestions-list">
-
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-10 content">
+            <div class="col-xs-12 content">
                 <div class="row">
                     <div class="col-sm-2">
                         <div id="block-section-KP" class="block-section block-section-double">

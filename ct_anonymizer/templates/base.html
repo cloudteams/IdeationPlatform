@@ -29,7 +29,7 @@
 	<body>
 		{% include "util/menu.html" %}
 
-		<section class="page dashboard-page {% block section_class %}{% endblock %}">
+		<section class="page dashboard-page {% block section_class %}{% endblock %}{% if minimized_sidebar %} minimized{% endif %}">
             <div class="container">
                 <div class="content">
                     <div class="row">
@@ -54,12 +54,16 @@
 		<script type="text/javascript" src="{% static "js/jquery.switch-button.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/base.js" %}"></script>
 
-		<script>
-			$(function() {
-				$('input#avatar-clear_id').remove();
-				$('input[type="checkbox"]:not([name^=form-])').switchButton()
-			});
-		</script>
+        <script>
+            // sidebar project redirect
+            // TODO fix
+            $('#main-select-project-navigation').on('change', function(e) {
+                console.log('test')
+                var pid = $(this).val();
+
+                document.location = '{{ tp_url }}{{ request.session.dashboard_id }}?action=cloudteams.getswproject&object=' + pid + '&op=cloudteams.getstdb';
+            })
+        </script>
 		{% block js %}
 		{% endblock %}
 	</body>

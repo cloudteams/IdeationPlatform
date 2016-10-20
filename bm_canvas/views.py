@@ -27,7 +27,8 @@ def project_view(request, pk):
         bmc = BusinessModel.objects.create(project_id=pk, project_name=project_name)
 
     return render(request, 'bm_canvas/canvas.html', {
-        'bmc': bmc
+        'bmc': bmc,
+        'minimized_sidebar': True,
     })
 
 
