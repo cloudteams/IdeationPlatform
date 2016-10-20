@@ -60,7 +60,7 @@
 
                     <div class="middle">
                         <p class="header-medium secondary">{{ persona.name }}</p>
-                        <p class="meta big">{% if persona.is_public %}Public{% else if persona %}Private{% else %}No{% endif %} persona</p>
+                        <p class="meta big">{% if persona.is_public %}Public{% elif persona %}Private{% else %}No{% endif %} persona</p>
                         <p class="description">{{ persona.description }}</p>
 
                         {% with extra_personas_cnt=scenario.involved_personas.count|add:"-1" %}
