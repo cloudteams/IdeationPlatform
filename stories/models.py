@@ -41,6 +41,10 @@ class Scenario(Model):
         return Persona.objects.filter(stories__scenarios=self).distinct('id')
 
     @property
+    def tag_list(self):
+        return [x.strip() for x in self.tags.split(' ') if x.strip()]
+
+    @property
     def main_persona(self):
         try:
             return Persona.objects.filter(stories__scenarios=self).\

@@ -6,7 +6,7 @@
 {% load bm_filters %}
 
 {% block title %}{{ project.project_name }} - Scenario information{% endblock %}
-{% block section_class %}bg-white{% endblock %}
+{% block section_class %}developer-dashboard-project-requirements-content{% endblock %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static "stories/css/style.css" %}">
@@ -14,94 +14,145 @@
 {% endblock %}
 
 {% block content %}
-    <div class="clerfix">
-        <h1 class="pull-left">Scenario information - Scenario # {{ scenario.project_scenario_id }}</h1>
-        <a href="{{ scenario.get_abolute_url }}edit/" class="btn btn-transparent btn-sm pull-right">Edit scenario</a>
-    </div>
 
-    <div class="row">
-        <div class="panel bg-white col-xs-12">
-            <div class="col-md-3">
-                <h5>Info</h5>
-                <p><span class="underline">Created:</span><br />
-                    <span class="number">{{ scenario.created }}</span></p>
-                <p><span class="underline">Last edited:</span><br />
-                    <span class="number">{{ scenario.updated }}</span></p>
-                <p><span class="underline">Owner:</span><br />
-                    <span class="number">{{ scenario.owner }}</span></p>
-
-                {% with personas=scenario.involved_personas %}
-                    <h5 class="margin-top-5">Involved personas ({{ personas|length }})</h5>
-                    <div class="row">
-                        {% for persona in personas %}
-                            <div class="col-xs-6 text-center">
-                                {% include 'util/persona-xs.html' %}
-                            </div>
-                        {% empty %}
-                            <div class="col-xs-12">
-                                No personas involved
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endwith %}
-            </div>
-
-            <div class="col-md-6 scenario-main-col">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <b>ID</b>: #{{ scenario.project_scenario_id }}
-                    </div>
-
-                    <div class="col-xs-9">
-                        <b>Title</b>: {{ scenario.title }}
-                    </div>
+    {% with stories=scenario.get_all_stories %}
+        <header class="main-header">
+            <div class="vertical-align">
+                <div class="middle">
+                    <i class="icon icon-requirement"></i>
+                    <h1 class="header-large">Requirements</h1>
+                    <p class="header-medium secondary">Project title</p>
                 </div>
 
-                <div class="row margin-top-5">
-                    <div class="col-xs-12">
-                        <p><b>Scenario</b><br />
-                        {{ scenario.description|linebreaksbr }}</p>
-                    </div>
-                </div>
-
-                <div class="row margin-top-5">
-                    <div class="col-xs-12">
-                        <p><b>Tags</b><br />
-                        {{ scenario.tags }}</p>
-                    </div>
-                </div>
-
-                <div class="row margin-top-5">
-                    <div class="col-xs-12">
-                        <p><b>Comments</b><br />
-                        {{ scenario.comments|linebreaksbr|default:"No comments available" }}</p>
-                    </div>
+                <div class="middle last">
+                    <p class="project-counter"><span>{{ stories|length }}</span></p>
+                    <p class="project-counter">Stories</p>
                 </div>
             </div>
+        </header>
 
-            <div class="col-md-3">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <h5>Related Stories ({{ scenario.stories.count }})</h5>
-                        <p>
-                            {% for story in scenario.get_all_stories %}
-                                <a href="{{ story.get_absolute_url }}">#{{ story.project_story_id }} - {{ story.title }} ({{ story.get_story_type_display }})</a><br/>
-                            {% empty %}
-                                No stories yet in this scenario.<br />
-                                Start by <a href="{{ scenario.get_create_story_url }}">creating a story</a>.
-                            {% endfor %}
-                        </p>
+        <section class="developer-dashboard-project-requirements-scenario">
+            <ul class="menu-subpage">
+                <li id="link-to-subpage-1" class="link-to-subpage active">About</li>
+                <li id="link-to-subpage-2" class="link-to-subpage">Related stories</li>
+            </ul>
 
-                        <div class="pull-right">
-                            <a href="{{ scenario.get_create_story_url }}">Create</a>
-                            <span class="separator"> | </span>
-                            <a href="#" class="add-existing-story" data-scenario_id="{{ scenario.pk }}">Add existing</a>
-                        </div>
-                    </div>
+            <div class="overview-data">
+            <h2 class="header-medium secondary">Scenario {{ scenario.project_scenario_id }}#</h2>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <table>
+                        <tbody><tr>
+                            <td>
+                                <i class="icon icon-edit"></i>
+                                <p>Created</p>
+                            </td>
+                            <td>
+                                <p><time datetime="{{ scenario.created|date:'d-m-Y' }}">{{ scenario.created|date:'d-m-Y' }}</time></p>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <i class="icon icon-time"></i>
+                                <p>Last modified</p>
+                            </td>
+                            <td>
+                                <p><time datetime="{{ scenario.updated|date:'d-m-Y' }}">{{ scenario.updated|date:'d-m-Y' }}</time></p>
+                            </td>
+                        </tr>
+                    </tbody></table>
+                </div>
+
+                <div class="col-sm-6">
+                    <table>
+                        <tbody><tr>
+                            <td>
+                                <i class="icon icon-user"></i>
+                                <p>Owner</p>
+                            </td>
+                            <td>
+                                <p>{{ scenario.owner }}</p>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <i class="icon icon-requirement"></i>
+                                <p>Related stories</p>
+                            </td>
+                            <td>
+                                <p>{{ stories|length }}</p>
+                            </td>
+                        </tr>
+                    </tbody></table>
                 </div>
             </div>
         </div>
-    </div>
+            <section id="subpage-1" class="subpage active">
+                <article class="block-line large">
+                    <header class="article-header">
+                        <div class="vertical-align">
+                            <div class="middle">
+                                <h2 class="header-medium secondary">{{ scenario.title }}</h2>
+                            </div>
+                            <div class="middle">
+                                <p class="header-small"><a href="{{ scenario.get_absolute_url }}edit/"><span class="header-small action-text">EDIT</span></a></p>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="content">
+                        <p>{{ scenarion.description|default:"No description"|linebreaksbr }}</p>
+                    </div>
+
+                    <div class="content tags">
+                        <div>
+                            <p><strong>Tags:</strong></p>
+
+                            {% for tag in scenario.tag_list %}
+                                <div class="item-tag">{{ tag }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </article>
+            </section>
+
+            <section id="subpage-2" class="subpage">
+                <h2 class="header-medium secondary">{{ stories|length }} stories added to scenario
+                    <a href="#" class="btn add-existing-story" data-scenario_id="{{ scenario.pk }}">Add existing story</a>
+                    <a href="{{ scenario.get_create_story_url }}" class="btn create-new-story" alt="create story">Create a story</a>
+                </h2>
+                <div class="row">
+                    <section class="developer-dashboard-notifications-content">
+                        {% if stories %}
+                            <section class="content">
+                                {% for story in stories %}
+                                    <a href="{{ story.get_absolute_url }}" class="col-xs-12" style="margin: 20px 0 0 0;">
+                                        <article class="notification">
+                                            <div class="vertical-align">
+                                                <div class="middle">
+                                                    <p>Story {{ story.project_story_id }}# - {{ story.title }} </p>
+                                                </div>
+
+                                                <div class="middle">
+                                                    <p class="meta thin inline-block">{{ story.get_story_type_display }}</p>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    </a>
+                                {% endfor %}
+                            </section>
+                        {% endif %}
+                    </section>
+                </div>
+            </section>
+
+        </section>
+
+    {% endwith %}
+
 
     {% include 'util/popup.html' %}
 {% endblock %}

@@ -9,10 +9,10 @@
 				<a href="#" class="open-tooltip-button" id="open-tooltip-button-1"><i class="icon icon-more-options"></i></a>
 				<div class="custom-tooltip" id="custom-tooltip-1">
 					<ul>
-                        {% for story in stories %}
+                        {% for story in scenario.get_all_stories %}
                             <li><a href="{{ story.get_absolute_url }}">#{{ story.project_story_id }} - {{ story.title }} ({{ story.get_story_type_display }})</a></li>
                         {% endfor %}
-                        <li><a href="{{ scenario.get_create_story_url }}">Create new</a></li>
+                        <li><a href="{{ scenario.get_create_story_url }}">Add story</a></li>
 					</ul>
 				</div>
 			</div>
@@ -26,7 +26,7 @@
 						<p>Created</p>
 					</td>
 					<td class="col-xs-9">
-						<p><time datetime="{{ scenario.created|date:"d/M/Y" }}">{{ scenario.created|date:"d/M/Y" }}</time></p>
+						<p><time datetime="{{ scenario.created|date:"d-m-Y" }}">{{ scenario.created|date:"d-m-Y" }}</time></p>
 					</td>
 				</tr>
 
@@ -36,7 +36,7 @@
 						Last edited
 					</td>
 					<td class="col-xs-9">
-						<p><time datetime="{{ scenario.updated|date:"d/M/Y" }}">{{ scenario.updated|date:"d/M/Y" }}</time></p>
+						<p><time datetime="{{ scenario.updated|date:"d-m-Y" }}">{{ scenario.updated|date:"d-m-Y" }}</time></p>
 					</td>
 				</tr>
 
@@ -63,7 +63,7 @@
                         <p class="meta big">{% if persona.is_public %}Public{% else %}Private{% endif %} persona</p>
                         <p class="description">{{ persona.description }}</p>
 
-                        {% with extra_personas_cnt=scenarion.involved_personas.count|add:"-1" %}
+                        {% with extra_personas_cnt=scenario.involved_personas.count|add:"-1" %}
                             {% if extra_personas_cnt > 0 %}
                                 <a href="#"><p class="meta big">&amp; {{ extra_personas_cnt|apnumber }} more persona{% if extra_personas_cnt > 1 %}s{% endif %}</p></a>
                             {% endif %}
