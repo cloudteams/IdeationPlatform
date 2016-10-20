@@ -6,7 +6,7 @@
 {% load bm_filters %}
 
 {% block title %}{{ project.project_name }} - Create a scenario{% endblock %}
-{% block section_class %}bg-white{% endblock %}
+{% block section_class %}page-developer-dashboard-project-requirements{% endblock %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static "stories/css/style.css" %}">
@@ -14,15 +14,43 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Create a new scenario</h1>
+    <header class="main-header">
+        <div class="vertical-align">
+            <div class="middle">
+                <i class="icon icon-requirement"></i>
+                <h1 class="header-large">Requirements</h1>
+            </div>
+
+            <div class="middle last">
+                <p class="project-counter">{{ project.project_name }}</p>
+            </div>
+        </div>
+    </header>
 
     <form class="row panel"
           action="{{ project.get_absolute_url }}add-scenario/" method="POST">{% csrf_token %}
-        {{ form.as_p }}
+        <article class="block-line large">
+            <header class="article-header">
+                <div class="vertical-align">
+                    <div class="middle">
+                        <h2 class="header-medium secondary"><i class="icon icon-profile"></i>
+                            Create a new scenario
+                        </h2>
+                    </div>
+                </div>
+            </header>
 
-        <div class="clearfix">
-            <button type="submit" class="btn btn-primary pull-left"><i class="fa fa-save"></i> Create &amp; add stories</button>
-            <a href="{{ project.get_absolute_url }}" class="btn btn-transparent pull-right">Cancel</a>
-        </div>
+            <div class="content form-section">
+                {{ form.as_p }}
+
+                <hr>
+
+                <fieldset class="form-group form-submit">
+                    <a href="{{ project.get_absolute_url }}" class="btn-transparent" alt="cancel">Cancel</a>
+                    <button type="submit" class="btn confirm-button pull-right">Create &amp; add stories</button>
+                </fieldset>
+
+            </div>
+	    </article>
     </form>
 {% endblock %}
