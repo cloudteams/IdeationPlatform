@@ -341,5 +341,5 @@ class BscwApi:
                 del request.session['after_auth_url']
             else:
                 after_auth_path = '/team-ideation-tools/personas/'
-                
+
             return redirect(after_auth_path)
