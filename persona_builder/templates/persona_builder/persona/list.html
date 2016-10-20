@@ -3,7 +3,7 @@
 {% load static from staticfiles %}
 {% load app_filters %}
 
- {% block section_class %}page-developer-dashboard-project-personas{% endblock %}
+{% block section_class %}page-developer-dashboard-project-personas{% endblock %}
 
 {% block content %}
     <header class="main-header">
@@ -38,6 +38,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
     <script src="{% static "js/jquery.cookie.js" %}"></script>
 
+    <script src="{% static "persona_builder/js/common-dev.js" %}"></script>
     <script src="{% static "persona_builder/js/persona-picker.js" %}"></script>
     <script src="{% static "persona_builder/js/persona-builder.js" %}"></script>
     <script src="{% static "persona_builder/js/edit_properties.js" %}"></script>

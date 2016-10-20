@@ -1,32 +1,80 @@
-<article class="scenario">
-    <div class="row">
-        <div class="col-xs-9">
-            <a href="{{ scenario.get_absolute_url }}"><b>Scenario #{{ scenario.project_scenario_id }}</b></a><br />
-            <b>Title</b>: {{ scenario.title }}<br />
-        </div>
-        <div class="col-xs-3 text-center">
-            {% with persona=scenario.main_persona %}
-                {% include 'util/persona-xs.html' %}
-            {% endwith %}
-        </div>
-    </div>
-    <div class="teaser-separator"></div>
-    <div>
-        <span class="toggle-stories">
-            <b>Related stories: </b> {{ scenario.stories.count }} <i class="fa fa-angle-down"></i>
-        </span>
-        <a class="pull-right btn btn-sm btn-transparent" href="{{ scenario.get_absolute_url }}">Open</a>
-    </div>
+{% load humanize %}
 
-    <div class="stories-list" style="display: none;">
-        {% with stories=scenario.get_all_stories %}
-            {% if stories %}<p>{% endif %}
-                {% for story in stories %}
-                    <a href="{{ story.get_absolute_url }}">#{{ story.project_story_id }} - {{ story.title }} ({{ story.get_story_type_display }})</a><br/>
-                {% endfor %}
-            {% if stories %}</p>{% endif %}
+<article class="requirement block-line-half col-md-6 clear-2">
+	<div class="background">
+		<header class="article-header">
+			<h2 class="header-medium secondary">Scenario {{ scenario.project_scenario_id }}#</h2>
+
+			<div class="tooltip-container">
+				<a href="#" class="open-tooltip-button" id="open-tooltip-button-1"><i class="icon icon-more-options"></i></a>
+				<div class="custom-tooltip" id="custom-tooltip-1">
+					<ul>
+                        {% for story in stories %}
+                            <li><a href="{{ story.get_absolute_url }}">#{{ story.project_story_id }} - {{ story.title }} ({{ story.get_story_type_display }})</a></li>
+                        {% endfor %}
+                        <li><a href="{{ scenario.get_create_story_url }}">Create new</a></li>
+					</ul>
+				</div>
+			</div>
+		</header>
+
+		<div class="content data">
+			<table>
+				<tbody><tr class="row">
+					<td class="col-xs-3">
+						<i class="icon icon-edit"></i>
+						<p>Created</p>
+					</td>
+					<td class="col-xs-9">
+						<p><time datetime="{{ scenario.created|date:"d/M/Y" }}">{{ scenario.created|date:"d/M/Y" }}</time></p>
+					</td>
+				</tr>
+
+				<tr class="row">
+					<td class="col-xs-3">
+						<i class="icon icon-time"></i>
+						Last edited
+					</td>
+					<td class="col-xs-9">
+						<p><time datetime="{{ scenario.updated|date:"d/M/Y" }}">{{ scenario.updated|date:"d/M/Y" }}</time></p>
+					</td>
+				</tr>
+
+				<tr class="row">
+					<td class="col-xs-3">
+						<i class="icon icon-user"></i>
+						<p>Owner</p>
+					</td>
+					<td class="col-xs-9">
+						<p class="bold">{{ scenario.owner }}</p>
+					</td>
+				</tr>
+			</tbody></table>
+		</div>
+
+        {% with persona=scenario.main_persona %}
+            <div class="content user">
+                <div class="vertical-align">
+                    <div class="middle image-container" style="background-image: url({{ persona.get_avatar_url }});">
+                    </div>
+
+                    <div class="middle">
+                        <p class="header-medium secondary">{{ persona.name }}</p>
+                        <p class="meta big">{% if persona.is_public %}Public{% else %}Private{% endif %} persona</p>
+                        <p class="description">{{ persona.description }}</p>
+
+                        {% with extra_personas_cnt=scenarion.involved_personas.count|add:"-1" %}
+                            {% if extra_personas_cnt > 0 %}
+                                <a href="#"><p class="meta big">&amp; {{ extra_personas_cnt|apnumber }} more persona{% if extra_personas_cnt > 1 %}s{% endif %}</p></a>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
         {% endwith %}
-        <a href="{{ scenario.get_create_story_url }}">Create new</a>
-    </div>
 
+		<footer>
+			<a href="{{ scenario.get_absolute_url }}" class="btn">Show scenario</a>
+		</footer>
+	</div>
 </article>

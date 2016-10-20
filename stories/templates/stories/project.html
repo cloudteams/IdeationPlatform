@@ -7,74 +7,52 @@
 
 {% block title %}{{ project.project_name }} - Project Overview{% endblock %}
 
-{% block section_class %}bg-white{% endblock %}
 {% block css %}
     <link rel="stylesheet" href="{% static "stories/css/style.css" %}">
     <link rel="stylesheet" href="{% static "persona_builder/css/style.css" %}">
 {% endblock %}
 
-{% block content %}
-    <div class="row">
-        <div class="col-md-4">
-            <div class="panel">
-                <h3>General statistics</h3>
-                <p><label for="id_current_project">Project:</label>
-                    <select name="current_project" id="id_current_project">
-                        <option value="{{ project.project_id }}" selected="selected">{{ project.project_name }}</option>
-                        {% for p in request.session.projects %}
-                            {% if p.pid != project.project_id %}
-                                <option value="{{ p.pid}}">{{ p.title }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
-                </p>
-                <p>Total Scenarios: <span class="number">{{ project.project_scenarios.all.count }}</span><br />
-                Total Stories: <span class="number">{{ project.project_stories.all.count }}</span></p>
-            </div>
+{% block section_class %}developer-dashboard-project-requirements-content{% endblock %}
 
-            <div class="panel">
-                <form action="{{ project.get_absolute_url }}" method="GET">
-                    <label for="id_order_scenarios_by">Order by:</label>
-                    <select id="id_order_scenarios_by" name="order_scenarios_by">
-                        <option value="scenario_id" {% if scenario_order == 'scenario_id' %}selected="selected"{% endif %}>Scenario ID</option>
-                        <option value="title" {% if scenario_order == 'title' %}selected="selected"{% endif %}>Title</option>
-                        <option value="num_stories" {% if scenario_order == 'num_stories' %}selected="selected"{% endif %}>Number of user stories</option>
-                        <option value="updated" {% if scenario_order == 'updated' %}selected="selected"{% endif %}>Time modified</option>
-                        <option value="created" {% if scenario_order == 'created' %}selected="selected"{% endif %}>Time created</option>
-                    </select>
-                </form>
+{% block content %}
+    <header class="main-header">
+        <div class="vertical-align">
+            <div class=" middle">
+                <i class="icon icon-requirement"></i>
+                <h1 class="header-large">Requirements</h1>
             </div>
         </div>
+    </header>
 
-        <div class="col-md-8">
-            {% for scenario in scenarios %}
-                <div class="col-xs-12">
-                    {% include "scenarios/teaser.html" %}
-                </div>
-            {% endfor %}
-
-            <article class="project add-item add-scenario col-xs-4 col-xs-push-4" style="padding: 0;">
-                <a href="{{ project.get_absolute_url}}add-scenario/" alt="create new scenario" class="new-scenario-link">
-                    <div class="background" style="padding: 20px;">
+    <section class="developer-dashboard-project-requirements-content">
+        <div class="row">
+            <article class="requirement add-item col-md-6" style="height: 390px;">
+                <a href="{{ project.get_absolute_url}}add-scenario/">
+                    <div class="background">
                         <div class="vertical-align">
                             <div class="middle">
                                 <div class="add-project-button">
                                     <div class="vertical-align">
                                         <div class="middle">
-                                            <i class="fa fa-2x fa-pencil" style="color: whitesmoke;"></i>
+                                            <i class="icon icon-plus"></i>
                                         </div>
                                     </div>
                                 </div>
-                                <h2 class="header-small secondary">Create a new scenario</h2>
+                                <h2 class="header-small secondary">Create new scenario</h2>
                             </div>
                         </div>
                     </div>
                 </a>
             </article>
+
+            {% for scenario in scenarios %}
+                {% include "scenarios/teaser.html" %}
+            {% endfor %}
         </div>
-    </div>
+    </section>
 {% endblock %}
 
 {% block js %}
+    <script src="{% static 'stories/js/common-dev.js' %}"></script>
     <script src="{% static 'stories/js/stories.js' %}"></script>
 {% endblock %}
