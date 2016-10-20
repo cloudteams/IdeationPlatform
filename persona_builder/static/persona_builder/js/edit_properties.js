@@ -1,7 +1,7 @@
 $(function() {
     QueryUI = {
         clear: function() {
-            $('.filter-value').val('').trigger('change');
+            $('.filter-value').val('').trigger('change').trigger('chosen:updated');
         },
 
         // load UI from query text
@@ -47,7 +47,7 @@ $(function() {
                 var fr = $('.filter-row[data-name="' + exp[0] + '"]');
                 fr.find('.comparison-select').val(exp[1]);
                 fr.find('.filter-value').val(vals);
-                fr.find('select.filter-value').trigger('change');
+                fr.find('select.filter-value').trigger('change').trigger('chosen:updated');
             }
         },
 

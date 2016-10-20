@@ -95,12 +95,8 @@ input[type="submit"]:hover {
     padding: 0 5px;
 }
 
-input.select2-search__field:focus {
+.chosen-container .search-field input {
     box-shadow: none !important;
-}
-
-input.select2-search__field {
-    width: 100% !important;
 }
 
 .page-developer-dashboard-project-personas .persona-percentage-item.item-7 {

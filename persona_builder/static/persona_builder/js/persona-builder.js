@@ -29,12 +29,13 @@ $(function() {
                     $dBody.html($(data));
 
                     // initialize select2 with placeholders
-                    $.each($dBody.find('select:not(.comparison-select)'), function(idx, select){
+                    /* $.each($dBody.find('select:not(.comparison-select)'), function(idx, select){
                         var $select = $(select);
                         $select.select2({
                             placeholder: $select.data('placeholder') || ''
                         });
-                    });
+                    }); */
+                    $dBody.find('select:not(.comparison-select)').chosen();
 
                     // load the query
                     if ($('#id_query').length === 1) {

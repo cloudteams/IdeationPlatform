@@ -108,13 +108,12 @@ input[type="checkbox"] {
     margin-right: 20px;
 }
 
-.persona-filters-form .select2 {
+.persona-filters-form .chosen-container {
     width: 100% !important;
 }
 
 .filter-row {
     height: 90px;
-    overflow: hidden;
 }
 
 .comparison-select {
