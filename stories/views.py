@@ -17,13 +17,14 @@ def project_view(request, project_id):
         project_name = ''
         for p in request.session['projects']:
             if p['pid'] == str(pk):
-                request.session['project_id'] = project_id
                 project_name = p['title']
 
         if not project_name:
             return HttpResponse('Project #%d was not found on TeamPlatform' % pk, status=404)
 
         project = Project.objects.create(project_id=pk, project_name=project_name)
+
+    request.session['project_id'] = project_id
 
     # order scenarios
     scenarios = project.project_scenarios.all().order_by('project_scenario_id')
