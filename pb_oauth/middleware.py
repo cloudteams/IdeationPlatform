@@ -25,6 +25,7 @@ class AuthorizationMiddleware(object):
         if 'back_url' in request.GET:
             request.session['dashboard_url'] = request.GET.get('back_url')
 
+        print 'cid=%s' % request.session.get('campaign_id', '')
         # exclude authorization pages
         if request.path == '/team-ideation-tools/authorize/':
             return None
