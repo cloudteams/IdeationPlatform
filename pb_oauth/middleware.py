@@ -9,14 +9,6 @@ class AuthorizationMiddleware(object):
     # Check if client IP is allowed
     def process_request(self, request):
 
-        # except authorization pages
-        if request.path == '/team-ideation-tools/authorize/':
-            return None
-
-        # exclude api views
-        if '/api/' in request.path:
-            return None
-
         # save information about the persona that has to be sent
         if 'send_persona' in request.GET:
             request.session['send_persona'] = request.GET.get('send_persona')
@@ -32,6 +24,14 @@ class AuthorizationMiddleware(object):
             request.session['campaign_id'] = request.GET.get('cid')
         if 'back_url' in request.GET:
             request.session['dashboard_url'] = request.GET.get('back_url')
+
+        # exclude authorization pages
+        if request.path == '/team-ideation-tools/authorize/':
+            return None
+
+        # exclude api views
+        if '/api/' in request.path:
+            return None
 
         # make sure user has already authorized the app through customer platform
         if ('bswc_token' not in request.session) or ('send_persona' in request.GET):

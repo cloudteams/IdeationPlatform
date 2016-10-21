@@ -6,7 +6,7 @@
 {% block section_class %}page-developer-dashboard-project-personas{% endblock %}
 
 {% block content %}
-    <header class="main-header">
+    <header class="main-header" data-campaign="{{ request.session.campaign_id }}">
         <div class="vertical-align">
             <div class=" middle">
                 <i class="icon icon-user"></i>
