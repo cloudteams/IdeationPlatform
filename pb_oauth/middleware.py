@@ -1,4 +1,4 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 
 from ct_anonymizer.settings import PRODUCTION
 from pb_oauth.xmlrpc_oauth import BscwApi
@@ -25,7 +25,7 @@ class AuthorizationMiddleware(object):
         if 'back_url' in request.GET:
             request.session['dashboard_url'] = request.GET.get('back_url')
 
-        print 'cid=%s' % request.session.get('campaign_id', '')
+        print 'session=%s' % str(request.session.session_key)[0:5]
         # exclude authorization pages
         if request.path == '/team-ideation-tools/authorize/':
             return None
@@ -37,6 +37,8 @@ class AuthorizationMiddleware(object):
         # make sure user has already authorized the app through customer platform
         if ('bswc_token' not in request.session) or ('send_persona' in request.GET):
             request.session['after_auth_url'] = request.path
-            return redirect(BscwApi.authorization_url())
+            return render(request, 'pb_oauth/redirect.html', {
+                'redirect_to': BscwApi.authorization_url()
+            })
 
         return None
