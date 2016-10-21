@@ -25,6 +25,11 @@ class AuthorizationMiddleware(object):
         if 'back_url' in request.GET:
             request.session['dashboard_url'] = request.GET.get('back_url')
 
+        # create session manually to debug
+        if not request.session.exists(request.session.session_key):
+            print('new session!')
+            request.session.create()
+
         print 'session=%s' % str(request.session.session_key)[0:5]
         # exclude authorization pages
         if request.path == '/team-ideation-tools/authorize/':
