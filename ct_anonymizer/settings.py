@@ -22,14 +22,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'd3tp5w*r91afobses)b6*!dpbv_b)e-^gx9v3qr1ss$jq&u86l'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['*']
-
 # Check if we're on development or production
 # Not the same as DEBUG since right now we're on DEBUG=True on production as well
 PRODUCTION = os.path.isfile(os.path.join(BASE_DIR, 'production.txt'))
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = PRODUCTION
+
+ALLOWED_HOSTS = ['*']
+
 
 # Application definition
 INSTALLED_APPS = (

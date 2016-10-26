@@ -27,8 +27,8 @@ class AuthorizationMiddleware(object):
 
         # make sure user has already authorized the app through customer platform
         if ('bswc_token' not in request.session) \
-                or ('send_persona' in request.GET) \
-                or ('delete_persona' in request.GET):
+                or (request.path == '/team-ideation-tools/propagate/' and 'send_persona' in request.GET) \
+                or (request.path == '/team-ideation-tools/propagate/' and 'delete_persona' in request.GET):
 
             # save information about the persona that has to be sent
             if 'send_persona' in request.GET:
@@ -38,7 +38,7 @@ class AuthorizationMiddleware(object):
                     redirect_to += '&next=%s' % request.GET.get('next')
             if 'delete_persona' in request.GET:
                 redirect_to = '/team-ideation-tools/perform-pending-action/?delete_persona=%s' % \
-                              request.GET.get('send_persona')
+                              request.GET.get('delete_persona')
                 if 'next' in request.GET:
                     redirect_to += '&next=%s' % request.GET.get('next')
             else:
