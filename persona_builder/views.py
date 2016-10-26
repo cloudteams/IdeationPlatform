@@ -301,35 +301,37 @@ def delete_persona(request, pk):
         })
     elif request.method == 'POST':
         # notify Team Platform
-        return redirect('/team-ideation-tools/propagate/?send_persona=%d&delete=true' % persona.pk)
+        return redirect('/team-ideation-tools/propagate/?delete_persona=%d' % persona.pk)
     else:
         return HttpResponse('Invalid method', status=400)
 
 
 def perform_pending_action(request):
-    persona_id = request.session['send_persona']
+    if 'send_persona' in request.GET:
+        persona_id = request.GET.get('send_persona')
+    else:
+        persona_id = request.GET.get('delete_persona')
+
     persona = Persona.objects.get(pk=persona_id)
+    print('username=%s' % request.session['username'])
     srv = get_srv_instance(request.session['username'])
-    persona.send_campaign_personas(srv, 'delete_persona' in request.session)
-    del request.session['send_persona']
+    persona.send_campaign_personas(srv, 'delete_persona' in request.GET)
 
     # should the persona be deleted?
-    if 'delete_persona' in request.session:
-        del request.session['delete_persona']
+    if 'delete_persona' in request.GET:
         persona.delete()
         return redirect('/team-ideation-tools/personas/')
 
     # is the next page specified?
-    if 'next_page' in request.session:
-        nxt = request.session['next_page']
-        del request.session['next_page']
+    if 'next' in request.GET:
+        nxt = request.GET['next']
         if nxt == 'absolute':
             return redirect(persona.get_absolute_url(full=True))
         elif nxt == 'properties':
             return redirect(persona.get_edit_properties_url(full=True))
 
     # default next page
-    return redirect('/team-ideation-tools/personas/' + persona_id + '/')
+    return redirect(persona.get_absolute_url(full=True))
 
 
 def add_from_pool(request, pk):
