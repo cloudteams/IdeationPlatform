@@ -267,7 +267,7 @@ article.campaign {
 }
 
 .page-developer-dashboard-project-personas .modal-dialog.medium .modal-body #subpage-3 {
-    height: 380px;
+    height: auto;
 }
 
 .file-upload-image-container.has-value {
