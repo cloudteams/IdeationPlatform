@@ -64,8 +64,9 @@ $(function() {
 
         confirm: function() {
             if (typeof(this.$selectedPersona) != 'undefined') {
-                var personaId = this.$selectedPersona.data('persona_id')
-
+                var personaId = this.$selectedPersona.data('persona_id');
+                $('button.add-persona').attr('disabled', 'disabled').html('<i class="fa fa-spin fa-spinner"></i> Adding persona');
+                
                 $.ajax({
                     url: '/team-ideation-tools/personas/add-from-pool/' + personaId + '/',
                     method: 'POST',
