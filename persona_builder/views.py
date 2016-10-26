@@ -313,7 +313,6 @@ def perform_pending_action(request):
         persona_id = request.GET.get('delete_persona')
 
     persona = Persona.objects.get(pk=persona_id)
-    print('username=%s' % request.session['username'])
     srv = get_srv_instance(request.session['username'])
     persona.send_campaign_personas(srv, 'delete_persona' in request.GET)
 
