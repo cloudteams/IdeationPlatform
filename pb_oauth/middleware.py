@@ -32,12 +32,12 @@ class AuthorizationMiddleware(object):
 
             # save information about the persona that has to be sent
             if 'send_persona' in request.GET:
-                redirect_to = 'team-ideation-tools/perform-pending-action/?send_persona=%s' % \
+                redirect_to = '/team-ideation-tools/perform-pending-action/?send_persona=%s' % \
                               request.GET.get('send_persona')
                 if 'next' in request.GET:
                     redirect_to += '&next=%s' % request.GET.get('next')
             if 'delete_persona' in request.GET:
-                redirect_to = 'team-ideation-tools/perform-pending-action/?delete_persona=%s' % \
+                redirect_to = '/team-ideation-tools/perform-pending-action/?delete_persona=%s' % \
                               request.GET.get('send_persona')
                 if 'next' in request.GET:
                     redirect_to += '&next=%s' % request.GET.get('next')
