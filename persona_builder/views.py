@@ -12,7 +12,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.views.generic import CreateView, DetailView, ListView, DeleteView, UpdateView
 from anonymizer.models import ConnectionConfiguration
-from ct_anonymizer.settings import DEBUG
+from ct_anonymizer.settings import PRODUCTION
 from pb_oauth.xmlrpc_oauth import get_srv_instance
 from persona_builder.forms import PersonaForm, PersonaPropertiesForm
 from persona_builder.models import Persona, PersonaUsers
@@ -149,10 +149,10 @@ def edit_persona_properties(request, pk):
                 persona.save()
 
                 # send info to customer platform
-                if DEBUG:
-                    return redirect(persona.get_absolute_url(full=True))
-                else:
+                if PRODUCTION:
                     return redirect('/team-ideation-tools/propagate/?send_persona=%d&next=absolute' % persona.pk)
+                else:
+                    return redirect(persona.get_absolute_url(full=True))
             else:
                 # not enough users
                 request.session['persona_form_error'] = 'Use less strict filters'
