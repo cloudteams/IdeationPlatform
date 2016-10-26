@@ -65,7 +65,7 @@
 					</li>
 
 					<li>
-						<a href="/views/developer/dashboard/projects/project/profile">
+						<a href="{{ tp_url }}{{ request.session.dashboard_id }}?op=cloudteams.getstdb&action=cloudteams.editsoftwareproject&object={{ request.session.project_id }}">
 							<i class="icon icon-profile"></i>
 							<span>Project profile</span>
 						</a>
