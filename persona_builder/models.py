@@ -238,6 +238,7 @@ class Persona(models.Model):
             'descr': persona.description
         } for persona in qs]
 
+        print('ps=%s' % str(personas))
         # call method & return code
         if PRODUCTION:
             try:
