@@ -100,6 +100,8 @@ DATABASES = {
     }
 }
 
+if PRODUCTION:
+    DATABASES['default']['PASSWORD'] = 'cloudteams!'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -143,7 +145,10 @@ MIN_USERS_IN_PERSONA = 3
 USER_PASSWD = 'cloudteams_api:cloudteams1!'
 SERVER_URL = 'https://teams.cloudteams.eu/bscw/bscw.cgi'
 
-# Secure cookies
+
 if PRODUCTION:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+    SESSION_COOKIE_DOMAIN = '.customers.cloudteams.eu'
+    SESSION_COOKIE_NAME = 'pbuildercookie'

@@ -11,7 +11,7 @@ SRV_INSTANCES = {}
 bscw_oauth_args = {
     'op': 'OAuth'
 }
-DEFAULT_HOST = 'cloudteams.epu.ntua.gr/team-ideation-tools'
+DEFAULT_HOST = 'cloudteams.epu.ntua.gr'
 
 
 def log(*val):
@@ -41,7 +41,7 @@ def quote(s):
 
 def quote_args(args):
     key_values = [(quote(toUTF8(k)), quote(toUTF8(v))) \
-        for k,v in args.items()]
+                  for k, v in args.items()]
     key_values.sort()
     return '&'.join(['%s=%s' % (k, v) for k, v in key_values])
 
@@ -98,7 +98,7 @@ class OAuthClient:
         return base64.b64encode(hashed.digest())
 
     def pack(self, d):
-        return ','.join(((k + '="' + str(v) + '"') for (k,v) in d.items()))
+        return ','.join(((k + '="' + str(v) + '"') for (k, v) in d.items()))
 
     def authorization_header(self, url_args={}, post=False):
         import time, random
@@ -109,7 +109,7 @@ class OAuthClient:
         oauth_args = {}
         oauth_args['oauth_consumer_key'] = self.consumer_key
         oauth_args['oauth_timestamp'] = int(time.time())
-        oauth_args['oauth_nonce'] = random.randint(0, 2**32)
+        oauth_args['oauth_nonce'] = random.randint(0, 2 ** 32)
         oauth_args['oauth_version'] = '1.0'
         if self.token:
             oauth_args['oauth_token'] = self.token
@@ -149,6 +149,8 @@ class BscwApi:
     """
 
     def __init__(self, script_uri):
+        # handle nginx proxying
+        script_uri = script_uri.replace('http://127.0.0.1:8000/', 'https://cloudteams.epu.ntua.gr/')
         self.script_uri = script_uri
 
     def show_form(self, request):
@@ -178,19 +180,21 @@ class BscwApi:
                 request.session['dashboard_id'] = obj['__id__']
 
         request.session['projects'] = [{
-            'pid': p['__id__'],
-            'title': p['name'],
-        } for p in project_lst]
+                                           'pid': p['__id__'],
+                                           'title': p['name'],
+                                       } for p in project_lst]
         request.session['campaigns'] = [{
-            'cid': c['__id__'],
-            'title': c['name'],
-        } for c in campaign_lst]
+                                            'cid': c['__id__'],
+                                            'title': c['name'],
+                                        } for c in campaign_lst]
 
     @staticmethod
-    def authorization_url():
-        return '/team-ideation-tools/authorize/?action=authorize&host=%s' % quote(DEFAULT_HOST)
+    def authorization_url(redirect_to=None):
+        if redirect_to:
+            redirect_to_param = '&redirect_to=%s' % quote(redirect_to)
+        return '/team-ideation-tools/authorize/?action=authorize&host=%s%s' % (quote(DEFAULT_HOST), redirect_to_param)
 
-    def authorize(self, reply):
+    def authorize(self, request, reply, return_to=None):
         import base64
         args = bscw_oauth_args.copy()
 
@@ -206,6 +210,8 @@ class BscwApi:
             args['portal'] = self.portal
         if self.hmac_sha1:
             args['hmac_sha1'] = self.hmac_sha1
+        if return_to:
+            args['return_to'] = return_to
 
         callback_url = make_url(self.script_uri, args)
 
@@ -269,7 +275,7 @@ class BscwApi:
             'bscw_api': self,
         })
 
-    def handle(self, request):
+    def handle(self, request, return_to=None):
         # get POST & GET parameters
         form = request.GET.copy()
         form.update(request.POST)
@@ -302,7 +308,7 @@ class BscwApi:
             self.hmac_sha1 = 0
 
         log('###', action, os.environ.get('REQUEST_METHOD', ''))
-        log(self.script_uri+'?'+os.environ.get('QUERY_STRING', ''))
+        log(self.script_uri + '?' + os.environ.get('QUERY_STRING', ''))
 
         self.oauth = OAuthClient(
             servers[self.host],
@@ -316,16 +322,17 @@ class BscwApi:
             return self.show_form(request)
         elif action == 'authorize':
             try:
-                reply = self.oauth.request_token()   # A Comsumer Request - Request Token
+                reply = self.oauth.request_token()  # A Comsumer Request - Request Token
             except urllib2.HTTPError, e:
                 return self.show_error(request, e, 'Request token error')
 
-            return self.authorize(reply)                    # C Consumer Directs User to Service Provider
+            return self.authorize(request, reply,
+                                  form.get('redirect_to', ''))  # C Consumer Directs User to Service Provider
         elif action == 'doit':
             self.oauth.token = base64.decodestring(form.get('a1'))
             self.oauth.token_secret = base64.decodestring(form.get('a2'))
             try:
-                reply = self.oauth.access_token()    # E Comsumer Request - Access Token
+                reply = self.oauth.access_token()  # E Comsumer Request - Access Token
             except urllib2.HTTPError, e:
                 return self.show_error(request, e, 'Access token error')
             self.oauth.token = urllib.unquote(reply['oauth_token'])
@@ -336,10 +343,6 @@ class BscwApi:
             if 'send_persona' in request.session:
                 return redirect('/team-ideation-tools/perform-pending-action/')
 
-            if 'after_auth_url' in request.session:
-                after_auth_path = request.session['after_auth_url']
-                del request.session['after_auth_url']
-            else:
-                after_auth_path = '/team-ideation-tools/personas/'
+            after_auth_path = form.get('return_to', '/team-ideation-tools/personas/')
 
             return redirect(after_auth_path)
