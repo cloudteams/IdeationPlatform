@@ -27,7 +27,7 @@ SECRET_KEY = 'd3tp5w*r91afobses)b6*!dpbv_b)e-^gx9v3qr1ss$jq&u86l'
 PRODUCTION = os.path.isfile(os.path.join(BASE_DIR, 'production.txt'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = PRODUCTION
+DEBUG = not PRODUCTION
 
 ALLOWED_HOSTS = ['*']
 
