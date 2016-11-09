@@ -37,7 +37,7 @@
             <div class="col-xs-6" style="text-align: right; margin-top: 20px">
                 <i class="icon icon-check"></i> This persona is now ready to use
                 {% if persona.campaign_id %}
-                    <a href="{{ tp_url }}{{ request.session.dashboard_id }}?op=cloudteams.getstdb&action=cloudteams.getcampaign&object={{ persona.campaign_id }}"
+                    <a href="{{ tp_url }}{{ request.session.dashboard_id }}?op=cloudteams.getstdb&action=cloudteams.getcampaign&object={{ persona.campaign_id }}&section=personas"
                        class="btn btn-primary" style="margin-top: 20px;">
                         <i class="icon icon-campaign"></i> Continue with campaign
                     </a>
