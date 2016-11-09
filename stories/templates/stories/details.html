@@ -139,7 +139,7 @@
                         {% endif %}
                     </div>
 
-                    <div class="content tags row">
+                    <div class="content tags clearfix">
                         <div class="col-xs-6">
                             <p><strong>Type:</strong></p>
                              <div class="item-tag">{{ story.get_story_type_display }}</div>
@@ -158,6 +158,12 @@
                         <div class="col-xs-6">
                             <p><strong>Estimate:</strong></p>
                              <div class="item-tag">{{ story.estimate }} day{% if story.estimate != 1 %}s{% endif %}</div>
+                        </div>
+                    </div>
+
+                    <div class="content clearfix">
+                        <div class="col-xs-12">
+                            <a href="#" class="pull-right btn btn-transparent delete-story-btn" data-action="{{ story.get_absolute_url }}delete/">Delete story</a>
                         </div>
                     </div>
                 </article>
@@ -227,4 +233,5 @@
 
 {% block js %}
     <script src="{% static 'stories/js/common-dev.js' %}"></script>
+    <script src="{% static 'stories/js/stories.js' %}?v=20161109.1"></script>
 {% endblock %}

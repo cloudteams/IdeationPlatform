@@ -12,9 +12,10 @@ $(function() {
         var scenarioId = $(this).data('scenario_id');
 
         // setup the popup
-        var $modal = $('#story-modal');
+        var $modal = $('#main-modal');
         $modal.find('.modal-title').text('Add an existing story');
         $modal.find('.modal-body').html('');
+        $modal.find('.modal-footer > button').show();
         $modal.addClass('in').css('display', 'block');
 
         // get possible stories
@@ -32,7 +33,7 @@ $(function() {
 
     /* On "Add Story" button click add the story*/
     $('body').on('click', '.add-existing-story', function() {
-        var $modal = $('#story-modal');
+        var $modal = $('#main-modal');
         var scenarioId = $(this).data('scenario_id');
         var storyId = $(this).data('story_id');
 
@@ -44,6 +45,7 @@ $(function() {
                 story_id: storyId
             },
             success: function(data) {
+                $modal.find('.modal-footer > button').show();
                 $modal.removeClass('in').css('display', 'none');
 
                 // reload the scenario
@@ -53,6 +55,64 @@ $(function() {
                 $modal.find('.modal-body').html('An error occurred, please try again later.')
             }
         });
+    });
+
+    /* On delete scenario show popup */
+    $('.delete-scenario-btn').on('click', function(e) {
+        // prevent default action
+        e.preventDefault();
+        e.stopPropagation();
+
+        // get scenario ID
+        var deleteScenarioUrl = $(this).data('action');
+
+        // setup the popup
+        var $modal = $('#main-modal');
+        $modal.find('.modal-title').text('Delete scenario');
+        $modal.find('.modal-body').html('');
+        $modal.find('.modal-footer > button').hide();
+        $modal.addClass('in').css('display', 'block');
+
+        // get possible stories
+        $.ajax({
+            type: 'GET',
+            url: deleteScenarioUrl,
+            success: function(data) {
+                $modal.find('.modal-body').html(data)
+            },
+            error: function() {
+                $modal.find('.modal-body').html('An error occurred, please try again later.')
+            }
+        })
+    });
+
+    /* On delete story show popup */
+    $('.delete-story-btn').on('click', function(e) {
+        // prevent default action
+        e.preventDefault();
+        e.stopPropagation();
+
+        // get scenario ID
+        var deleteStoryUrl = $(this).data('action');
+
+        // setup the popup
+        var $modal = $('#main-modal');
+        $modal.find('.modal-title').text('Delete story');
+        $modal.find('.modal-body').html('');
+        $modal.find('.modal-footer > button').hide();
+        $modal.addClass('in').css('display', 'block');
+
+        // get possible stories
+        $.ajax({
+            type: 'GET',
+            url: deleteStoryUrl,
+            success: function(data) {
+                $modal.find('.modal-body').html(data)
+            },
+            error: function() {
+                $modal.find('.modal-body').html('An error occurred, please try again later.')
+            }
+        })
     });
 
     /* On scenario toggle stories */

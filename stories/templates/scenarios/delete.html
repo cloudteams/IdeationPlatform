@@ -1,0 +1,11 @@
+<form method="POST" action="{{ scenario.get_absolute_url }}delete/">
+    {% csrf_token %}
+
+    <p>Are you sure you want to delete scenario #{{ scenario.project_scenario_id }} - <em>{{ scenario.title }}</em>?</p>
+    <p><em>This will not affect the stories that are part of this scenario.</em></p>
+
+    <div class="clearfix">
+        <button type="button" class="btn btn-transparent pull-left" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-trash"></i> Delete</button>
+    </div>
+</form>

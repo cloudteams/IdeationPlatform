@@ -9,10 +9,10 @@
 				<a href="#" class="open-tooltip-button" id="open-tooltip-button-1"><i class="icon icon-more-options"></i></a>
 				<div class="custom-tooltip" id="custom-tooltip-1">
 					<ul>
-                        {% for story in scenario.get_all_stories %}
-                            <li><a href="{{ story.get_absolute_url }}">#{{ story.project_story_id }} - {{ story.title }} ({{ story.get_story_type_display }})</a></li>
-                        {% endfor %}
+                        <li><a href="{{ scenario.get_absolute_url }}">Show scenario</a></li>
                         <li><a href="{{ scenario.get_create_story_url }}">Add story</a></li>
+                        <li><hr /></li>
+                        <li><a href="#" class="delete-scenario-btn" data-action="{{ scenario.get_absolute_url }}delete/">Delete scenario</a></li>
 					</ul>
 				</div>
 			</div>

@@ -157,6 +157,37 @@ def edit_scenario(request, project_id, scenario_id):
 
     return render(request, 'scenarios/edit.html', ctx)
 
+
+def delete_scenario(request, project_id, scenario_id):
+    """
+    Delete an existing scenario
+    """
+    project_id = int(project_id)
+    try:
+        project = Project.objects.get(project_id=project_id)
+    except Project.DoesNotExist:
+        return HttpResponse('Project #%d was not found on TeamPlatform' % project_id, status=404)
+
+    # get scenario
+    scenario_id = int(scenario_id)
+    try:
+        scenario = Scenario.objects.get(pk=scenario_id, project_id=project_id)
+    except Scenario.DoesNotExist:
+        return HttpResponse('Scenario #%d does not exist' % scenario_id, status=404)
+
+    if request.method == 'GET':
+        return render(request, 'scenarios/delete.html', {
+            'scenario': scenario
+        })
+    elif request.method == 'POST':
+        # delete the scenario
+        scenario.delete()
+
+        # return to scenarios page
+        return redirect(project.get_absolute_url())
+    else:
+        return HttpResponse('Method not allowed', status=400)
+
 """
 Story
 """
@@ -288,6 +319,37 @@ def edit_story(request, project_id, story_id):
     }
 
     return render(request, 'stories/edit.html', ctx)
+
+
+def delete_story(request, project_id, story_id):
+    """
+    Delete an existing story
+    """
+    project_id = int(project_id)
+    try:
+        project = Project.objects.get(project_id=project_id)
+    except Project.DoesNotExist:
+        return HttpResponse('Project #%d was not found on TeamPlatform' % project_id, status=404)
+
+    # get story
+    story_id = int(story_id)
+    try:
+        story = Story.objects.get(pk=story_id, project_id=project_id)
+    except Story.DoesNotExist:
+        return HttpResponse('Story #%d does not exist' % story_id, status=404)
+
+    if request.method == 'GET':
+        return render(request, 'stories/delete.html', {
+            'story': story
+        })
+    elif request.method == 'POST':
+        # delete the scenario
+        story.delete()
+
+        # return to scenarios page
+        return redirect(project.get_absolute_url())
+    else:
+        return HttpResponse('Method not allowed', status=400)
 
 
 def stories_to_add(request, scenario_id):

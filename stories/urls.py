@@ -14,6 +14,8 @@ urlpatterns = [
         name='scenario-details'),
     url(r'^projects/(?P<project_id>[\w-]+)/scenarios/(?P<scenario_id>[\w-]+)/edit/$', views.edit_scenario,
         name='edit-scenario'),
+    url(r'^projects/(?P<project_id>[\w-]+)/scenarios/(?P<scenario_id>[\w-]+)/delete/$', views.delete_scenario,
+        name='delete-scenario'),
 
     # story
     url(r'^projects/(?P<project_id>[\w-]+)/scenarios/(?P<scenario_id>[\w-]+)/add-story/$',
@@ -22,6 +24,8 @@ urlpatterns = [
         name='story-details'),
     url(r'^projects/(?P<project_id>[\w-]+)/stories/(?P<story_id>[\w-]+)/edit/$', views.edit_story,
         name='edit-story'),
+    url(r'^projects/(?P<project_id>[\w-]+)/stories/(?P<story_id>[\w-]+)/delete/$', views.delete_story,
+        name='delete-story'),
 
     # add existing story to scenario
     url(r'^scenarios/(?P<scenario_id>[\w-]+)/stories-to-add/$', views.stories_to_add, name='stories-to-add'),

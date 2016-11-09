@@ -1,0 +1,11 @@
+<form method="POST" action="{{ story.get_absolute_url }}delete/">
+    {% csrf_token %}
+
+    <p>Are you sure you want to delete story #{{ story.project_story_id }} - <em>{{ story.title }}</em>?</p>
+    <p><b>NOTE</b>: <em>This action is irreversible.</em></p>
+
+    <div class="clearfix">
+        <button type="button" class="btn btn-transparent pull-left" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-trash"></i> Delete</button>
+    </div>
+</form>

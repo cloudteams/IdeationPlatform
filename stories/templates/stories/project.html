@@ -51,9 +51,11 @@
             {% endfor %}
         </div>
     </section>
+
+    {% include 'util/popup.html' %}
 {% endblock %}
 
 {% block js %}
     <script src="{% static 'stories/js/common-dev.js' %}"></script>
-    <script src="{% static 'stories/js/stories.js' %}"></script>
+    <script src="{% static 'stories/js/stories.js' %}?v=20161109.1"></script>
 {% endblock %}
