@@ -57,12 +57,15 @@
         <script>
             // sidebar project redirect
             // TODO fix
-            $('#main-select-project-navigation').on('change', function(e) {
-                console.log('test')
-                var pid = $(this).val();
 
-                document.location = '{{ tp_url }}{{ request.session.dashboard_id }}?action=cloudteams.getswproject&object=' + pid + '&op=cloudteams.getstdb';
-            })
+            var originalPid = $('#main-select-project-navigation').val();
+            var projectSelectTimer = setInterval(function() {
+                var pid = $('#main-select-project-navigation').val();
+                if (pid !== originalPid) {
+                    clearInterval(projectSelectTimer);
+                    document.location = '{{ tp_url }}{{ request.session.dashboard_id }}?action=cloudteams.getswproject&object=' + pid + '&op=cloudteams.getstdb';
+                }
+            }, 500);
         </script>
 		{% block js %}
 		{% endblock %}
