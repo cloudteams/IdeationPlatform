@@ -45,7 +45,7 @@ PROVIDER_PLUGINS = [
         'args': [
             ('xp_points', 'The XP points of the user'),
         ],
-        'type': 'INT(11)',
+        'type': 'VARCHAR(255)',
     },
 
     # providers.Ranges

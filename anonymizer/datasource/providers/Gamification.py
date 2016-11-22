@@ -16,4 +16,11 @@ def xp_points_to_level(*args):
     except ValueError:
         return 0
 
-    return math.floor(xp_points / 1000) + 1
+    level = int(math.floor(xp_points / 1000) + 1)
+
+    if level <= 1:
+        return 'New User'
+    elif level <= 3:
+        return 'Experienced User'
+    else:
+        return 'Veteran'

@@ -53,7 +53,15 @@ def process_options(f):
     if not f['has_options']:
         return None
 
-    result = sorted(f['get_options'], key=lambda t: t[1])
+    if f['name'] == 'experience_in_platform':
+        rs = ['New User', 'Experienced User', 'Veteran', ]
+        result = [(r, r) for r in rs]
+    elif f['name'] == 'activity_start':
+        rs = ['Morning', 'Noon', 'Afternoon', 'Evening', 'Night', ]
+        result = [(r, r) for r in rs]
+    else:
+        result = sorted(f['get_options'], key=lambda t: t[1])
+
     if not result or result[0][0]:
         result = [('', '')] + result
 
