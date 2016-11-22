@@ -147,9 +147,28 @@ $(function() {
 
         // FileReader support
         if (FileReader && files && files.length) {
+
+            // Accept images only up to 1 MB
+            if (files[0].size > 1024 * 1024) {
+                // show error message
+                var $container = $('.file-upload-image-container')
+                $container.find('ul.errorlist').remove()
+                $container.append('<ul class="errorlist"><li>Please choose an image that is smaller than 1MB</li></ul>');
+
+                // clear input
+                $('#file-upload').val('');
+
+                return
+            }
+
             var fr = new FileReader();
             fr.onload = function () {
-                $('.file-upload-image-container').get(0).style.backgroundImage = "url('" +fr.result + "')";
+                console.log(files[0]);
+
+                var img = $('.file-upload-image').get(0);
+                img.style.backgroundImage = "url('" +fr.result + "')";
+                img.style.backgroundSize = 'cover';
+                img.style.backgroundPosition = 'center center';
             };
             fr.readAsDataURL(files[0]);
         }
