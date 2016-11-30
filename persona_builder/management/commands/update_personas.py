@@ -46,11 +46,14 @@ class Command(BaseCommand):
             user_manager = config.get_user_manager(token=persona.uuid)
 
             # update & save persona
-            persona.update_users(user_manager)
-            persona.save()
+            try:
+                persona.update_users(user_manager)
+                persona.save()
 
-            # log
-            t2 = datetime.datetime.now()
-            print 'Persona #%d updated in %s' % (persona.pk, str(t2 - t))
-
+                # log
+                t2 = datetime.datetime.now()
+                print 'Persona #%d updated in %s' % (persona.pk, str(t2 - t))
+            except:
+                print 'Persona #%d could not be updated' % persona.pk
+                
         print '%d personas updated successfully' % len(personas)
