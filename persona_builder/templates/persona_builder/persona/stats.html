@@ -2,6 +2,12 @@
 
     <section id="subpage-3" class="subpage{% if active %} active{% endif %}">
         <div class="row">
+            <div class="col-xs-12">
+                <i class="icon icon-invite"></i> This persona matches <b>{{ persona.persona_users.all.count }}</b> customers.
+            </div>
+        </div>
+
+        <div class="row">
             {% with overview_values=persona.get_overview_values %}
                 {% for property,values in overview_values.items %}
                         <div class="col-md-2 persona-property-column">
@@ -36,8 +42,8 @@
                     <a href="{{ persona.get_absolute_url }}download/" target="blank" class="pull-left"><i class="icon icon-download"></i>Download the detailed users profiles file</a>
                 </div>
             {% endcomment %}
-        
-            <div class="col-xs-6" style="text-align: right; margin-top: 20px">
+
+            <div class="col-xs-6" style="margin-top: 20px">
                 <i class="icon icon-check"></i> This persona is now ready to use
                 {% if persona.campaign_id %}
                     <a href="{{ tp_url }}{{ request.session.dashboard_id }}?op=cloudteams.getstdb&action=cloudteams.getcampaign&object={{ persona.campaign_id }}&section=personas"

@@ -359,3 +359,10 @@ article.campaign {
     min-height: 400px;
     letter-spacing: 1.4px;
 }
+
+.persona-popup .modal-body {
+    height: auto;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
