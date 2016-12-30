@@ -165,7 +165,7 @@ $(function() {
             fr.onload = function () {
                 console.log(files[0]);
 
-                var img = $('.file-upload-image').get(0);
+                var img = $('.file-upload-image-container').get(0);
                 img.style.backgroundImage = "url('" +fr.result + "')";
                 img.style.backgroundSize = 'cover';
                 img.style.backgroundPosition = 'center center';
