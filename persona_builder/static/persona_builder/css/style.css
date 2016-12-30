@@ -366,3 +366,7 @@ article.campaign {
     overflow-y: auto;
     overflow-x: hidden;
 }
+
+.file-upload-image-container {
+    height: 200px;
+}
