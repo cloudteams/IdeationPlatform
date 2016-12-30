@@ -371,6 +371,8 @@ def add_from_pool(request, pk):
 
 
 def download_persona_users(request, pk):
+    return HttpResponse('Not allowed', status=401)
+    """
     persona = get_object_or_404(Persona, pk=pk)
     um = get_active_configuration().get_user_manager(token=persona.uuid)
 
@@ -395,3 +397,4 @@ def download_persona_users(request, pk):
 
     # return HTTP response
     return response
+    """

@@ -55,5 +55,5 @@ class Command(BaseCommand):
                 print 'Persona #%d updated in %s' % (persona.pk, str(t2 - t))
             except:
                 print 'Persona #%d could not be updated' % persona.pk
-                
+
         print '%d personas updated successfully' % len(personas)
