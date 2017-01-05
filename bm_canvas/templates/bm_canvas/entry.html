@@ -1,25 +1,28 @@
 {% load humanize %}
 {% load bm_filters %}
 
-<div class="entry" data-id="{{ entry.pk }}" data-order="{{ entry.order }}">
 
-    <div class="header clearfix">
-        <span class="entry-author pull-left">{{ entry.author }}</span>
+<div class="row canvas-content-item entry" data-id="{{ entry.pk }}" data-order="{{ entry.order }}">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="block-container pull-left"><div style="background:{{ entry.group_color }};" class="color-block"></div></div>
+            <div class="description pull-left"><strong>{{ entry.author }}</strong></div>
+            <div class="tooltip-container pull-right">
+                <a href="#" class="open-tooltip-button"><i class="icon icon-more-options"></i></a>
+                <div class="custom-tooltip">
+                    <ul>
 
-        <div class="clr-container pull-right">
-            <span class="clr-val" style="background-color: {{ entry.group_color }};"></span></div>
-        <span class="date-created pull-right">{{ entry.created|naturaltime }}</span>
-    </div>
-    <div class="content clearfix">
-            <div class="actions pull-right">
-                <i class="fa fa-pencil edit-entry" title="Edit entry"></i>
-                <i class="fa fa-trash-o remove-entry" title="Delete entry"></i>
+                        <li><a class="edit-entry" href="">Edit</a></li>
+                        <li><a class="remove-entry">Delete</a></li>
+                    </ul>
+                </div>
             </div>
-            <div class="text pull-left">
-                <span class="hidden markdown-content">{{ entry.text }}</span>
-                <div class="rendered-output">{{ entry.text|markdown_to_html }}</div>
-            </div>
-
+            <div class="timing pull-right">{{ entry.created|naturaltime }}</div>
+        </div>
     </div>
-
+    <div class="col-md-12">
+        <div class="row">
+            <div class="pull-left content">{{ entry.text|markdown_to_html }}</div>
+        </div>
+    </div>
 </div>

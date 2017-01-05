@@ -5,7 +5,7 @@
 
 {% load bm_filters %}
 
-{% block title %}{{bmc.project_name}} - Business Model Canvas{% endblock %}
+{% block title %}{{bmc.project_name}} - Business Models{% endblock %}
 {% block section_class %}developer-dashboard-project-requirements-content{% endblock %}
 
 {% block css %}
@@ -20,122 +20,71 @@
         <div class="vertical-align">
             <div class=" middle">
                 <i class="icon icon-user"></i>
-                <h1 class="header-large">Business Model Canvas</h1>
+                <h1 class="header-large">Business Models</h1>
                 <p class="header-medium secondary">{{ bmc.project_name }}</p>
             </div>
         </div>
     </header>
 
-    <div id="bmc-clearfix"></div>
-    <div id="business-model-canvas" data-project_id="{{ bmc.project_id }}" data-csrfmiddlewaretoken="{{ csrf_token }}">
-        <div class="row">
-            <div class="col-xs-12 content">
-                <div class="row">
-                    <div class="col-sm-2">
-                        <div id="block-section-KP" class="block-section block-section-double">
-                            <h3>Key Partners</h3>
-                            <div class="entry-region">
-                                {% for entry in bmc|get_entries:"KP" %}
-                                    {% include "bm_canvas/entry.html" %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div id="block-section-KA" class="block-section">
-                            <h3>Key Activities</h3>
-                            <div class="entry-region">
-                                {% for entry in bmc|get_entries:"KA" %}
-                                    {% include "bm_canvas/entry.html" %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                        <div id="block-section-KR" class="block-section">
-                            <h3>Key Resources</h3>
-                            <div class="entry-region">
-                                {% for entry in bmc|get_entries:"KR" %}
-                                    {% include "bm_canvas/entry.html" %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
-                        <div id="block-section-VP" class="block-section block-section-double">
-                            <h3>Value Proposition</h3>
-                            <div class="entry-region">
-                                {% for entry in bmc|get_entries:"VP" %}
-                                    {% include "bm_canvas/entry.html" %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div id="block-section-CR" class="block-section">
-                            <h3>Customer Relationships</h3>
-                            <div class="entry-region">
-                                {% for entry in bmc|get_entries:"CR" %}
-                                    {% include "bm_canvas/entry.html" %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                        <div id="block-section-CH" class="block-section">
-                            <h3>Channels</h3>
-                            <div class="entry-region">
-                                {% for entry in bmc|get_entries:"CH" %}
-                                    {% include "bm_canvas/entry.html" %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
-                        <div id="block-section-CS" class="block-section block-section-double">
-                            <h3>Customer Segments</h3>
-                            <div class="entry-region">
-                                {% for entry in bmc|get_entries:"CS" %}
-                                    {% include "bm_canvas/entry.html" %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div id="block-section-C$" class="block-section">
-                            <h3>Cost Structure</h3>
-                            <div class="entry-region">
-                                {% for entry in bmc|get_entries:"C$" %}
-                                    {% include "bm_canvas/entry.html" %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div id="block-section-R$" class="block-section">
-                            <h3>Revenue Streams</h3>
-                            <div class="entry-region">
-                                {% for entry in bmc|get_entries:"R$" %}
-                                    {% include "bm_canvas/entry.html" %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <section id="developer-dashboard-project-business-model-canvas">
+        <div id="bmc-clearfix"></div>
+        <div id="business-model-canvas" data-project_id="{{ bmc.project_id }}" data-csrfmiddlewaretoken="{{ csrf_token }}">
+            <div class="canvas-section row">
+                {% with section_id="block-section-KP" position="left" box_style="rectangle" title="Key Partners" help="What uniquely strategic things does the business do to deliver its proposition?" entries=bmc|get_entries:"KP" %}
+                    {% include 'bm_canvas/section.html' %}
+                {% endwith %}
 
-    <div class="new-entry-template">
-        <textarea></textarea>
-        <div class="clearfix">
-            <div class="add-entry pull-right">
-                <i class="fa fa-save"></i> Save
+                {% with section_id="block-section-KA" position="right" box_style="square" title="Key Activities" help="What uniquely strategic things does the business do to deliver its proposition?" entries=bmc|get_entries:"KA" %}
+                    {% include 'bm_canvas/section.html' %}
+                {% endwith %}
+
+                {% with section_id="block-section-KR" position="right" box_style="square" title="Key Resources" help="What uniquely strategic things does the business do to deliver its proposition?" entries=bmc|get_entries:"KR" %}
+                    {% include 'bm_canvas/section.html' %}
+                {% endwith %}
             </div>
-            <div class="pull-right colorpicker">
-                <input type="text" name="new-entry-color" value="#ffffff" />
-                <label>Group</label>
+
+            <div class="canvas-section row">
+                {% with section_id="block-section-VP" position="right" box_style="rectangle" title="Value Proposition" help="What uniquely strategic things does the business do to deliver its proposition?" entries=bmc|get_entries:"VP" %}
+                    {% include 'bm_canvas/section.html' %}
+                {% endwith %}
+
+                {% with section_id="block-section-CR" position="left" box_style="square" title="Customer Relationships" help="What uniquely strategic things does the business do to deliver its proposition?" entries=bmc|get_entries:"CR" %}
+                    {% include 'bm_canvas/section.html' %}
+                {% endwith %}
+
+                {% with section_id="block-section-CH" position="left" box_style="square" title="Channels" help="What uniquely strategic things does the business do to deliver its proposition?" entries=bmc|get_entries:"CH" %}
+                    {% include 'bm_canvas/section.html' %}
+                {% endwith %}
+
+                {% with section_id="block-section-CS" position="left" box_style="square" section_col_size="12" title="Customer Segments" help="What uniquely strategic things does the business do to deliver its proposition?" entries=bmc|get_entries:"CS" %}
+                    {% include 'bm_canvas/section.html' %}
+                {% endwith %}
+            </div>
+
+            <div class="canvas-section row">
+                {% with section_id="block-section-C$" position="left" box_style="square" title="Cost Structure" help="What uniquely strategic things does the business do to deliver its proposition?" entries=bmc|get_entries:"C$" %}
+                    {% include 'bm_canvas/section.html' %}
+                {% endwith %}
+
+                {%  with section_id="block-section-R$" position="left" box_style="square" title="Revenue Streams" help="What uniquely strategic things does the business do to deliver its proposition?" entries=bmc|get_entries:"R$" %}
+                    {% include 'bm_canvas/section.html' %}
+                {% endwith %}
             </div>
         </div>
-    </div>
+
+        <div class="new-entry-template">
+            <textarea></textarea>
+            <div class="clearfix">
+                <div class="add-entry pull-right">
+                    <i class="fa fa-save"></i> Save
+                </div>
+                <div class="pull-right colorpicker">
+                    <input type="text" name="new-entry-color" value="#ffffff" />
+                    <label>Group</label>
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}
 
 {% block js %}

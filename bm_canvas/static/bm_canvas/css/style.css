@@ -1,5 +1,6 @@
 /* Basic Layout */
 
+/*
 h1 {
     margin: 20px;
 }
@@ -27,9 +28,11 @@ h1 {
 #bmc-clearfix {
     padding-bottom: 750px;
 }
+*/
 
 /* Sidebar */
 
+/*
 .sidebar h5 {
     display: inline-block;
     vertical-align: top;
@@ -58,8 +61,11 @@ h1 {
     margin-top: 20px;
 }
 
+*/
+
 /* Regions */
 
+/*
 .block-section {
     padding: 5px 10px;
     border: 1px dashed #333;
@@ -83,9 +89,7 @@ h1 {
 #business-model-canvas .col-md-10.content > .row > .col-sm-6 {
     padding: 0;
 }
-
-/* Scrollbar */
-.ps-scrollbar-y-rail
+*/
 
 /* Entries */
 .entry {
@@ -142,10 +146,21 @@ h1 {
     width: 100%;
 }
 
+.canvas-content {
+    position: relative;
+}
+
+.remove-entry {
+    cursor: pointer;
+}
 
 .entry .update-entry,
 .entry .cancel-update-entry {
     cursor: pointer;
+}
+
+.entry {
+    padding-right: 15px !important;
 }
 
 .entry.ui-sortable-helper {
@@ -165,7 +180,7 @@ h1 {
 
 .block-section .new-entry {
     display: none;
-    padding-top: 20px;
+    padding: 20px;
 }
 
 .new-entry-template {

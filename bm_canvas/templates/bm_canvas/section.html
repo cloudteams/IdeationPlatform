@@ -1,0 +1,32 @@
+    <div class="col-md-{{ section_col_size|default:"6" }} pull-{{ position }}">
+        <article class="block-section block {{ box_style }}" id="{{ section_id }}">
+            <header class="canvas-header">
+                <div class="vertical-align">
+                    <div class="middle">
+                        <h2 class="header-medium secondary">{{ title }}</h2>
+                    </div>
+                    <div class="middle text-right">
+                        <i class="icon icon-info canvas-tooltip-trigger"></i>
+                        <div class="canvas-tooltip text-left">
+                            <p>{{ help }}</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <section class="canvas-content">
+
+                {% if not entries %}
+                    <div class="empty">
+                        <p class="col-md-12 text-center">Add an item</p>
+                    </div>
+                {% endif %}
+
+                <div class="entry-region">
+                    {% for entry in entries %}
+                        {% include "bm_canvas/entry.html" %}
+                    {% endfor %}
+                </div>
+
+            </section>
+        </article>
+    </div>

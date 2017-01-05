@@ -30,7 +30,7 @@ def project_view(request, pk):
 
     return render(request, 'bm_canvas/canvas.html', {
         'bmc': bmc,
-        'minimized_sidebar': True,
+        'minimized_sidebar': False,
     })
 
 

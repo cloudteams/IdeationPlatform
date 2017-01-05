@@ -131,11 +131,14 @@ $(function() {
                     'text': simplemde.value(),
                     'section': section,
                     'order': order,
-                    'groupColor': color,
+                    'groupColor': color
                 },
                 success: function(data) {
                     // add the new entry
                     $(data).insertBefore($entry.closest('.entry-region .new-entry'));
+
+                    // clear "Add an item" message
+                    $entry.closest('.canvas-content').find('> .empty').remove();
 
                     // clear the editor
                     simplemde.value('');
@@ -261,7 +264,14 @@ $(function() {
                         'csrfmiddlewaretoken': this.csrfmiddlewaretoken(),
                     },
                     success: function() {
+                        var $cc = $entry.closest('.canvas-content');
+
                         $entry.remove();
+
+                        // add "Add an item" message if necessary
+                        if ($cc.find('> .entry-region > .entry').length == 0) {
+                            $cc.append('<div class="empty"><p class="col-md-12 text-center">Add an item</p></div>');
+                        }
                     }
                 });
             }
@@ -288,13 +298,17 @@ $(function() {
     });
 
     $('#business-model-canvas').on('click', '.edit-entry', function(e) {
-        BusinessModelCanvas.showEditEntry($(this).closest('.entry'))
         e.stopPropagation();
+        e.preventDefault();
+
+        BusinessModelCanvas.showEditEntry($(this).closest('.entry'))
     });
 
     $('#business-model-canvas').on('click', '.update-entry', function(e) {
-        BusinessModelCanvas.updateEntry($(this).closest('.entry'))
         e.stopPropagation();
+        e.preventDefault();
+
+        BusinessModelCanvas.updateEntry($(this).closest('.entry'))
     });
 
     $('#business-model-canvas').on('click', '.update-entry-form', function(e) {
@@ -316,5 +330,5 @@ $(function() {
     });
 
     // scrolling
-    $('.block-section').perfectScrollbar();
+    $('.canvas-content').perfectScrollbar();
 })
