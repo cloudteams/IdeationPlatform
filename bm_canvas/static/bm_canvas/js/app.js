@@ -302,6 +302,8 @@ $(function() {
         e.preventDefault();
 
         BusinessModelCanvas.showEditEntry($(this).closest('.entry'))
+
+        $(this).closest('.tooltip-container').find('.custom-tooltip').toggleClass('active')
     });
 
     $('#business-model-canvas').on('click', '.update-entry', function(e) {

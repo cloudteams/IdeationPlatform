@@ -1,6 +1,23 @@
+import json
+
 from django.db import models
 
 from bm_canvas.lists import BUSINESS_MODEL_SECTIONS
+
+DEFAULT_PALETTE_CONFIG = {
+    'FFFFFF': '',
+    'EF4836': 'Danger',
+    '7D3C8C': 'Main action',
+    '4183D7': 'Ongoing',
+    'E9D460': 'Blocking',
+    '67809F': 'Pending approval',
+    '1BBC9B': 'Complete',
+    'F89406': 'Idea',
+    '65C6BB': 'Innovation',
+    '6C7A89': 'Design',
+    'BDC3C7': 'Testing',
+    '333333': 'Competitive advantage',
+}
 
 
 class BusinessModel(models.Model):
@@ -9,9 +26,11 @@ class BusinessModel(models.Model):
     """
     project_id = models.IntegerField(unique=True, primary_key=True)
     project_name = models.CharField(max_length=1023)
+    title = models.TextField(default='Business Model #1')
+    palette_config = models.TextField(default=json.dumps(DEFAULT_PALETTE_CONFIG))
 
     def __str__(self):
-        return 'Business Model <> for Project #%d' % self.project_id
+        return 'Business Model <%s> for Project #%d' % (self.title, self.project_id)
 
 
 class BusinessModelEntry(models.Model):
@@ -39,3 +58,10 @@ class BusinessModelEntry(models.Model):
 
     def can_update(self, request):
         return self.can_access(request)
+
+    @property
+    def group(self):
+        try:
+            return json.loads(self.business_model.palette_config)[self.group_color[1].upper()]
+        except KeyError:
+            return ''
