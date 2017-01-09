@@ -128,11 +128,17 @@
             e.preventDefault();
             e.stopPropagation();
 
+            $(this).closest('.tooltip-container').find('.custom-tooltip').toggleClass('active')
+
             var $dialog = $('#delete-canvas-dialog');
             $dialog.find('input[name="canvas_id"]').val($(this).data('canvas_id'));
             $dialog.find('.dialog-main-message > b').text($(this).closest('.business-model').find('.article-header > h2').text())
 
             $dialog.addClass('in').css('display', 'block')
+        })
+
+        $('.modal [data-dismiss="modal"]').on('click', function(e) {
+            $(this).closest('.modal').css('display', 'none')
         })
     </script>
 {% endblock %}
