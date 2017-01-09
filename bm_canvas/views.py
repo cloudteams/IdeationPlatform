@@ -4,7 +4,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponse
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from bm_canvas.lists import BUSINESS_MODEL_SECTIONS
 from bm_canvas.models import BusinessModel, BusinessModelEntry
@@ -25,9 +25,28 @@ def project_view(request, pk):
         return HttpResponse('Access not allowed', status=403)
 
     return render(request, 'bm_canvas/list.html', {
+        'project_id': pk,
         'project_name': project_name,
         'bmcs': bmcs,
     })
+
+
+def create_canvas(request, pk):
+    if request.method != 'POST':
+        return HttpResponse('Only POST method allowed', status=403)
+
+    project_name = ''
+    for p in request.session['projects']:
+        if p['pid'] == str(pk):
+            project_name = p['title']
+
+    if not project_name:
+        return HttpResponse('Access not allowed', status=403)
+
+    # create new bmc item
+    bmc = BusinessModel.objects.create(project_id=pk, project_name=project_name, title=request.POST.get('title'))
+
+    return redirect('/team-ideation-tools/business-model/projects/%s/%s/' % (str(pk), str(bmc.pk)))
 
 
 def canvas_view(request, pk, bm):
@@ -35,15 +54,15 @@ def canvas_view(request, pk, bm):
     try:
         bmc = BusinessModel.objects.get(project_id=pk, pk=bm)
     except BusinessModel.DoesNotExist:
-        project_name = ''
-        for p in request.session['projects']:
-            if p['pid'] == str(pk):
-                project_name = p['title']
+        return HttpResponse('Canvas was not found', status=404)
 
-        if not project_name:
-            return HttpResponse('Project #%d was not found on TeamPlatform' % pk)
+    project_name = ''
+    for p in request.session['projects']:
+        if p['pid'] == str(pk):
+            project_name = p['title']
 
-        bmc = BusinessModel.objects.create(project_id=pk, project_name=project_name)
+    if not project_name:
+        return HttpResponse('Access not allowed', status=403)
 
     request.session['project_id'] = str(pk)
 

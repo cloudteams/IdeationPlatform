@@ -64,16 +64,19 @@
                         </header>
 
                         <div class="modal-body">
-                            <div class="row form-group required">
-                                <div class="col-md-6"><label class="control-label">What's the name of your business model?</label></div>
-                                <div class="col-md-6"><input type="text" name="search" placeholder="Name"></div>
-                            </div>
-                            <div class="row">
-                                <fieldset class="col-md-12 form-submit">
-                                    <a href="#nowhere" data-dismiss="modal" class="btn-transparent" alt="cancel">Cancel</a>
-                                    <a href="#nowhere" data-dismiss="modal" class="btn confirm-button" alt="add persona">Create</a>
-                                </fieldset>
-                            </div>
+                            <form action="/team-ideation-tools/business-model/projects/{{ project_id }}/create/" method="POST">
+                                {% csrf_token %}
+                                <div class="row form-group required">
+                                    <div class="col-md-6"><label class="control-label">What's the name of your business model?</label></div>
+                                    <div class="col-md-6"><input type="text" name="title" placeholder="Name"></div>
+                                </div>
+                                <div class="row">
+                                    <fieldset class="col-md-12 form-submit">
+                                        <a href="#nowhere" data-dismiss="modal" class="btn-transparent" alt="cancel">Cancel</a>
+                                        <button class="btn confirm-button" role="submit">Create</button>
+                                    </fieldset>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

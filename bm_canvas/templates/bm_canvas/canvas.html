@@ -78,7 +78,7 @@
                     {% include 'bm_canvas/section.html' %}
                 {% endwith %}
 
-                {%  with section_id="block-section-R$" position="left" box_style="square" title="Revenue Streams" help="With Revenue Streams you define how our business is going to make money! Subscription fees, pay-per-usage or Advanced Support charges could all be valid streams for a technology company." entries=bmc|get_entries:"R$" %}
+                {% with section_id="block-section-R$" position="left" box_style="square" title="Revenue Streams" help="With Revenue Streams you define how our business is going to make money! Subscription fees, pay-per-usage or Advanced Support charges could all be valid streams for a technology company." entries=bmc|get_entries:"R$" %}
                     {% include 'bm_canvas/section.html' %}
                 {% endwith %}
             </div>
