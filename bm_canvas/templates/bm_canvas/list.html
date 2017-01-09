@@ -135,7 +135,7 @@
             $dialog.find('.dialog-main-message > b').text($(this).closest('.business-model').find('.article-header > h2').text())
 
             $dialog.addClass('in').css('display', 'block')
-        })
+        });
 
         $('.modal [data-dismiss="modal"]').on('click', function(e) {
             $(this).closest('.modal').css('display', 'none')
