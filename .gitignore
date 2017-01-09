@@ -63,9 +63,6 @@ target/
 # Project database
 db.sqlite3
 
-# Migrations
-migrations/
-
 # Media files
 media/
 
