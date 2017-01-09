@@ -49,6 +49,25 @@ def create_canvas(request, pk):
     return redirect('/team-ideation-tools/business-model/projects/%s/%s/' % (str(pk), str(bmc.pk)))
 
 
+def delete_canvas(request, pk):
+    if request.method != 'POST':
+        return HttpResponse('Only POST method allowed', status=403)
+
+    project_name = ''
+    for p in request.session['projects']:
+        if p['pid'] == str(pk):
+            project_name = p['title']
+
+    if not project_name:
+        return HttpResponse('Access not allowed', status=403)
+
+    # delete bmc item
+    bmc = BusinessModel.objects.get(project_id=pk, pk=request.POST.get('canvas_id'))
+    bmc.delete()
+
+    return redirect('/team-ideation-tools/business-model/projects/%s/' % str(pk))
+
+
 def canvas_view(request, pk, bm):
     pk = int(pk)
     try:

@@ -8,6 +8,7 @@ urlpatterns = [
     # all canvases list
     url(r'^projects/(?P<pk>[\w-]+)/$', views.project_view, name='project-bmc'),
     url(r'^projects/(?P<pk>[\w-]+)/create/$', views.create_canvas, name='project-bmc-create'),
+    url(r'^projects/(?P<pk>[\w-]+)/delete-canvas/$', views.delete_canvas, name='project-bmc-create'),
 
     # project business model canvas
     url(r'^projects/(?P<pk>[\w-]+)/(?P<bm>[\w-]+)/$', views.canvas_view, name='canvas-bmc'),

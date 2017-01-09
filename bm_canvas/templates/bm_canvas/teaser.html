@@ -2,6 +2,16 @@
                 <div class="background">
                     <header class="article-header">
                         <h2 class="header-medium secondary">{{ bmc.title }}</h2>
+
+                        <div class="tooltip-container">
+                            <a href="#nowhere" class="open-tooltip-button" id="open-tooltip-button-1"><i class="icon icon-more-options"></i></a>
+                            <div class="custom-tooltip" id="custom-tooltip-1">
+                                <ul>
+                                    <li><a href="/team-ideation-tools/business-model/projects/{{ bmc.project_id }}/{{ bmc.pk }}/">Open canvas</a></li>
+                                    <li><a href="" class="delete-canvas" data-canvas_id="{{ bmc.pk }}">Delete canvas</a></li>
+                                </ul>
+                            </div>
+                        </div>
                     </header>
                     <section class="row status">
                         <div class="col-md-6">Status:</div>
