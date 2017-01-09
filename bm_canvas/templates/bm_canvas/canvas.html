@@ -5,7 +5,7 @@
 
 {% load bm_filters %}
 
-{% block title %}{{bmc.project_name}} - Business Models{% endblock %}
+{% block title %}{{ bmc.project_name }} - {{ bmc.title }}{% endblock %}
 {% block section_class %}developer-dashboard-project-requirements-content{% endblock %}
 
 {% block css %}
@@ -21,52 +21,64 @@
             <div class=" middle">
                 <i class="icon icon-user"></i>
                 <h1 class="header-large">Business Models</h1>
-                <p class="header-medium secondary">{{ bmc.project_name }}</p>
+                <p class="header-medium secondary">{{ project_name }}</p>
             </div>
         </div>
     </header>
 
     <section id="developer-dashboard-project-business-model-canvas">
+        <header class="row options">
+            <div class="col-md-12">
+                <div class="vertical-align">
+                    <div class="middle">
+                        <p class="header-medium secondary">{{ bmc.title }}</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
         <div id="bmc-clearfix"></div>
-        <div id="business-model-canvas" data-project_id="{{ bmc.project_id }}" data-csrfmiddlewaretoken="{{ csrf_token }}">
+        <div id="business-model-canvas"
+             data-project_id="{{ bmc.project_id }}" data-canvas_id="{{ bmc.pk }}"
+             data-csrfmiddlewaretoken="{{ csrf_token }}">
             <div class="canvas-section row">
-                {% with section_id="block-section-KP" position="left" box_style="rectangle" title="Key Partners" help="What uniquely strategic things does the business do to deliver its proposition?" entries=bmc|get_entries:"KP" %}
+                {% with section_id="block-section-KP" position="left" box_style="rectangle" title="Key Partners" help="A Key Partner is someone external to your business with whom you have to co-operate to materialize your idea." entries=bmc|get_entries:"KP" %}
                     {% include 'bm_canvas/section.html' %}
                 {% endwith %}
 
-                {% with section_id="block-section-KA" position="right" box_style="square" title="Key Activities" help="What uniquely strategic things does the business do to deliver its proposition?" entries=bmc|get_entries:"KA" %}
+                {% with section_id="block-section-KA" position="right" box_style="square" title="Key Activities" help="Key Activities refer to business processes that are crucial to running our business and its success." entries=bmc|get_entries:"KA" %}
                     {% include 'bm_canvas/section.html' %}
                 {% endwith %}
 
-                {% with section_id="block-section-KR" position="right" box_style="square" title="Key Resources" help="What uniquely strategic things does the business do to deliver its proposition?" entries=bmc|get_entries:"KR" %}
+                {% with section_id="block-section-KR" position="right" box_style="square" title="Key Resources" help="Key Resources could be anything from raw materials, access to certain technology or human resources that is required for the company to keep running." entries=bmc|get_entries:"KR" %}
                     {% include 'bm_canvas/section.html' %}
                 {% endwith %}
             </div>
 
             <div class="canvas-section row">
-                {% with section_id="block-section-VP" position="right" box_style="rectangle" title="Value Proposition" help="What uniquely strategic things does the business do to deliver its proposition?" entries=bmc|get_entries:"VP" %}
+                {% with section_id="block-section-VP" position="right" box_style="rectangle" title="Value Proposition" help="The value propositions are the product's main selling points, what it has to offer to the world." entries=bmc|get_entries:"VP" %}
                     {% include 'bm_canvas/section.html' %}
                 {% endwith %}
 
-                {% with section_id="block-section-CR" position="left" box_style="square" title="Customer Relationships" help="What uniquely strategic things does the business do to deliver its proposition?" entries=bmc|get_entries:"CR" %}
+                {% with section_id="block-section-CR" position="left" box_style="square" title="Customer Relationships" help="Ways your team visions to create and sustain relationships with its customers (e.g personal, phone support, live chat)." entries=bmc|get_entries:"CR" %}
                     {% include 'bm_canvas/section.html' %}
                 {% endwith %}
 
-                {% with section_id="block-section-CH" position="left" box_style="square" title="Channels" help="What uniquely strategic things does the business do to deliver its proposition?" entries=bmc|get_entries:"CH" %}
+                {% with section_id="block-section-CH" position="left" box_style="square" title="Channels" help="Channels help your team define *how* you're going to reach your customer segments and how to provide your product to them." entries=bmc|get_entries:"CH" %}
                     {% include 'bm_canvas/section.html' %}
                 {% endwith %}
 
-                {% with section_id="block-section-CS" position="left" box_style="square" section_col_size="12" title="Customer Segments" help="What uniquely strategic things does the business do to deliver its proposition?" entries=bmc|get_entries:"CS" %}
+                {% with section_id="block-section-CS" position="left" box_style="square" section_col_size="12" title="Customer Segments" help="Make clear which groups of individuals or businesses your product aims to reach." entries=bmc|get_entries:"CS" %}
                     {% include 'bm_canvas/section.html' %}
                 {% endwith %}
             </div>
 
             <div class="canvas-section row">
-                {% with section_id="block-section-C$" position="left" box_style="square" title="Cost Structure" help="What uniquely strategic things does the business do to deliver its proposition?" entries=bmc|get_entries:"C$" %}
+                {% with section_id="block-section-C$" position="left" box_style="square" title="Cost Structure" help="Remember to first understand your key activities, resources and overall strategy, in order to get a fairly clear idea of what your actual expenses will be." entries=bmc|get_entries:"C$" %}
                     {% include 'bm_canvas/section.html' %}
                 {% endwith %}
 
-                {%  with section_id="block-section-R$" position="left" box_style="square" title="Revenue Streams" help="What uniquely strategic things does the business do to deliver its proposition?" entries=bmc|get_entries:"R$" %}
+                {%  with section_id="block-section-R$" position="left" box_style="square" title="Revenue Streams" help="With Revenue Streams you define how our business is going to make money! Subscription fees, pay-per-usage or Advanced Support charges could all be valid streams for a technology company." entries=bmc|get_entries:"R$" %}
                     {% include 'bm_canvas/section.html' %}
                 {% endwith %}
             </div>

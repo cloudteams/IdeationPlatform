@@ -5,12 +5,15 @@ __author__ = 'dipap'
 
 
 urlpatterns = [
-    # project business model canvas
+    # all canvases list
     url(r'^projects/(?P<pk>[\w-]+)/$', views.project_view, name='project-bmc'),
-    url(r'^projects/(?P<pk>[\w-]+)/add-entry/$', views.add_entry, name='add-entry'),
+
+    # project business model canvas
+    url(r'^projects/(?P<pk>[\w-]+)/(?P<bm>[\w-]+)/$', views.canvas_view, name='project-bmc'),
+    url(r'^projects/(?P<pk>[\w-]+)/(?P<bm>[\w-]+)/add-entry/$', views.add_entry, name='add-entry'),
 
     # autocomplete
-    url(r'^projects/(?P<pk>[\w-]+)/suggest-term/$', views.suggest_term, name='suggest-term'),
+    url(r'^projects/(?P<pk>[\w-]+)/(?P<bm>[\w-]+)/suggest-term/$', views.suggest_term, name='suggest-term'),
 
     # entries
     url(r'^entries/update-orders/$', views.update_entry_orders, name='view-entry'),

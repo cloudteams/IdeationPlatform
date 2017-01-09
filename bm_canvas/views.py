@@ -13,8 +13,27 @@ from persona_builder.models import Persona
 
 def project_view(request, pk):
     pk = int(pk)
+    bmcs = BusinessModel.objects.filter(project_id=pk)
+
+    project_name = ''
+    for p in request.session['projects']:
+        if int(p['pid']) == pk:
+            project_name = p['title']
+            request.session['project_id'] = str(pk)
+
+    if not project_name:
+        return HttpResponse('Access not allowed', status=403)
+
+    return render(request, 'bm_canvas/list.html', {
+        'project_name': project_name,
+        'bmcs': bmcs,
+    })
+
+
+def canvas_view(request, pk, bm):
+    pk = int(pk)
     try:
-        bmc = BusinessModel.objects.get(project_id=pk)
+        bmc = BusinessModel.objects.get(project_id=pk, pk=bm)
     except BusinessModel.DoesNotExist:
         project_name = ''
         for p in request.session['projects']:
@@ -30,11 +49,10 @@ def project_view(request, pk):
 
     return render(request, 'bm_canvas/canvas.html', {
         'bmc': bmc,
-        'minimized_sidebar': False,
     })
 
 
-def suggest_term(request, pk):
+def suggest_term(request, pk, bm):
     """
     :param request: The request of the user
     :param pk: The project primary key
@@ -52,12 +70,12 @@ def suggest_term(request, pk):
     return JsonResponse(data=results, safe=False)
 
 
-def add_entry(request, pk):
+def add_entry(request, pk, bm):
     pk = int(pk)
     if request.method != 'POST':
         return HttpResponse('Only POST requests allowed', status=400)
 
-    bmc = BusinessModel.objects.get(project_id=pk)
+    bmc = BusinessModel.objects.get(project_id=pk, pk=bm)
 
     text = request.POST.get('text', '')
     if not text:

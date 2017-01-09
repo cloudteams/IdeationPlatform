@@ -115,6 +115,7 @@ $(function() {
         addEntry: function($entry) {
             var blockId = $entry.closest('.block-section').attr('id');
             var projectId = $('#business-model-canvas').data('project_id');
+            var canvasId = $('#business-model-canvas').data('canvas_id');
             var simplemde = this.editors[blockId];
             var $bs = $entry.closest('.block-section')
             var section_arr = $bs.attr('id').split('-');
@@ -124,7 +125,7 @@ $(function() {
 
             // post the entry
             $.ajax({
-                url: '/team-ideation-tools/business-model/projects/' + projectId + '/add-entry/',
+                url: '/team-ideation-tools/business-model/projects/' + projectId + '/' + canvasId + '/add-entry/',
                 method: 'POST',
                 data: {
                     'csrfmiddlewaretoken': this.csrfmiddlewaretoken(),

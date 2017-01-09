@@ -30,3 +30,8 @@ def get_default_project(request):
             return None
         except IndexError:
             return None
+
+
+@register.filter
+def mostsignificant(nattime):
+    return nattime.replace(' ago', '').split(', ')[0] + ' ago'

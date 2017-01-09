@@ -253,18 +253,18 @@ div.colorPicker-palette {
     display: none;
 }
 
-.entry .clr-container {
-    width: 10px;
-    height: 10px;
-    border: 1px solid #aaa;
+.entry .block-container {
+    width: 16px !important;
+    height: 16px !important;
+    border: 1px solid #c7c7c7;
     margin: 2px 0 2px 5px;
     padding: 1px;
     position: relative;
 }
 
-.entry .clr-val {
+.entry .color-block {
     display: inline-block;
-    width: calc(100% - 2px);
-    height: calc(100% - 2px);
+    width: calc(100% - 2px) !important;
+    height: calc(100% - 2px) !important;
     position: absolute;
 }

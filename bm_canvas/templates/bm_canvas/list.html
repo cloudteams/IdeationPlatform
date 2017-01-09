@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% load endless %}
+{% load static from staticfiles %}
+
+{% load bm_filters %}
+
+{% block title %}{{ project_name }} - Business Models{% endblock %}
+{% block section_class %}developer-dashboard-project-requirements-content{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static "bm_canvas/css/style.css" %}?v=20160804.1">
+{% endblock %}
+
+{% block content %}
+    <header class="main-header">
+        <div class="vertical-align">
+            <div class=" middle">
+                <i class="icon icon-user"></i>
+                <h1 class="header-large">Business Models</h1>
+                <p class="header-medium secondary">{{ project_name }}</p>
+            </div>
+        </div>
+    </header>
+
+    <section id="developer-dashboard-project-business-model">
+        <div class="row">
+            <article class="business-model add-item col-md-6" style="height: 267.556px;">
+                <a href="#" data-toggle="modal" data-target=".popup-new-business-model">
+                    <div class="background">
+                        <div class="vertical-align">
+                            <div class="middle">
+                                <div class="add-project-button">
+                                    <div class="vertical-align">
+                                        <div class="middle">
+                                            <i class="icon icon-plus"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h2 class="header-small secondary">Create new business model</h2>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </article>
+
+			{% for bmc in bmcs %}
+                {% include 'bm_canvas/teaser.html' %}
+            {% endfor %}
+
+            <div id="new" class="popup-new-business-model modal fade" role="dialog">
+                <div class="modal-dialog medium">
+                    <div class="block block-fill">
+                        <header class="modal-header">
+                            <div class="vertical-align">
+                                <div class="middle">
+                                    <i class="icon icon-user"></i>
+                                    <h2 class="header-medium secondary">Create a new business model canvas</h2>
+                                </div>
+                                <div class="close" data-dismiss="modal">
+                                    <i class="icon icon-close"></i>
+                                </div>
+                            </div>
+                        </header>
+
+                        <div class="modal-body">
+                            <div class="row form-group required">
+                                <div class="col-md-6"><label class="control-label">What's the name of your business model?</label></div>
+                                <div class="col-md-6"><input type="text" name="search" placeholder="Name"></div>
+                            </div>
+                            <div class="row">
+                                <fieldset class="col-md-12 form-submit">
+                                    <a href="#nowhere" data-dismiss="modal" class="btn-transparent" alt="cancel">Cancel</a>
+                                    <a href="#nowhere" data-dismiss="modal" class="btn confirm-button" alt="add persona">Create</a>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
