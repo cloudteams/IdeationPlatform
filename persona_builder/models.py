@@ -49,7 +49,15 @@ class Persona(models.Model):
         return '%s%s%s' % (self.name, _public, _cnt)
 
     def get_avatar_url(self):
-        return '%s/%s' % (MEDIA_URL, self.avatar)
+        if PRODUCTION:
+            base_url = 'https://customers.cloudteams.eu/team-ideation-tools'
+        else:
+            base_url = 'http://127.0.0.1:8000'
+
+        if not self.avatar:
+            return '%s/static/persona_builder/img/default-persona.svg' % base_url
+
+        return '%s%s/%s' % (base_url, MEDIA_URL, self.avatar)
 
     def get_absolute_url(self, full=False):
         if not full:
@@ -235,7 +243,9 @@ class Persona(models.Model):
         personas = [{
             'id': str(persona.id),
             'name': persona.name,
-            'descr': persona.description
+            'descr': persona.description,
+            'num_matches': PersonaUsers.objects.filter(persona_id=persona.pk).count(),
+            'img': persona.get_avatar_url(),
         } for persona in qs]
 
         print('ps=%s' % str(personas))
