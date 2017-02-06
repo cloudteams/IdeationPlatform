@@ -57,7 +57,7 @@ class Persona(models.Model):
         if not self.avatar:
             return '%s/static/persona_builder/img/default-persona.svg' % base_url
 
-        return '%s%s/%s' % (base_url, MEDIA_URL, self.avatar)
+        return '%s/media/%s' % (base_url, self.avatar)
 
     def get_absolute_url(self, full=False):
         if not full:
