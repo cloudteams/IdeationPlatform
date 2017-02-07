@@ -244,7 +244,7 @@ class Persona(models.Model):
             'id': str(persona.id),
             'name': persona.name,
             'descr': persona.description,
-            'num_matches': PersonaUsers.objects.filter(persona_id=persona.pk).count(),
+            'num_matches': str(PersonaUsers.objects.filter(persona_id=persona.pk).count()),
             'img': persona.get_avatar_url(),
         } for persona in qs]
 
