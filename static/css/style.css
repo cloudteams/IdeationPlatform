@@ -113,3 +113,8 @@ input[type="submit"]:hover {
     outline: none;
     font-family: 'Inconsolata';
 }
+
+/* Hide cookie consent */
+div[role="dialog"][aria-label="cookieconsent"] {
+    display: none !important;
+}
