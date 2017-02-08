@@ -270,11 +270,14 @@ class BscwApi:
     """
 
     def show_error(self, request, e, title='error'):
+        return redirect('https://teams.cloudteams.eu/bscw/bscw.cgi/')
+        """
         return render(request, 'pb_oauth/index.html', {
             'title': title,
             'error': e,
             'bscw_api': self,
         })
+        """
 
     def handle(self, request, return_to=None):
         # get POST & GET parameters
