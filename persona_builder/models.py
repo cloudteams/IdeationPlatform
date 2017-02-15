@@ -21,7 +21,7 @@ import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
 
-OVERVIEW_PROPERTIES = ['gender', 'age', 'tech_level', 'platform', 'device', 'activity']
+OVERVIEW_PROPERTIES = ['gender', 'age', 'tech_level', 'platform', 'device', 'education', 'employment']
 
 
 class Persona(models.Model):

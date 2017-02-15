@@ -67,6 +67,16 @@
                 }
             }, 500);
         </script>
+
+        <script>
+            $('body').on('click', 'li.link-to-subpage', function() {
+                $(this).closest('.menu-subpage').find('.link-to-subpage').removeClass('active');
+                $(this).closest('.menu-subpage').parent().find('.subpage').removeClass('active');
+
+                $(this).addClass('active');
+                $('#' + $(this).attr('id').split('link-to-')[1]).addClass('active');
+            });
+        </script>
 		{% block js %}
 		{% endblock %}
 	</body>
