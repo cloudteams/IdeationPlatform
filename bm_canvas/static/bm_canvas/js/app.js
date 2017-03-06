@@ -113,17 +113,17 @@ $(function() {
         },
 
         addEntry: function($entry, entryConfig) {
-            var blockId, color, text, simplemde, $entryRegion;
+            var blockId, color, text, simplemde, $blockSection;
 
             if ($entry === undefined) {
                 blockId = entryConfig.blockId;
                 simplemde = this.editors[blockId];
-                $entryRegion = $('#' + blockId);
+                $blockSection = $('#' + blockId);
                 color = entryConfig.color || '#ffffff';
                 text = entryConfig.text;
             } else {
                 blockId = $entry.closest('.block-section').attr('id');
-                $entryRegion = $entry.closest('.entry-region');
+                $blockSection = $entry.closest('.block-section');
                 simplemde = this.editors[blockId];
                 color = $entry.find('input[name="new-entry-color"]').val();
                 text = simplemde.value();
@@ -131,9 +131,9 @@ $(function() {
 
             var projectId = $('#business-model-canvas').data('project_id');
             var canvasId = $('#business-model-canvas').data('canvas_id');
-            var section_arr = $entryRegion.attr('id').split('-');
-            var order = Number($entryRegion.find('.entry-region .entry:last').data('order')) + 1 || 0;
-            var section = section_arr[section_arr.length - 1];
+            var sectionArr = $blockSection.attr('id').split('-');
+            var order = Number($blockSection.find('.entry-region .entry:last').data('order')) + 1 || 0;
+            var section = sectionArr[sectionArr.length - 1];
 
             // post the entry
             $.ajax({
@@ -148,10 +148,10 @@ $(function() {
                 },
                 success: function(data) {
                     // add the new entry
-                    $(data).insertBefore($entryRegion.find('.new-entry'));
+                    $(data).insertBefore($blockSection.find('.new-entry'));
 
                     // clear "Add an item" message
-                    $entryRegion.find('.canvas-content').find('> .empty').remove();
+                    $blockSection.find('.canvas-content').find('> .empty').remove();
 
                     // clear the editor
                     simplemde.value('');
