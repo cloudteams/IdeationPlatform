@@ -35,11 +35,11 @@ $(function() {
 
                         $list.html('');
                         $.each(data, function (idx, term) {
-                            $list.append('<div>' + term.text + '</div>')
+                            $list.append('<li>' + term.text + '</li>')
                         });
                     }
                 })
-            }
+            };
 
             setTimeout(fn, 50)
         }
@@ -334,4 +334,36 @@ $(function() {
 
     // scrolling
     $('.canvas-content').perfectScrollbar();
-})
+
+    // move customers segment to correct place
+    var $customerSegments = $('li.customer-segments');
+
+    $customerSegments
+        .css('top', ($('#block-section-CS').offset().top - 65) + 'px')
+        .css('position', 'absolute')
+        .css('display', 'block');
+
+    // load customer segments
+    $customerSegments
+        .find('ul')
+        .empty();
+
+    $.ajax({
+        url: 'suggest-term',
+        success: function(personas) {
+            $.each(personas, function(idx, persona) {
+                $customerSegments
+                    .find('ul')
+                    .append($('<li />')
+                        .text(persona.text)
+                        .data('personaid', persona.id)
+                        .attr('data-personaid', persona.id)
+                    );
+            });
+
+            $customerSegments
+                .find('ul')
+                .perfectScrollbar();
+        }
+    })
+});

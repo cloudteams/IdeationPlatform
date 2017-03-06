@@ -268,3 +268,16 @@ div.colorPicker-palette {
     height: calc(100% - 2px) !important;
     position: absolute;
 }
+
+/* Sidebar */
+li.customer-segments > ul {
+    max-height: 150px;
+}
+
+li.customer-segments > ul .ps-scrollbar-y-rail {
+    margin-top: 20px;
+}
+
+li.customer-segments > ul > li {
+    margin-bottom: 0 !important;
+}

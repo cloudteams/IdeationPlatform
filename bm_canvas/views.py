@@ -97,9 +97,17 @@ def suggest_term(request, pk, bm):
     :return: List of suggestions
     """
     results = []
-    for p in Persona.objects.filter(Q(project_id=pk) | Q(is_public=True))[:5]:
+    for p in Persona.objects.filter(project_id=pk):
         results.append({
-            'url': p.get_absolute_url(),
+            'id': p.pk,
+            'text': p.name,
+            'icon': p.get_avatar_url(),
+            'type': 'Persona',
+        })
+
+    for p in Persona.objects.filter(is_public=True).exclude(project_id=pk):
+        results.append({
+            'id': p.pk,
             'text': p.name,
             'icon': p.get_avatar_url(),
             'type': 'Persona',
