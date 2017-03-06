@@ -112,16 +112,28 @@ $(function() {
             return $('#business-model-canvas').data('csrfmiddlewaretoken');
         },
 
-        addEntry: function($entry) {
-            var blockId = $entry.closest('.block-section').attr('id');
+        addEntry: function($entry, entryConfig) {
+            var blockId, color, text, simplemde, $entryRegion;
+
+            if ($entry === undefined) {
+                blockId = entryConfig.blockId;
+                simplemde = this.editors[blockId];
+                $entryRegion = $('#' + blockId);
+                color = entryConfig.color || '#ffffff';
+                text = entryConfig.text;
+            } else {
+                blockId = $entry.closest('.block-section').attr('id');
+                $entryRegion = $entry.closest('.entry-region');
+                simplemde = this.editors[blockId];
+                color = $entry.find('input[name="new-entry-color"]').val();
+                text = simplemde.value();
+            }
+
             var projectId = $('#business-model-canvas').data('project_id');
             var canvasId = $('#business-model-canvas').data('canvas_id');
-            var simplemde = this.editors[blockId];
-            var $bs = $entry.closest('.block-section')
-            var section_arr = $bs.attr('id').split('-');
-            var order = Number($bs.find('.entry-region .entry:last').data('order')) + 1 || 0;
+            var section_arr = $entryRegion.attr('id').split('-');
+            var order = Number($entryRegion.find('.entry-region .entry:last').data('order')) + 1 || 0;
             var section = section_arr[section_arr.length - 1];
-            var color = $entry.find('input[name="new-entry-color"]').val();
 
             // post the entry
             $.ajax({
@@ -129,17 +141,17 @@ $(function() {
                 method: 'POST',
                 data: {
                     'csrfmiddlewaretoken': this.csrfmiddlewaretoken(),
-                    'text': simplemde.value(),
+                    'text': text,
                     'section': section,
                     'order': order,
                     'groupColor': color
                 },
                 success: function(data) {
                     // add the new entry
-                    $(data).insertBefore($entry.closest('.entry-region .new-entry'));
+                    $(data).insertBefore($entryRegion.find('.new-entry'));
 
                     // clear "Add an item" message
-                    $entry.closest('.canvas-content').find('> .empty').remove();
+                    $entryRegion.find('.canvas-content').find('> .empty').remove();
 
                     // clear the editor
                     simplemde.value('');
@@ -358,6 +370,12 @@ $(function() {
                         .text(persona.text)
                         .data('personaid', persona.id)
                         .attr('data-personaid', persona.id)
+                        .on('click', function() {
+                            BusinessModelCanvas.addEntry(undefined, {
+                                blockId: 'block-section-CS',
+                                text: persona.text
+                            });
+                        })
                     );
             });
 

@@ -271,7 +271,7 @@ div.colorPicker-palette {
 
 /* Sidebar */
 li.customer-segments > ul {
-    max-height: 150px;
+    max-height: 220px;
 }
 
 li.customer-segments > ul .ps-scrollbar-y-rail {
@@ -280,4 +280,9 @@ li.customer-segments > ul .ps-scrollbar-y-rail {
 
 li.customer-segments > ul > li {
     margin-bottom: 0 !important;
+    cursor: pointer;
+}
+
+li.customer-segments > ul > li:hover {
+    color: white;
 }
