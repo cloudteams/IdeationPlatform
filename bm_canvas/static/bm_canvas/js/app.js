@@ -361,7 +361,7 @@ $(function() {
         .empty();
 
     $.ajax({
-        url: 'suggest-term',
+        url: 'suggest-term/',
         success: function(personas) {
             $.each(personas, function(idx, persona) {
                 $customerSegments
