@@ -250,7 +250,7 @@ class Persona(models.Model):
             'num_matches': str(PersonaUsers.objects.filter(persona_id=persona.pk).count()),
             'img': persona.get_avatar_url(),
             'date_created': persona.created.strftime('%d/%m/%y %H:%M'),
-            'date_last': persona.updated.strftime('%d/%m/%y %H:%M'),
+            'date': persona.updated.strftime('%d/%m/%y %H:%M'),
         } for persona in qs]
 
         print('ps=%s' % str(personas))
