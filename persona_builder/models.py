@@ -39,6 +39,9 @@ class Persona(models.Model):
     based_on = models.ForeignKey('self', blank=True, null=True, default=None)
     is_processing = models.BooleanField(default=False)
 
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
     def __str__(self):
         _public = ''
         if self.is_public:
@@ -246,6 +249,8 @@ class Persona(models.Model):
             'descr': persona.description,
             'num_matches': str(PersonaUsers.objects.filter(persona_id=persona.pk).count()),
             'img': persona.get_avatar_url(),
+            'date_created': persona.created.strftime('%d/%m/%y %H:%M'),
+            'date_last': persona.updated.strftime('%d/%m/%y %H:%M'),
         } for persona in qs]
 
         print('ps=%s' % str(personas))
