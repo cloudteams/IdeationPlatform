@@ -99,13 +99,6 @@
 						</a>
 					</li>
 
-					<li class="hidden">
-						<a href="/views/developer/dashboard/projects/project/rewards">
-							<i class="icon icon-reward"></i>
-							<span>Rewards</span>
-						</a>
-					</li>
-
 					<li>
 						<a href="{{ tp_url }}{{ request.session.dashboard_id }}?op=cloudteams.getstdb&action=cloudteams.team&object={{ request.session.project_id }}">
 							<i class="icon icon-team"></i>
@@ -120,10 +113,17 @@
 						</a>
 					</li>
 
-					<li class="hidden">
-						<a class="incoming" href="/views/developer/dashboard/projects/project/blog">
+                    <li>
+						<a href="{{ tp_url }}{{ request.session.dashboard_id }}?op=cloudteams.getstdb&action=cloudteams.manageprojectblog&object={{ request.session.project_id }}">
 							<i class="icon icon-blog"></i>
 							<span>Blog</span>
+						</a>
+					</li>
+
+                    <li>
+						<a href="{{ tp_url }}{{ request.session.dashboard_id }}?op=cloudteams.getstdb&action=cloudteams.managerewards&object={{ request.session.project_id }}">
+							<i class="icon icon-reward"></i>
+							<span>Rewards</span>
 						</a>
 					</li>
 
@@ -131,6 +131,13 @@
 						<a href="{{ tp_url }}{{ request.session.dashboard_id }}?op=cloudteams.getstdb&action=cloudteams.manageprojectmessages&object={{ request.session.project_id }}">
 							<i class="icon icon-message"></i>
 							<span>Messages</span>
+						</a>
+					</li>
+
+                    <li>
+						<a href="{{ tp_url }}{{ request.session.dashboard_id }}?op=cloudteams.getstdb&action=cloudteams.customers&object={{ request.session.project_id }}">
+							<i class="icon icon-invitation"></i>
+							<span>Invitations</span>
 						</a>
 					</li>
 
@@ -150,6 +157,13 @@
 				</ul>
 			</li>
 
+            <li>
+				<a href="{{ tp_url }}{{ request.session.dashboard_id }}?op=cloudteams.getstdb&action=cloudteams.cloudcoins">
+					<i class="icon icon-cloudcoins"></i>
+					<span>CloudCoins</span>
+				</a>
+			</li>
+
 			<li>
 				<a href="{{ tp_url }}{{ request.session.dashboard_id }}?op=cloudteams.getstdb&action=cloudteams.activities">
 					<i class="icon icon-activity"></i>
@@ -157,19 +171,6 @@
 				</a>
 			</li>
 
-			<hr>
-
-			<li class="cloudcoins hidden">
-				<a href="" class="active"><span>CloudCoins</span><span>100</span></a>
-			</li>
-
-			<li class="cloudcoins hidden">
-				<a href="/views/developer/dashboard/cloudcoins">
-					<span>Top-up CloudCoins</span>
-				</a>
-			</li>
-
-			<hr>
 
             <li class="customer-segments" style="display: none;">
                 <h6><i class="icon icon-user"></i> Pick a segment to add</h6>
