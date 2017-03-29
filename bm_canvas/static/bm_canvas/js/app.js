@@ -389,7 +389,7 @@ $(function() {
                         .on('click', function() {
                             BusinessModelCanvas.addEntry(undefined, {
                                 blockId: 'block-section-CS',
-                                text: persona.text
+                                text: persona.name
                             });
                         })
                     );
