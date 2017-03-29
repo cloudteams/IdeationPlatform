@@ -364,6 +364,8 @@ $(function() {
         url: 'suggest-term/',
         success: function(personas) {
             $.each(personas, function(idx, persona) {
+                persona.text = persona.text || 'Unnamed persona';
+
                 $customerSegments
                     .find('ul')
                     .append($('<li />')

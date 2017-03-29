@@ -219,6 +219,7 @@ li.customer-segments > ul > li > .name {
     float: left;
     width: calc(100% - 40px);
     margin: 5px 0 0 0;
+    font-size: 14px;
 }
 
 li.customer-segments > ul > li > .project {
