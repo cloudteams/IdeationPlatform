@@ -7,6 +7,11 @@
     padding-right: 5px;
 }
 
+#developer-dashboard-project-business-model article.business-model section.colors {
+    height: 100px;
+    overflow-y: auto;
+}
+
 .open-tooltip-button {
     cursor: pointer;
 }
@@ -183,10 +188,11 @@ div.colorPicker-palette {
 /* Sidebar */
 li.customer-segments > ul {
     max-height: 220px;
+    position: relative;
 }
 
 li.customer-segments > ul .ps-scrollbar-y-rail {
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 li.customer-segments > ul > li {

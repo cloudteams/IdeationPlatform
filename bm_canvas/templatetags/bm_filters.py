@@ -1,3 +1,5 @@
+import json
+
 import markdown
 from django.utils.safestring import mark_safe
 
@@ -35,3 +37,11 @@ def get_default_project(request):
 @register.filter
 def mostsignificant(nattime):
     return nattime.replace(' ago', '').split(', ')[0] + ' ago'
+
+
+@register.filter
+def get_color_label(canvas, color):
+    try:
+        return json.loads(canvas.palette_config)[color[1:].upper()]
+    except:
+        return 'No tag'

@@ -52,6 +52,18 @@ class BusinessModel(models.Model):
 
         return result
 
+    @property
+    def tags(self):
+        result = []
+        colors = json.loads(self.palette_config)
+        for color in colors:
+            result.append({
+                'label': colors[color],
+                'color': '#' + color,
+            })
+
+        return result
+
 
 class BusinessModelEntry(models.Model):
     """

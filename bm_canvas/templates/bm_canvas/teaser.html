@@ -15,12 +15,15 @@
                     </header>
                     <section class="row status">
                         <div class="col-md-6">Status:</div>
-                        <div class="col-md-6 bold text-right">Open</div>
+                        <div class="col-md-6 bold text-right">Active</div>
                     </section>
                     <section class="colors">
-                        {% for group in bmc.groups|slice:"3" %}
+                        {% for group in bmc.groups %}
                             <div class="row">
-                                <div class="col-md-1 block-container"><div style="background:{{ group.group_color }};" class="color-block"></div></div>
+                                <div class="col-md-1 block-container">
+                                    <div style="background:{{ group.group_color }}; {% if 'fff' in group.group_color %}border: 1px solid #999;{% endif %}"
+                                         class="color-block"></div>
+                                </div>
                                 <div class="col-md-8 description">{{ group.label }}</div>
                                 <div class="col-md-2 bold text-right">{{ group.cnt }}</div>
                             </div>

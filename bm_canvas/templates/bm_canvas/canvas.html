@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="{% static "bm_canvas/css/sortable.min.css" %}">
     <link rel="stylesheet" href="{% static "bm_canvas/css/colorPicker.css" %}">
     <link rel="stylesheet" href="{% static "bm_canvas/css/simplemde.min.css" %}">
-    <link rel="stylesheet" href="{% static "bm_canvas/css/style.css" %}?v=20170306.1">
+    <link rel="stylesheet" href="{% static "bm_canvas/css/style.css" %}?v=20170329.1">
 {% endblock %}
 
 {% block content %}
@@ -97,6 +97,19 @@
             </div>
         </div>
     </section>
+
+    <div class="row" style="margin: 40px 0;">
+        <div class="col-xs-12">
+            <h4 style="color: white;">Tags:</h4>
+        </div>
+
+        {% for tag in bmc.tags %}
+            <div class="col-xs-6 entry" style="border-top: none;">
+                <div class="block-container pull-left"><div style="background:{{ tag.color }};" class="color-block"></div></div>
+                <div class="pull-left" style="padding-left: 20px; color: #eee;">{{ tag.label }}</div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}
 
 {% block js %}
