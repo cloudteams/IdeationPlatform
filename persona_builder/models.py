@@ -55,7 +55,7 @@ class Persona(models.Model):
         if PRODUCTION:
             base_url = 'https://customers.cloudteams.eu/team-ideation-tools'
         else:
-            base_url = 'http://127.0.0.1:8000'
+            base_url = 'http://localhost:8000/team-ideation-tools'
 
         if not self.avatar:
             return '%s/static/persona_builder/img/default-persona.svg' % base_url

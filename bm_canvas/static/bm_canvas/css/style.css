@@ -188,6 +188,7 @@ div.colorPicker-palette {
 /* Sidebar */
 li.customer-segments > ul {
     max-height: 220px;
+    width: 210px;
     position: relative;
 }
 
@@ -203,3 +204,26 @@ li.customer-segments > ul > li {
 li.customer-segments > ul > li:hover {
     color: white;
 }
+
+li.customer-segments > ul > li > .avatar {
+    float: left;
+    width: 30px;
+    height: 30px;
+    margin: 10px 10px 10px 0;
+    background-size: cover;
+    border-radius: 50%;
+    background-position: center;
+}
+
+li.customer-segments > ul > li > .name {
+    float: left;
+    width: calc(100% - 40px);
+    margin: 5px 0 0 0;
+}
+
+li.customer-segments > ul > li > .project {
+    margin: 0;
+    font-size: 10px;
+    text-transform: uppercase;
+}
+

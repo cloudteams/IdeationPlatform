@@ -96,22 +96,21 @@ def suggest_term(request, pk, bm):
     :param pk: The project primary key
     :return: List of suggestions
     """
+    def serialize_persona(p):
+        return {
+            'id': p.pk,
+            'text': p.name,
+            'icon': p.get_avatar_url(),
+            'type': 'Persona',
+            'public': p.is_public,
+        }
+
     results = []
     for p in Persona.objects.filter(project_id=pk):
-        results.append({
-            'id': p.pk,
-            'text': p.name,
-            'icon': p.get_avatar_url(),
-            'type': 'Persona',
-        })
+        results.append(serialize_persona(p))
 
     for p in Persona.objects.filter(is_public=True).exclude(project_id=pk):
-        results.append({
-            'id': p.pk,
-            'text': p.name,
-            'icon': p.get_avatar_url(),
-            'type': 'Persona',
-        })
+        results.append(serialize_persona(p))
 
     return JsonResponse(data=results, safe=False)
 
