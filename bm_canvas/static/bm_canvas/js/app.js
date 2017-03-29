@@ -364,7 +364,8 @@ $(function() {
         url: 'suggest-term/',
         success: function(personas) {
             $.each(personas, function(idx, persona) {
-                persona.text = persona.text || 'Unnamed persona';
+                persona.name = persona.name || 'Unnamed persona';
+                persona.description = persona.description || 'No description';
 
                 $customerSegments
                     .find('ul')
@@ -376,12 +377,13 @@ $(function() {
                         )
                         .append($('<div />')
                             .addClass('name')
-                            .text(persona.text)
+                            .text(persona.name)
                         )
                         .append($('<div />')
                             .addClass('project')
                             .text(persona.public ? 'Public' : 'Private')
                         )
+                        .attr('title', persona.description)
                         .data('personaid', persona.id)
                         .attr('data-personaid', persona.id)
                         .on('click', function() {

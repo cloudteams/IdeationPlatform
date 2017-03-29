@@ -99,7 +99,8 @@ def suggest_term(request, pk, bm):
     def serialize_persona(p):
         return {
             'id': p.pk,
-            'text': p.name,
+            'name': p.name,
+            'description': p.description,
             'icon': p.get_avatar_url(),
             'type': 'Persona',
             'public': p.is_public,
