@@ -47,7 +47,12 @@ class Persona(models.Model):
         if self.is_public:
             _public = ' (public persona)'
 
-        _cnt = ' - %d users matched' % PersonaUsers.objects.filter(persona_id=self.pk).count()
+        try:
+            count = self.number_of_customers
+        except AttributeError:
+            count = PersonaUsers.objects.filter(persona_id=self.pk).count()
+
+        _cnt = ' - %d users matched' % count
 
         return '%s%s%s' % (self.name, _public, _cnt)
 
@@ -281,6 +286,6 @@ class PersonaUsers(models.Model):
     """
     Users represented by each persona
     """
-    persona = models.ForeignKey(Persona, db_index=True)
+    persona = models.ForeignKey(Persona, db_index=True, related_name='persona_users')
     user_id = models.IntegerField(db_index=True)
     info = models.TextField()

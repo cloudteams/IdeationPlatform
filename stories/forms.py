@@ -44,5 +44,7 @@ class StoryForm(ModelForm):
         self.fields['estimate'].label = 'Estimate (# days)'
 
         # filter possible personas
-        self.fields['persona'].queryset = Persona.objects.filter(is_ready=True).filter(Q(is_public=True) |
-                                                                                       Q(project_id=project_id))
+        self.fields['persona'].queryset = Persona.objects\
+            .filter(is_ready=True) \
+            .filter(Q(is_public=True) | Q(project_id=project_id)) \
+            .annotate(number_of_customers=Count('persona_users'))

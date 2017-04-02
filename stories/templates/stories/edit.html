@@ -55,3 +55,12 @@
 	    </article>
     </form>
 {% endblock %}
+
+{% block js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.jquery.min.js"></script>
+    <script>
+        $(function() {
+           $('#id_persona').chosen();
+        });
+    </script>
+{% endblock %}
